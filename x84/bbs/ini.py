@@ -292,8 +292,15 @@ def init_log_ini():
     cfg_log.set('handler_rotate_daily', 'formatter', 'default')
     daily_log = os.path.join(os.path.expanduser(
         os.path.join('~', '.x84', 'daily.log')))
-    cfg_log.set('handler_rotate_daily', 'args',
-                '"' + daily_log + '", "midnight", 1, 60')
+
+    # If platform is Windows double the slashes to escape it.
+    if os.name.startswith("nt"):
+        cfg_log.set('handler_rotate_daily', 'args',
+                    '"' + daily_log.replace('\\', '\\\\') + '", "midnight", 1, 60')
+    # Else no.
+    else:
+        cfg_log.set('handler_rotate_daily', 'args',
+            '"' + daily_log + '", "midnight", 1, 60')
 
     cfg_log.add_section('loggers')
     cfg_log.set('loggers', 'keys',
