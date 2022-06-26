@@ -10,7 +10,7 @@ docs/intro.rst
 
 ## TODO: Known bus until first attempt to migration to python 3.9+
 
- - Telnet is crashing when socet is opened.
+ - Telnet is crashing when socket is opened.
  - WEB server does not seem to see the packages.
  - Initial settings should escape double slashes.
  - rlogin never been tested.
