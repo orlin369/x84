@@ -1,0 +1,104 @@
+|06Tue Jun 16 21:05:00 UTC 2020
+|01============================
+
+The *final* release of x/84 for Python *2* is published.  Remember that Python 2 reached EOL this year (2020), and I have *no plans* to continue to work on x/84, or to upgrade it for Python 3. Sorry!
+
+Thank you everyone who contributed and cared, for your great support over the past 10+ years of development.  Thank you so much -- especially to haliphax, maze, Mercyful, and hellbeard. This project would have died a few years too soon without your support!
+
+Also, since then, NuSkooler wrote *another modern FOSS* BBS system, in javascript:
+
+    https://github.com/NuSkooler/enigma-bbs
+
+And it is still being updated, even today when I write this, so please have a look at that project, give it a star and tell your friends :-)
+
+This release also updates the version of "blessed", a package I *do* maintain, which fully supports 24-bit colors! I've added a small demonstration door plasma.py ("ct" from main menu).  This version of blessed also works on Windows, so maybe x/84 does too?! I don't know... who wants to install Windows in a VM to find out?  Not me :-)
+
+Best wishes!! Your sysop always,
+jq
+
+|06Sun Jan 11 19:05:31 PST 2015
+|01============================
+
+Well, here we are, after nearly a year we've finally released a new version of x/84, version 2.0.0.
+
+It's been a tough road, we've gotten a lot of new additions since the last release to pypi:
+
+   - sftp and ssh server
+   - intra-bbs messaging
+   - web server
+   - split screen chat
+   - improved message area
+   - improved irc client
+   - hacker news reader
+   - ami/x artwork and styling
+   - file browser
+   - xmodem support
+   - shroo.ms api for oneliners
+   - voting booth
+   - improved profile editor
+
+Special thanks to |03haliphax|07 and |03hellbeard|07 and all the many folks of #1984 who have encouraged this release.
+
+|06Mon Sep  1 02:49:05 PDT 2014
+|01============================
+
+There are now several boards running x/84:
+
+    telnet://|02bloodisland.ph4.se|07
+    telnet://|02bbs.beardy.se|07
+    telnet://|02bbs.maze.io|07
+    telnet://|02ufud.eu:6023|07
+    telnet://|02oddnetwork.org|07
+
+Special thanks to |03haliphax|07, |03hellbeard|07, |03beardy|07, |03maze|07, and |03megagumbo|07 for contributing to this release.  |03haliphax|07 and the team have contributed a web module with a json-formatted REST API that provides intra-bbs messaging.  With all the new activity on the message base, we're looking to improve it in the next release.
+
+We're pounding out bugs and creating a more homogeneous style for the default board.  |03maze|07 has contributed solid cp437 and amiga topaz encoding for utf8 translations, and helped improve ssh.
+
+Ssh support is complete -- you can ssh anonymous@, new@, or your_username@1984.ws and connect securely.  Ssh provides a lower latency than connection than telnet.  pubkey authentication is also supported.
+
+|06Tue Apr  1 20:05:28 PDT 2014
+|01============================
+
+Release 1.1.0 has been reached -- 10 iterations!
+
+As for the terminal support in x/84, this has now been published as an independent package, |02blessed|07 and re-used within x/84, but can be used independently -- you can build your own python apps upon it:
+
+  |02https://pypi.python.org/pypi/blessed/
+
+For example, somebody recently created a 2048 clone with 'blessed':
+
+  |02https://pypi.python.org/pypi/macht/
+
+
+|06Sun Mar  2 14:57:06 PST 2014
+|01============================
+
+Release 1.0.9 is now on pypi.  New features include a revamped 'weather' program, and some new art from xzip!impure.  Otherwise, various bugs were resolved.  Thanks to a few folk now running the bbs and providing feedback.
+
+Meanwhile, Mercyful of telnet://|03htc.zapto.org|07 has been (ab)using this bbs as a gatewaying host to test UTF-8<=>CP437 translation -- his bbs now also supports UTF-8.
+
+As for blessings, the upstream author has not been accepting patches, delayed over 1 year now.  I will fork the project, tentatively named 'blessed'.
+
+|06Fri Jun  7 14:37:07 EDT 2013
+|01============================
+
+Release 1.0.5 is now on pypi. This release includes "dropfile" and concise dosemu support. An example lord.py door is used and hosted on 1984.ws.
+
+If you're interested in the telnet protocol, check out another project:
+
+  |02https://github.com/jquast/telnetlib3
+
+|06Thu Feb 21 01:19:47 EST 2013
+|01============================
+
+x/84 version 1.0.4 has been released to pypi, to install:
+
+   $ |02pip install x84
+
+To upgrade:
+
+   $ |02pip install --upgrade x84
+
+This release improves editing and message reading capabilities.  You may have noticed Colors in this news item, which is safe to use in pager and lightbars, either with sequences or by using 'pipes', such as '||02' for the color |02green|07.
+
+If you need to use a literal pipe, just use two. (a||||b).
