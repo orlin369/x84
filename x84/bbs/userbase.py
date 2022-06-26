@@ -35,7 +35,8 @@ def find_user(handle):
     :returns: matching handle as str, or None if not found.
     :rtype: None or str.
     """
-    for key in DBProxy(USERDB).keys():
+    keys = DBProxy(USERDB).keys()
+    for key in keys:
         if handle.lower() == key.decode('utf8').lower():
             return key
 
@@ -432,6 +433,13 @@ def check_anonymous_user(username):
 
 def check_user_password(username, password):
     """ Boolean return when username and password match user record. """
+
+    if username == '':
+        return False
+
+    if password == '':
+        return False
+
     from bbs import find_user, get_user
     handle = find_user(username)
     if handle is None:
