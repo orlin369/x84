@@ -470,7 +470,7 @@ def _loop(servers):
                             kill_session(client, 'socket shutdown')
                             del server.clients[key]
             except Exception as e:
-                pass
+                log.error(e)
 
             # on-connect negotiations that have completed or failed.
             # delete their thread instance from further evaluation
