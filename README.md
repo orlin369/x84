@@ -1,2 +1,1 @@
-# x84
-x84 BBS Server
+docs/intro.rst
