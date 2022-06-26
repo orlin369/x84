@@ -66,16 +66,17 @@ def get_urls_funcs(web_modules):
         # module = __import__(module_path, globals(), locals(), [], 0)
         # module = importlib.import_module("..webmodules.static", "*")
 
-        import pkgutil
-        print([name for _, name, _ in pkgutil.iter_modules(["x84.webmodules"])])
+        # Test purpose only.
+        # import pkgutil
+        # print([name for _, name, _ in pkgutil.iter_modules(["webmodules"])])
 
         # first, check in system PATH (includes SCRIPT_PATH)
         try:
-            module = __import__('x84.webmodules.{0}'.format(mod),
+            module = __import__('webmodules.{0}'.format(mod),
                                 fromlist=['webmodules'])
         except ImportError:
             # failed to import, check in x84's path, raise naturally
-            module = __import__('x84.webmodules.{0}'.format(mod),
+            module = __import__('webmodules.{0}'.format(mod),
                                 fromlist=['webmodules'])
 
         api = module.web_module()
