@@ -5,7 +5,6 @@
 
 from bbs.ansiwin import AnsiWindow
 from bbs.output import encode_pipe, decode_pipe
-from bbs.session import getterminal
 from bbs.output import echo
 
 VI_KEYSET = {

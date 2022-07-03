@@ -11,7 +11,6 @@ import warnings
 
 # local
 from bbs.ansiwin import AnsiWindow, GLYPHSETS
-from bbs.session import getterminal
 from bbs.output import echo
 
 #: default command-key mapping.

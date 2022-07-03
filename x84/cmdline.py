@@ -8,9 +8,15 @@ import os
 
 
 def parse_args():
-    """ Parse system arguments and return lookup path for bbs and log ini. """
+    """Parse system arguments and return lookup path for bbs and log ini.
+
+    Returns:
+        set: Arguments
+    """
+
     if sys.platform.lower().startswith('win32'):
         system_path = os.path.join('C:', 'x84')
+
     else:
         system_path = os.path.join(os.path.sep, 'etc', 'x84')
 
@@ -21,27 +27,30 @@ def parse_args():
                   os.path.expanduser(os.path.join('~', '.x84', 'logging.ini')))
 
     try:
-        opts, tail = getopt.getopt(sys.argv[1:], '', (
-            'config=', 'logger=', 'help'))
+        opts, tail = getopt.getopt(sys.argv[1:], '', ('config=', 'logger=', 'help'))
+
     except getopt.GetoptError as err:
-        sys.stderr.write('{0}\n'.format(err))
+        sys.stderr.write('{}\n'.format(err))
         return 1
+
     for opt, arg in opts:
+
         if opt in ('--config',):
             lookup_bbs = (arg,)
+
         elif opt in ('--logger',):
             lookup_log = (arg,)
+
         elif opt in ('--help',):
             sys.stderr.write(
                 'Usage: \n'
                 '{0} [--config <filepath>] [--logger <filepath>]\n'
                 .format(os.path.basename(sys.argv[0])))
             sys.exit(1)
+
     if len(tail):
         sys.stderr.write('Unrecognized program arguments: {0}\n'
                          .format(tail))
         sys.exit(1)
+
     return (lookup_bbs, lookup_log)
-
-
-

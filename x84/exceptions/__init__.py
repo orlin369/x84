@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ top-level scripting module for x/84. """
 # local side-effect producing imports
 # (encodings such as 'cp437_art' become registered)
@@ -7,10 +10,8 @@ __import__('encodings')
 # local/exported at top-level 'from bbs import ...'
 from bbs.ansiwin import AnsiWindow
 from bbs.dbproxy import DBProxy
-from bbs.door import Door, DOSDoor, Dropfile
+
 from bbs.editor import LineEditor, ScrollingEditor
-from exceptions.disconnected import Disconnected
-from exceptions.goto import Goto
 from bbs.lightbar import Lightbar
 from bbs.msgbase import list_msgs, get_msg, list_tags, Msg, list_privmsgs
 from bbs.output import (echo, timeago, encode_pipe, decode_pipe,
@@ -20,10 +21,6 @@ from bbs.output import (echo, timeago, encode_pipe, decode_pipe,
 from bbs.pager import Pager
 from bbs.script_def import Script
 from bbs.selector import Selector
-from bbs.session import (getsession, getterminal,
-                             goto, disconnect, gosub,
-                             getch,      # deprecated in v2.1
-                             )
 from bbs.userbase import list_users, get_user, find_user, User, Group
 
 # the scripting API is generally defined by this __all__ attribute, but

@@ -12,7 +12,8 @@ import time
 import warnings
 
 # local
-from bbs.exception import Disconnected
+from exceptions.disconnected import Disconnected
+
 from terminal import spawn_client_session
 
 

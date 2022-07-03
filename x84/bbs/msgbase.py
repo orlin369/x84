@@ -5,8 +5,6 @@ import logging
 
 # local
 from bbs.dbproxy import DBProxy
-from bbs.session import getsession
-from bbs.ini import get_ini
 
 # 3rd party
 import dateutil.tz

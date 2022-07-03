@@ -15,7 +15,8 @@ import time
 import os
 
 # local
-from bbs.exception import Disconnected
+from exceptions.disconnected import Disconnected
+
 from bbs.userbase import check_new_user, check_bye_user, check_anonymous_user, check_user_password, check_user_pubkey
 
 from terminal import spawn_client_session, on_naws

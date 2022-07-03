@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ Session engine for x/84. """
 
 # std imports
@@ -12,10 +14,11 @@ import sys
 import os
 
 # local
-from bbs.exception import Disconnected, Goto
+from exceptions.disconnected import Disconnected
+from exceptions.goto import Goto
+
 from bbs.script_def import Script
 from bbs.userbase import User
-from bbs.ini import get_ini
 
 
 #: singleton representing the session connected by current process

@@ -11,7 +11,7 @@ import json
 import os
 
 # local
-from . import cmdline
+import cmdline
 
 # 3rd-party
 import requests
@@ -68,6 +68,7 @@ def pull_rest(net, last_msg_id):
     try:
         response = json.loads(req.text)
         return response['messages'] if response['response'] else []
+
     except Exception as err:
         log.exception('[{net[name]}] JSON error: {err}'
                       .format(net=net, err=err))
@@ -87,6 +88,7 @@ def push_rest(net, msg, parent):
                            headers={'Auth-X84net': get_token(net)},
                            data=data,
                            verify=net['verify'])
+
     except Exception as err:
         log.exception('[{net[name]}] exception in push_rest: {err}'
                       .format(net=net, err=err))

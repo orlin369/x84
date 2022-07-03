@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """
 Door package for x/84.
 
@@ -7,7 +10,6 @@ It also supports executing external Unix paths. See wikipedia article
 for details: http://en.wikipedia.org/wiki/BBS_door
 """
 
-# std imports
 import logging
 import select
 import codecs
@@ -17,10 +19,8 @@ import sys
 import os
 import re
 
-# local imports
 from bbs.session import getsession, getterminal
 from bbs.output import echo
-from bbs.ini import get_ini
 from bbs.userbase import list_users
 
 

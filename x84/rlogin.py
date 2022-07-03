@@ -22,7 +22,8 @@ from bbs.userbase import (
     check_bye_user,
     check_anonymous_user
 )
-from bbs.exception import Disconnected
+from exceptions.disconnected import Disconnected
+
 from client import BaseClient, BaseConnect
 from server import BaseServer
 from terminal import spawn_client_session

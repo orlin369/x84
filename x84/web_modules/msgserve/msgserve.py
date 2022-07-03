@@ -29,6 +29,10 @@ import json
 import time
 import web
 
+from bbs import DBProxy, msgbase
+from bbs.msgbase import to_utctime, to_localtime, Msg
+from utils.settings import ApplicationSettings
+
 #: response for general errors
 RESP_FAIL = json.dumps({'response': False, 'message': 'Error'})
 
@@ -59,8 +63,10 @@ def parse_auth(request_data):
 
     _, _, when = values
     when = int(when)
+
     if time.time() > when + AUTH_EXPIREY:
         raise ValueError('Token is from the future')
+
     elif time.time() - when > AUTH_EXPIREY:
         raise ValueError('Token too far in the past')
 
@@ -68,10 +74,10 @@ def parse_auth(request_data):
 
 
 class MessageApi(object):
+    """Message network web API endpoint
+    """
 
-    """ message network web API endpoint """
-
-    # todo: validate messages much earlier (here, not below the scissor-line)
+    #TODO: validate messages much earlier (here, not below the scissor-line)
 
     def GET(self, network, last):
         """ GET method - pull messages """
@@ -124,6 +130,7 @@ class MessageApi(object):
         """
         try:
             return json.dumps(response_data)
+
         except ValueError as err:
             log.error('{err}: response_data={response_data!r}'.format(
                 err=err, response_data=response_data))
@@ -169,8 +176,6 @@ def serve_messages_for(board_id, request_data, db_source):
     """ Reply-to api client request to receive new messages. """
     # pylint: disable=R0914
     #         Too many local variables (16/15)
-    from bbs import DBProxy, msgbase
-    from bbs.msgbase import to_utctime
     log = logging.getLogger(__name__)
     # log.error(msg)
     db_tags = DBProxy(msgbase.TAGDB, use_session=False)
@@ -227,7 +232,7 @@ def serve_messages_for(board_id, request_data, db_source):
 def receive_message_from(board_id, request_data,
                          db_source, db_transactions):
     """ Reply-to api client request to post a new message. """
-    from bbs.msgbase import to_localtime, Msg
+
     log = logging.getLogger(__name__)
 
     if 'message' not in request_data:
@@ -270,7 +275,7 @@ def get_response(request_data):
     """ Serve one API server request and return. """
     # pylint: disable=R0914
     #         Too many local variables (16/15)
-    from bbs import DBProxy, get_ini
+    
     log = logging.getLogger(__name__)
 
     # validate primary json request keys
@@ -283,7 +288,7 @@ def get_response(request_data):
             status_exc=web.BadRequest)
 
     # validate this server offers such message network
-    server_tags = get_ini(section='msg', key='server_tags', split=True)
+    server_tags = ApplicationSettings.get_ini(section='msg', key='server_tags', split=True)
 
     if not request_data['network'] in server_tags:
         raise server_error(

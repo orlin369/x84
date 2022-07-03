@@ -5,7 +5,6 @@
 
 import logging
 
-from bbs.ini import get_ini
 
 from db import get_db_filepath, get_database, get_db_func, get_db_lock, log_db_cmd
 

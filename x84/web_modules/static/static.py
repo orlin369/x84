@@ -7,9 +7,11 @@ import web
 import os
 import mimetypes
 
-class StaticApp(object):
+from utils.settings import ApplicationSettings
 
-    """ Class for serving static files. """
+class StaticApp(object):
+    """Class for serving static files.
+    """
 
     static_root = ''
     mime_types = {
@@ -25,29 +27,35 @@ class StaticApp(object):
         file_url = os.path.join(*filter(lambda txt: txt != '..',
                                         filename.split('/')))
         myfile = os.path.join(StaticApp.static_root, file_url)
+
         if os.path.isfile(myfile):
             # we're serving a file; use the proper mime type
             mime = mimetypes.guess_type(myfile)
             _, ext = os.path.splitext(myfile.lower())
             mime = StaticApp.mime_types.get(ext, mime)
             web.header('Content-Type', mime, unique=True)
+
             return open(myfile, 'rb').read()
+
         elif os.path.isdir(myfile):
             # we're serving a directory; try directory/index.html instead
             if not filename.endswith('/'):
                 return web.redirect(''.join([filename, '/']))
             return self.GET('/'.join([filename, 'index.html']))
+
         # path does not exist; return 404
         return web.notfound()
 
-
 def web_module():
-    """ Expose our REST API. Run only once on server startup. """
-    from bbs.ini import get_ini
+    """Expose our REST API. Run only once on server startup.
+
+    Returns:
+        dict: Description
+    """    
 
     # determine document root for web server
-    static_root = (get_ini('web', 'document_root')
-                   or os.path.join(get_ini('system', 'scriptpath',
+    static_root = (ApplicationSettings.get_ini('web', 'document_root')
+                   or os.path.join(ApplicationSettings.get_ini('system', 'scriptpath',
                    split=True)[0], 'www-static'))
     StaticApp.static_root = static_root
 

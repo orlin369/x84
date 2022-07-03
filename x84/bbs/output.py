@@ -6,9 +6,6 @@ import glob
 import os
 import re
 
-# local
-from bbs.ini import get_ini
-from bbs.session import getterminal, getsession
 
 # 3rd-party
 from sauce import SAUCE

@@ -25,9 +25,10 @@ The following options are available, but not required:
 import logging
 import time
 
+from utils.settings import ApplicationSettings
+
 # globals
 BANNED_IP_LIST, ATTEMPTED_LOGINS = dict(), dict()
-
 
 def get_fail2ban_function():
     """
@@ -42,40 +43,40 @@ def get_fail2ban_function():
     :return: function accepting ip address, returning boolean
     :rtype: callable
     """
-    # local imports
-    from bbs import get_ini
 
-    if not get_ini(section='fail2ban', key='enabled', getter='getboolean'):
+
+
+    if not ApplicationSettings.get_ini(section='fail2ban', key='enabled', getter='getboolean'):
         return lambda ip: True
 
     # configuration
-    ip_blacklist = get_ini(section='fail2ban',
+    ip_blacklist = ApplicationSettings.get_ini(section='fail2ban',
                            key='ip_blacklist',
                            split=True)
 
-    ip_whitelist = get_ini(section='fail2ban',
+    ip_whitelist = ApplicationSettings.get_ini(section='fail2ban',
                            key='ip_whitelist',
                            split=True)
 
-    max_attempted_logins = get_ini(
+    max_attempted_logins = ApplicationSettings.get_ini(
         section='fail2ban',
         key='max_attempted_logins',
         getter='getint'
     ) or 3
 
-    max_attempted_logins_window = get_ini(
+    max_attempted_logins_window = ApplicationSettings.get_ini(
         section='fail2ban',
         key='max_attempted_logins_window',
         getter='getint'
     ) or 30
 
-    initial_ban_length = get_ini(
+    initial_ban_length = ApplicationSettings.get_ini(
         section='fail2ban',
         key='initial_ban_length',
         getter='getint'
     ) or 360
 
-    ban_increment_length = get_ini(
+    ban_increment_length = ApplicationSettings.get_ini(
         section='fail2ban',
         key='ban_increment_length',
         getter='getint'

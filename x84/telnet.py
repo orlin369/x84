@@ -55,7 +55,8 @@ from telnetlib import XDISPLOC, IAC, DONT, DO, WONT, WILL, SE, NOP, DM, BRK
 from telnetlib import IP, AO, AYT, EC, EL, GA, SB
 
 # local
-from bbs.exception import Disconnected
+from exceptions.disconnected import Disconnected
+
 from terminal import spawn_client_session, on_naws
 from client import BaseClient, BaseConnect
 from server import BaseServer

@@ -2,7 +2,7 @@
 
 # local imports
 from bbs.ansiwin import AnsiWindow
-from bbs.session import getterminal
+
 from bbs.output import decode_pipe, echo
 
 

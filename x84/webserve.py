@@ -10,32 +10,24 @@ import traceback
 import logging
 import importlib
 
-from bbs import get_ini
-import bbs.ini
-import cmdline
+from utils.settings import ApplicationSettings
 
 import web
 from web.wsgiserver import CherryPyWSGIServer
 from cheroot.ssl.pyopenssl import pyOpenSSLAdapter
 from OpenSSL import SSL
 
-class Favicon(object):
-
-    """ Dummy class for preventing 404 of ``/favicon.ico`` """
-
-    def GET(self):
-        """ GET request callback (does nothing). """
-        pass
-
-
 def _get_fp(section_key, optional=False):
     """ Return filepath of [web] option by ``section_key``. """
 
-    value = get_ini(section='web', key=section_key) or None
+    value = ApplicationSettings.get_ini(section='web', key=section_key) or None
+
     if value:
         value = os.path.expanduser(value)
+
     elif optional:
         return None
+
     assert value is not None and os.path.isfile(value), (
         'Configuration section [web], key `{section_key}`, '
         'must {optional_exist}identify a path to an '
@@ -44,34 +36,30 @@ def _get_fp(section_key, optional=False):
             section_key=section_key,
             optional_exist=not optional and 'exist and ' or '',
             value=value))
+ 
     return value
 
-
-def get_urls_funcs(web_modules):
+def get_urls_funcs(web_modules_names):
     """ Get url function mapping for the given web modules. """
     log = logging.getLogger(__name__)
 
-    # list of url's to route to each module api; defaults to route /favicon.ico
+    # list of url's to route to each WEB module api; defaults to route /favicon.ico
     # to a non-op to avoid 404 errors.
     # See: http://webpy.org/docs/0.3/api#web.application
-    urls = ('/favicon.ico', 'favicon')
+    urls = ()
     funcs = globals()
-    funcs['favicon'] = Favicon
 
-    log.debug('add url {0} => {1}'.format(
-        '/favicon.ico', Favicon.__name__))
+    for web_module_name in web_modules_names:
+        web_module = None
 
-    for mod in web_modules:
-        module = None
-
-        module_path = "webmodules.{}.{}".format(mod, mod)
-        module = importlib.import_module(module_path)
+        module_path = "web_modules.{}.{}".format(web_module_name, web_module_name)
+        web_module = importlib.import_module(module_path)
 
         # first, check in system PATH (includes script_path)
-        if module is None:
+        if web_module is None:
             raise ImportError("{}".format(module_path))
 
-        api = module.web_module()
+        api = web_module.web_module()
 
         for key in api['funcs']:
             funcs[key] = api['funcs'][key]
@@ -82,16 +70,15 @@ def get_urls_funcs(web_modules):
         # [(1, 2), (3, 4), (5, 6), (7, 8)]
         for (url, f_key) in zip(api['urls'], api['urls'][1:]):
             if f_key not in funcs:
-                log.error('module {module} provided url {url_tuple} without '
-                          'matching function (available: {f_avail})'
-                          .format(module=module,
-                                  url_tuple=(url, f_key,),
-                                  f_avail=funcs.keys()))
+                log.error('web module {web_module} provided url {url_tuple} without matching function (available: {f_avail})'
+                          .format(web_module=web_module, url_tuple=(url, f_key,), f_avail=funcs.keys()))
+
             else:
                 log.debug('add url {} => {}'.format(url, funcs[f_key].__name__))
-        urls += api['urls']
-    return urls, funcs
 
+        urls += api['urls']
+
+    return urls, funcs
 
 def server(urls, funcs):
     """ Main server thread for running the web server """
@@ -102,11 +89,11 @@ def server(urls, funcs):
                         _get_fp('key'),
                         _get_fp('chain', optional=True))
 
-    addr = get_ini(section='web',
+    addr = ApplicationSettings.get_ini(section='web',
                    key='addr'
                    ) or '0.0.0.0'
 
-    port = get_ini(section='web',
+    port = ApplicationSettings.get_ini(section='web',
                    key='port',
                    getter='getint'
                    ) or 8443
@@ -117,7 +104,7 @@ def server(urls, funcs):
     #
     #   https://github.com/cloudflare/sslconfig/blob/master/conf
     #
-    cipher_list = (get_ini(section='web', key='cipher_list')
+    cipher_list = (ApplicationSettings.get_ini(section='web', key='cipher_list')
                    or ':'.join((
                        'ECDH+AESGCM',
                        'ECDH+AES256',
@@ -141,6 +128,7 @@ def server(urls, funcs):
 
     try:
         CherryPyWSGIServer.ssl_adapter.context.use_certificate_file(cert)
+
     except Exception:
         # wrap exception to contain filepath to 'cert' file, which will
         # hopefully help the user better understand what otherwise be very
@@ -149,16 +137,19 @@ def server(urls, funcs):
             traceback.format_exception_only(
                 sys.exc_info()[0],
                 sys.exc_info()[1])).rstrip()
+
         raise ValueError('Exception loading ssl certificate file {}: {}'.format(cert, error))
 
     try:
         CherryPyWSGIServer.ssl_adapter.context.use_privatekey_file(key)
+
     except Exception:
         # also wrap exception to contain filepath to 'key' file.
         error = ''.join(
             traceback.format_exception_only(
                 sys.exc_info()[0],
                 sys.exc_info()[1])).rstrip()
+
         raise ValueError('Exception loading ssl key file {}: \'{}\''.format(key, error))
 
     if chain is not None:
@@ -167,6 +158,7 @@ def server(urls, funcs):
 
     CherryPyWSGIServer.ssl_adapter.context.set_cipher_list(cipher_list)
 
+    # TODO: It is stops here. 03.07.2022g. FIX IT!
     app = web.application(urls, funcs)
 
     web.config.debug = False
@@ -191,13 +183,13 @@ def main(background_daemon=True):
 
     log = logging.getLogger(__name__)
 
-    script_path = get_ini(section='system', key='scriptpath', split=True)
+    script_path = ApplicationSettings.get_ini(section='system', key='scriptpath', split=True)
 
-    # ensure the script_path is in os environment PATH for module lookup.
+    # ensure the script_path is in os environment PATH for web_module lookup.
     for directory in script_path:
         sys.path.insert(0, os.path.expanduser(directory))
 
-    web_modules = get_ini(section='web', key='modules', split=True)
+    web_modules = ApplicationSettings.get_ini(section='web', key='modules', split=True)
 
     if not web_modules:
         log.error("web server enabled, but no `modules' "
@@ -213,16 +205,3 @@ def main(background_daemon=True):
         t.start()
     else:
         server(urls=urls, funcs=funcs)
-
-
-if __name__ == '__main__':
-    # load only the webserver module when executing this script directly.
-    #
-    # as we are running outside of the 'engine' context, it is necessary
-    # for us to initialize the .ini configuration scheme so that the list
-    # of web modules and ssl options may be gathered.
-
-    bbs.ini.init(*cmdline.parse_args())
-
-    # do not execute webserver as a background thread.
-    main(background_daemon=False)
