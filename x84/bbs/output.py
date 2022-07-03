@@ -103,7 +103,7 @@ def syncterm_setfont(font_name, font_page=0):
                          "available fonts specified in module {1}, table "
                          "SYNCTERM_FONTMAP. Available values: {2!r}".format(
                              font_name, __name__, SYNCTERM_FONTMAP))
-    return u'\x1b[{0};{1} D'.format(font_page, font_code)
+    return '\x1b[{0};{1} D'.format(font_page, font_code)
 
 
 def echo(ucs):
@@ -141,12 +141,12 @@ def timeago(secs, precision=0):
     weeks, days = divmod(days, 7)
     years, weeks = divmod(weeks, 52)
     ((num1, num2), (label1, label2)) = (
-        ((years, weeks), (u'y', u'w')) if years >= 1.0 else
-        ((weeks, days), (u'w', u'd')) if weeks >= 1.0 else
-        ((days, hours), (u'd', u'h')) if days >= 1.0 else
-        ((hours, mins), (u'h', u'm')) if hours >= 1.0 else
-        ((mins, secs), (u'm', u's')))
-    return (u'%2d%s%2.*f%s' % (num1, label1, precision, num2, label2,))
+        ((years, weeks), ('y', '')) if years >= 1.0 else
+        ((weeks, days), ('w', 'd')) if weeks >= 1.0 else
+        ((days, hours), ('d', 'h')) if days >= 1.0 else
+        ((hours, mins), ('h', 'm')) if hours >= 1.0 else
+        ((mins, secs), ('m', 's')))
+    return ('%2d%s%2.*f%s' % (num1, label1, precision, num2, label2,))
 
 
 def decode_pipe(ucs):
@@ -160,10 +160,10 @@ def decode_pipe(ucs):
     :rtype: str
     """
     # simple optimization, no '|' ? exit early!
-    if u'|' not in ucs:
+    if '|' not in ucs:
         return ucs
     term = getterminal()
-    outp = u''
+    outp = ''
     ptr = 0
     match = None
     ANSI_PIPE = re.compile(r'\|(\d{2,3}|\|)')
@@ -171,7 +171,7 @@ def decode_pipe(ucs):
     for match in ANSI_PIPE.finditer(ucs):
         val = match.group(1)
         # allow escaping using a second pipe
-        if val == u'|':
+        if val == '|':
             outp += ucs[ptr:match.start() + 1]
             ptr = match.end()
             continue
@@ -184,7 +184,7 @@ def decode_pipe(ucs):
         # special accommodations for 8-15, some termcaps are ok
         # with term.color(11), whereas others have trouble, help
         # out by using dim color and bold attribute instead.
-        attr = u''
+        attr = ''
         if int_value == 7:
             attr = term.normal
         elif int_value < 7 or int_value >= 16:
@@ -194,8 +194,8 @@ def decode_pipe(ucs):
         outp += ucs[ptr:match.start()] + attr
         ptr = match.end()
 
-    outp = ucs if match is None else u''.join((outp, ucs[match.end():]))
-    return u''.join((outp, term.normal))
+    outp = ucs if match is None else ''.join((outp, ucs[match.end():]))
+    return ''.join((outp, term.normal))
 
 
 def encode_pipe(ucs):
@@ -215,7 +215,7 @@ def encode_pipe(ucs):
     # such as kermit or avatar or some such, something non-emca,
     # upstream blessed project is looking for a SequenceIterator
     # class, https://github.com/jquast/blessed/issues/29
-    outp = u''
+    outp = ''
     nxt = 0
     for idx in range(0, len(ucs)):
         if idx == nxt:
@@ -225,7 +225,7 @@ def encode_pipe(ucs):
                 nxt = idx + len(match.group(0))
                 value = int(match.group(1)) - 30
                 if value >= 0 and value <= 60:
-                    outp += u'|%02d' % (value,)
+                    outp += '|%02d' % (value,)
         if nxt <= idx:
             # append non-sequence to outp,
             outp += ucs[idx]
@@ -304,10 +304,10 @@ def showart(filepattern, encoding=None, auto_mode=True, center=False,
         filename = None
 
     if filename is None:
-        yield u''.join((
-            term.bold_red(u'-- '),
-            u'no files matching {0}'.format(filepattern),
-            term.bold_red(u' --'),
+        yield ''.join((
+            term.bold_red('-- '),
+            'o files matching {0}'.format(filepattern),
+            term.bold_red(' --'),
         ))
         return
 
@@ -351,7 +351,7 @@ def showart(filepattern, encoding=None, auto_mode=True, center=False,
 
     # For wide terminals, center piece on screen using cursor movement
     # when center=True.
-    padding = u''
+    padding = ''
     if center and term.width > 81:
         padding = term.move_x((term.width / 2) - 40)
     lines = _decode(parsed.data).splitlines()
@@ -359,36 +359,36 @@ def showart(filepattern, encoding=None, auto_mode=True, center=False,
 
         if poll_cancel is not False and term.inkey(poll_cancel):
             # Allow slow terminals to cancel by pressing a keystroke
-            msg_cancel = msg_cancel or u''.join(
+            msg_cancel = msg_cancel or ''.join(
                 (term.normal,
-                 term.bold_black(u'-- '),
-                 u'canceled {0} by input'.format(os.path.basename(filename)),
-                 term.bold_black(u' --'),
+                 term.bold_black('-- '),
+                 'canceled {0} by input'.format(os.path.basename(filename)),
+                 term.bold_black(' --'),
                  ))
-            yield u'\r\n' + term.center(msg_cancel).rstrip() + u'\r\n'
+            yield '\r\n' + term.center(msg_cancel).rstrip() + '\r\n'
             return
 
         line_length = term.length(line.rstrip())
 
         if force is False and not padding and term.width < line_length:
             # if the artwork is too wide and force=False, simply stop displaying it.
-            msg_too_wide = u''.join(
+            msg_too_wide = ''.join(
                 (term.normal,
-                 term.bold_black(u'-- '),
-                 (u'canceled {0}, too wide:: {1}'
+                 term.bold_black('-- '),
+                 ('canceled {0}, too wide:: {1}'
                   .format(file_basename, line_length)),
-                 term.bold_black(u' --'),
+                 term.bold_black(' --'),
                  ))
-            yield (u'\r\n' +
+            yield ('\r\n' +
                    term.center(msg_too_wide).rstrip() +
-                   u'\r\n')
+                   '\r\n')
             return
         if idx == len(lines) - 1:
             # strip DOS end of file (^Z)
             line = line.rstrip('\x1a')
             if not line.strip():
                 break
-        yield padding + line + u'\r\n'
+        yield padding + line + '\r\n'
     yield term.normal
 
 

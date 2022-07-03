@@ -124,7 +124,7 @@ color_secondary = get_ini(
 #: password hidden character
 hidden_char = get_ini(
     section='nua', key='hidden_char'
-) or u'\u00f7'
+) or '\u00f7'
 
 
 def display_banner(term):
@@ -139,12 +139,12 @@ def display_banner(term):
 
     # http://www.termsys.demon.co.uk/vtansi.htm
     # disable line-wrapping (SyncTerm does not honor, careful!)
-    echo(u'\x1b[7l')
+    echo('\x1b[7l')
 
     if term.kind.startswith('xterm'):
         # http://www.xfree86.org/4.5.0/ctlseqs.html
         # Save xterm icon and window title on stack.
-        echo(u'\x1b[22;0t')
+        echo('\x1b[22;0t')
 
     # move to beginning of line and clear, in case syncterm_setfont
     # has been mis-interpreted, as it follows CSI with space, which
@@ -153,11 +153,11 @@ def display_banner(term):
 
     # display name of bbs and url to sourcecode.
     highlight = getattr(term, color_primary)
-    sep = getattr(term, color_secondary)(u'::')
+    sep = getattr(term, color_secondary)('::')
 
-    echo(u'{sep} Connected to {name}.\r\n'.format(
+    echo('{sep} Connected to {name}.\r\n'.format(
         sep=sep, name=highlight(system_bbsname)))
-    echo(u'{sep} See {url} for source code.\r\n'.format(
+    echo('{sep} See {url} for source code.\r\n'.format(
         sep=sep, url=highlight(__url__)))
 
     # display on-connect banner (`art_file`)
@@ -209,15 +209,15 @@ def authenticate_user(handle, password):
 
 
 def do_login(term):
-    sep_ok = getattr(term, color_secondary)(u'::')
-    sep_bad = getattr(term, color_primary)(u'::')
+    sep_ok = getattr(term, color_secondary)('::')
+    sep_bad = getattr(term, color_primary)('::')
     colors = {'highlight': getattr(term, color_primary)}
     for _ in range(login_max_attempts):
-        echo(u'\r\n\r\n{sep} Login: '.format(sep=sep_ok))
+        echo('\r\n\r\n{sep} Login: '.format(sep=sep_ok))
         handle = LineEditor(username_max_length, colors=colors
-                            ).read() or u''
+                            ).read() or ''
 
-        if handle.strip() == u'':
+        if handle.strip() == '':
             continue
 
         # user says goodbye
@@ -241,20 +241,20 @@ def do_login(term):
             user = User('anonymous')
         else:
             # authenticate password
-            echo(u'\r\n\r\n{sep} Password: '.format(sep=sep_ok))
+            echo('\r\n\r\n{sep} Password: '.format(sep=sep_ok))
             password = LineEditor(password_max_length,
                                   colors=colors,
                                   hidden=hidden_char
-                                  ).read() or u''
+                                  ).read() or ''
 
             user = authenticate_user(handle, password)
             if not user:
-                echo(u'\r\n\r\n{sep} Login failed.'.format(sep=sep_bad))
+                echo('\r\n\r\n{sep} Login failed.'.format(sep=sep_bad))
                 continue
 
         goto(top_script, handle=user.handle)
 
-    echo(u'\r\n\r\n{sep} Too many authentication attempts.\r\n'
+    echo('\r\n\r\n{sep} Too many authentication attempts.\r\n'
          .format(sep=sep_bad))
 
 

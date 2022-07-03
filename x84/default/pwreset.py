@@ -43,12 +43,12 @@ mail_smtphost = get_ini(section='system', key='mail_smtphost'
                         ) or 'localhost'
 
 #: body of password reset message
-msg_mailbody = (u'A password reset has been requested on {bbsname} '
-                u'from {session.sid!r} by matching your user handle '
-                u'{user.handle!r} and e-mail address.\r\n\r\n'
-                u'Your password reset key is {passkey!r}')
+msg_mailbody = ('A password reset has been requested on {bbsname} '
+                'from {session.sid!r} by matching your user handle '
+                '{user.handle!r} and e-mail address.\r\n\r\n'
+                'Your password reset key is {passkey!r}')
 
-msg_mailsubj = u'Passkey token for {bbsname}'
+msg_mailsubj = 'Passkey token for {bbsname}'
 
 msg_mailfrom = get_ini(section='system',
                        key='mail_addr'
@@ -72,11 +72,11 @@ color_secondary = 'bold_black'
 passkey_max_attempts = 5
 
 #: password hidden character
-hidden_char = u'\u00f7'
+hidden_char = '\u00f7'
 
 #: positions next prompt 40 pixels minus center of screen
 fixate_next = lambda term: (
-    u'\r\n\r\n' + term.move_x(max(0, (term.width // 2) - 40)))
+    '\r\n\r\n' + term.move_x(max(0, (term.width // 2) - 40)))
 
 
 def display_banner_animation(banner_text):
@@ -104,18 +104,18 @@ def display_banner_animation(banner_text):
     def display_header(xpos, banner_text):
         x_top_left = xpos - 1
         x_bot_right = xpos + (len(banner_text) - 5)
-        return u'\r\n'.join((
-            u'{xpos}{txt}'.format(xpos=term.move_x(x_top_left),
-                                  txt=lowlight(u'┬─────')),
-            u'',
-            u'{xpos}{txt}'.format(xpos=term.move_x(x_bot_right),
-                                  txt=lowlight(u'─────┴')),
+        return '\r\n'.join((
+            '{xpos}{txt}'.format(xpos=term.move_x(x_top_left),
+                                  txt=lowlight('┬─────')),
+            '',
+            '{xpos}{txt}'.format(xpos=term.move_x(x_bot_right),
+                                  txt=lowlight('─────┴')),
         ))
 
     def decorate_guess(guess, actual):
         # return string where matching letters are highlighted
         attr = None
-        rstr = u''
+        rstr = ''
         for idx, ch_guess in enumerate(guess):
             # optimized attribute draws
             if ch_guess == actual[idx]:
@@ -195,18 +195,18 @@ def display_banner_animation(banner_text):
 
 def prompt_input(term, key, **kwargs):
     """ Prompt for user input. """
-    sep_ok = getattr(term, color_secondary)(u'::')
-    sep_bad = getattr(term, color_primary)(u'::')
+    sep_ok = getattr(term, color_secondary)('::')
+    sep_bad = getattr(term, color_primary)('::')
     colors = {'highlight': getattr(term, color_primary)}
 
     echo(fixate_next(term))
-    echo(u'{sep} {key:>18}: '.format(sep=sep_ok, key=key))
-    entry = LineEditor(colors=colors, **kwargs).read() or u''
+    echo('{sep} {key:>18}: '.format(sep=sep_ok, key=key))
+    entry = LineEditor(colors=colors, **kwargs).read() or ''
     if not entry.strip():
         echo(fixate_next(term))
-        echo(u'{sep} Canceled !\r\n'.format(sep=sep_bad))
+        echo('{sep} Canceled !\r\n'.format(sep=sep_bad))
         log.debug('Password reset canceled at prompt key={0}.'.format(key))
-        return u''
+        return ''
 
     return entry
 
@@ -251,25 +251,25 @@ def send_passkey(user):
         smtp.quit()
     except Exception as err:
         log.exception(err)
-        echo(u'{0}'.format(err))
+        echo('{0}'.format(err))
         return False
 
-    log.info(u'Password reset token delivered '
-             u'to address {0!r} for user {1!r}.'
+    log.info('Password reset token delivered '
+             'to address {0!r} for user {1!r}.'
              .format(user.email, user.handle))
     return passkey
 
 
-def do_reset(term, handle, email=u''):
+def do_reset(term, handle, email=''):
     """ Password reset by e-mail loop. """
-    sep_ok = getattr(term, color_secondary)(u'::')
-    sep_bad = getattr(term, color_primary)(u'::')
-    email = u''
+    sep_ok = getattr(term, color_secondary)('::')
+    sep_bad = getattr(term, color_primary)('::')
+    email = ''
 
     for _ in range(passkey_max_attempts):
         handle = prompt_input(term=term,
                               key='Username',
-                              content=handle or u'',
+                              content=handle or '',
                               width=username_max_length)
 
         if not handle:
@@ -278,7 +278,7 @@ def do_reset(term, handle, email=u''):
 
         email = prompt_input(term=term,
                              key='E-mail',
-                             content=email or u'',
+                             content=email or '',
                              width=email_max_length)
         if not email:
             # canceled
@@ -287,7 +287,7 @@ def do_reset(term, handle, email=u''):
         user = matches_email(handle, email)
         if not user:
             echo(fixate_next(term))
-            echo(u'{0} Address is incorrect !'.format(sep_bad))
+            echo('{0} Address is incorrect !'.format(sep_bad))
             # try e-mail address again
             continue
 
@@ -296,10 +296,10 @@ def do_reset(term, handle, email=u''):
         if not passkey:
             # failed to send e-mail
             term.inkey(1)
-            echo(u'\r\n\r\n')
+            echo('\r\n\r\n')
             return False
 
-        echo(u'{0} E-mail successfully delivered !'.format(sep_ok))
+        echo('{0} E-mail successfully delivered !'.format(sep_ok))
 
         for _ in range(passkey_max_attempts):
             try_passkey = prompt_input(term=term,
@@ -313,7 +313,7 @@ def do_reset(term, handle, email=u''):
             if passkey.strip() != try_passkey.strip():
                 # passkey does not match
                 echo(fixate_next(term))
-                echo(u'{0} Passkey does not verify !'.format(sep_bad))
+                echo('{0} Passkey does not verify !'.format(sep_bad))
                 # try passkey again
                 continue
 
@@ -330,14 +330,14 @@ def do_reset(term, handle, email=u''):
             log.debug('password reset successful for user {0!r}.'
                       .format(user.handle))
             echo(fixate_next(term))
-            echo(u'{0} Password reset successful !'.format(sep_ok))
+            echo('{0} Password reset successful !'.format(sep_ok))
             return True
 
         echo(fixate_next(term))
-        echo(u'{0} Too many authentication attempts.'.format(sep_bad))
+        echo('{0} Too many authentication attempts.'.format(sep_bad))
 
     echo(fixate_next(term))
-    echo(u'{0} Too many authentication attempts.'.format(sep_bad))
+    echo('{0} Too many authentication attempts.'.format(sep_bad))
 
 
 def main(handle=None):
@@ -345,7 +345,7 @@ def main(handle=None):
     Main procedure.
     """
     session, term = getsession(), getterminal()
-    session.activity = u'resetting password'
+    session.activity = 'resetting password'
 
     display_banner(art_file)
 
@@ -353,6 +353,6 @@ def main(handle=None):
     echo(term.move_up() * 5)
 
     # display banner animation
-    display_banner_animation(banner_text=u'reset account password')
+    display_banner_animation(banner_text='reset account password')
 
     return do_reset(term, handle)

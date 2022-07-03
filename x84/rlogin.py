@@ -321,5 +321,5 @@ class RLoginServer(BaseServer):
         """ Return list of rlogin client file descriptors. """
         fds = [client.fileno() for client in self.clients.values()]
         # pylint: disable=bad-builtin
-        #         You're drunk, pylint
+        #         Yo're drunk, pylint
         return filter(None, fds)

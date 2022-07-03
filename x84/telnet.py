@@ -389,15 +389,15 @@ class TelnetClient(BaseClient):
             self.recv_buffer.fromstring('\b')
             self.log.debug('Erase Character (EC); "\\b" queued.')
         elif cmd == EL:
-            self.log.warn('Erase Line (EC) received; ignored.')
+            self.log.warning('Erase Line (EC) received; ignored.')
         elif cmd == GA:
-            self.log.warn('Go Ahead (GA) received; ignored.')
+            self.log.warning('Go Ahead (GA) received; ignored.')
         elif cmd == NOP:
             self.log.debug('NUL ignored.')
         elif cmd == DM:
-            self.log.warn('Data Mark (DM) received; ignored.')
+            self.log.warning('Data Mark (DM) received; ignored.')
         elif cmd == BRK:
-            self.log.warn('Break (BRK) received; ignored.')
+            self.log.warning('Break (BRK) received; ignored.')
         else:
             self.log.error('_two_byte_cmd invalid: %r', cmd)
         self.telnet_got_iac = False
@@ -421,7 +421,7 @@ class TelnetClient(BaseClient):
             self._handle_wont(option)
         else:
             self.log.debug('{self.addrport}: unhandled _three_byte_cmd: {opt}.'
-                           .format(self=self, opt=name_option(option)))
+                           .format(self.addrport, opt=name_option(option)))
         self.telnet_got_iac = False
         self.telnet_got_cmd = None
 
@@ -711,7 +711,7 @@ class TelnetClient(BaseClient):
             if len(pair) == 1:
                 if (pair[0] in self.env
                         and pair[0] not in ('LINES', 'COLUMNS', 'TERM')):
-                    self.log.warn("del env[%r]", pair[0])
+                    self.log.warning("del env[%r]", pair[0])
                     del self.env[pair[0]]
             elif len(pair) == 2:
                 if pair[0] == 'TERM':
@@ -724,7 +724,7 @@ class TelnetClient(BaseClient):
                 elif pair[1] == self.env[pair[0]]:
                     self.log.debug('env[%r] repeated', pair[0])
                 else:
-                    self.log.warn('%s=%s; conflicting value %s ignored.',
+                    self.log.warning('%s=%s; conflicting value %s ignored.',
                                   pair[0], self.env[pair[0]], pair[1])
             else:
                 self.log.error('client NEW_ENVIRON; invalid %r', pair)

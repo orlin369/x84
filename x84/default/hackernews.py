@@ -50,14 +50,14 @@ Direction = collections.namedtuple(
 
 #: structure defines key movements for :func:`do_movement`
 KEYSET = {
-    'up': ['KEY_UP', u'k'],
-    'sup': ['KEY_SUP', u'K'],
-    'pgup': ['KEY_PGUP', u'b'],
-    'home': ['KEY_HOME', u'0'],
-    'down': ['KEY_DOWN', u'j'],
-    'sdown': ['KEY_SDOWN', u'J'],
-    'pgdown': ['KEY_PGDOWN', u'f', u' '],
-    'end': ['KEY_END', u'G'],
+    'up': ['KEY_UP', 'k'],
+    'sup': ['KEY_SUP', 'K'],
+    'pgup': ['KEY_PGUP', 'b'],
+    'home': ['KEY_HOME', '0'],
+    'down': ['KEY_DOWN', 'j'],
+    'sdown': ['KEY_SDOWN', 'J'],
+    'pgdown': ['KEY_PGDOWN', 'f', ' '],
+    'end': ['KEY_END', 'G'],
 }
 
 MSG_NOTEXT = ("I'm sorry, the page you requested cannot be displayed in "
@@ -124,12 +124,12 @@ def get_article(term, articles):
         # bah syncterm
         moveto_lastline = term.move(term.height - 1, 0)
         width -= 1
-    echo(u''.join((
+    echo(''.join((
         moveto_lastline + getattr(term, COLOR_MAIN),
         term.center('', width),
         moveto_lastline,
     )))
-    echo(u':: enter article #: ')
+    echo(':: enter article #: ')
     article_idx = LineEditor(
         width=len(str(ARTICLE_LIMIT)),
         colors={'highlight': getattr(term, COLOR_MAIN)}
@@ -162,7 +162,7 @@ def render_article(term, html_text):
             for _subsq_indent, char in enumerate(line):
                 if not char.isspace():
                     break
-            _indent = u' ' * _subsq_indent
+            _indent = ' ' * _subsq_indent
             text_wrapped.extend(textwrap.wrap(line, term.width - 1,
                                               subsequent_indent=_indent))
     final = [_text.rstrip() for _text in text_wrapped]
@@ -181,7 +181,7 @@ def get_article_summaries(term, articles):
         _idx = '{0}{1}'.format(idx, term.bold_black('.'))
         _title = article.title
         _netloc = term.bold_black('({0})'.format(article.netloc))
-        results.append(u' '.join((_idx, _title, _netloc)))
+        results.append(' '.join((_idx, _title, _netloc)))
     return results
 
 
@@ -189,26 +189,26 @@ def render_articles_summary(term, scroll_idx, height, articles):
     """ Render and return articles summary in-view. """
     # _vpadd: larger terminals get an extra space between summaries
     _vpadd = 2 if term.height > 25 else 1
-    _endline = term.clear_eol + u'\r\n'
+    _endline = term.clear_eol + '\r\n'
 
     line_no = 0
 
     # render all articles,
-    output = u''
+    output = ''
     _start, _end = scroll_idx, (scroll_idx + (height // _vpadd))
     for line in articles[_start:_end]:
         # calculate indentation (after first ' ').
         _subsq_indent = ((term.strip_seqs(line[:30]).find(' ') or -1) + 1)
 
         # render each line, wrapping to terminal width
-        for subline in term.wrap(line, subsequent_indent=u' ' * _subsq_indent):
+        for subline in term.wrap(line, subsequent_indent=' ' * _subsq_indent):
             if line_no < height:
-                output = u''.join((output, subline, _endline))
+                output = ''.join((output, subline, _endline))
                 line_no += 1
 
         # add additional padding between articles if room remains
         if line_no + (_vpadd - 1) < height:
-            output = u''.join((output, _endline * (_vpadd - 1)))
+            output = ''.join((output, _endline * (_vpadd - 1)))
             line_no += (_vpadd - 1)
 
         else:
@@ -216,14 +216,14 @@ def render_articles_summary(term, scroll_idx, height, articles):
             break
     # clear text to bottom of screen
     remaining = _endline * (height - line_no)
-    output = u''.join((output, remaining))
+    output = ''.join((output, remaining))
     return output
 
 
 def view_article(session, term, url, title):
     """ view an article by target ``url``. """
     # context help
-    keyset_help = (u'[r]eturn - (pg)up/down - [{0}%] - [s]hare')
+    keyset_help = ('[r]eturn - (pg)up/down - [{0}%] - [s]hare')
 
     # display 'fetching ...'
     moveto_lastline = term.move(term.height, 0)
@@ -233,7 +233,7 @@ def view_article(session, term, url, title):
         moveto_lastline = term.move(term.height - 1, 0)
         width -=1
     fetch_txt = 'fetching {0}'.format(url)
-    echo(u''.join((moveto_lastline, term.center(fetch_txt[:term.width], width))))
+    echo(''.join((moveto_lastline, term.center(fetch_txt[:term.width], width))))
 
     # perform get request,
     headers = {'User-Agent': USER_AGENT}
@@ -243,7 +243,7 @@ def view_article(session, term, url, title):
         # a wide variety of exceptions may occur; ssl errors, connect timeouts,
         # read errors, BadStatusLine, it goes on and on.
         e_type, _, _ = sys.exc_info()
-        echo(u''.join((
+        echo(''.join((
             moveto_lastline,
             term.center('{0}: {1}'.format(e_type, err), width))))
         term.inkey()
@@ -251,7 +251,7 @@ def view_article(session, term, url, title):
 
     if 200 != req.status_code:
         # display 404, 500, or whatever non-200 code returned.
-        echo(u''.join((
+        echo(''.join((
             moveto_lastline,
             term.center('failed: status_code={0}'.format(req.status_code), width)
         )))
@@ -263,9 +263,9 @@ def view_article(session, term, url, title):
     html_text = req.text
 
     keyset = get_keyset(term)
-    _endline = term.clear_eol + u'\r\n'
+    _endline = term.clear_eol + '\r\n'
     bottom = -1
-    article_text = u''
+    article_text = ''
     scroll_idx = 0
     last_width, last_height = -1, -1
     do_quit = False
@@ -328,10 +328,10 @@ def view_article(session, term, url, title):
             session.buffer_input(data, pushback=True)
             inp = term.inkey(0)
             while inp:
-                if inp == u'\x0c':
+                if inp == '\x0c':
                     # refresh (^L)
                     dirty = 2
-                elif inp.lower() in (u'r', u'q',):
+                elif inp.lower() in ('r', 'q',):
                     do_quit = True
                     break
                 elif inp in ('s',):
@@ -352,7 +352,7 @@ def view_article(session, term, url, title):
 
 def view_article_summaries(session, term, rss_url, rss_title):
     """ view rss article summary by target ``rss_url``. """
-    keyset_help = (u'[q]uit - up/down - [v]iew - [c]omments')
+    keyset_help = ('[q]uit - up/down - [v]iew - [c]omments')
 
     # fetch rss feed articles
     echo(term.move(term.height // 2, 0))
@@ -413,7 +413,7 @@ def view_article_summaries(session, term, rss_url, rss_title):
             moveto_lastline = term.move(term.height, 0)
             if term.kind.startswith('ansi'):
                 moveto_lastline = term.move(term.height - 1, 0)
-            echo(u''.join((
+            echo(''.join((
                 moveto_lastline,
                 getattr(term, COLOR_MAIN)(
                     keyset_help[:term.width].center(width)))
@@ -431,17 +431,17 @@ def view_article_summaries(session, term, rss_url, rss_title):
             session.buffer_input(data, pushback=True)
             inp = term.inkey(0)
             while inp:
-                if inp == u'\x0c':
+                if inp == '\x0c':
                     # refresh (^L)
                     dirty = 2
-                elif inp.lower() in (u'q',):
+                elif inp.lower() in ('q',):
                     do_quit = True
                     break
-                elif inp in (u'v', 'c'):
+                elif inp in ('v', 'c'):
                     article = get_article(term, articles)
                     if article is not None:
-                        url = {u'v': article.link,
-                               u'c': article.comments
+                        url = {'v': article.link,
+                               'c': article.comments
                                }[inp]
                         view_article(session=session, term=term,
                                      url=url, title=article.title)
@@ -473,7 +473,7 @@ def main(rss_url=None, rss_title=None):
     echo(term.move(term.height, 0) + term.normal)
 
     # create a new, empty screen
-    echo(u'\r\n' * (term.height + 1))
+    echo('\r\n' * (term.height + 1))
 
     with term.hidden_cursor():
         view_article_summaries(session=session, term=term,

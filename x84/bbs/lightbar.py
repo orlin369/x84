@@ -7,14 +7,14 @@ from bbs.output import decode_pipe, echo
 
 
 #: default command-key mapping.
-NETHACK_KEYSET = {'home': [u'y', '0'],
-                  'end': [u'n', 'G'],
-                  'pgup': [u'h', u'b'],
-                  'pgdown': [u'l', u'f'],
-                  'up': [u'k'],
-                  'down': [u'j'],
-                  'enter': [u'\r'],
-                  'exit': [u'q', u'Q', chr(27), ],
+NETHACK_KEYSET = {'home': ['y', '0'],
+                  'end': ['n', 'G'],
+                  'pgup': ['h', 'b'],
+                  'pgdown': ['l', 'f'],
+                  'up': [''],
+                  'down': [''],
+                  'enter': ['\r'],
+                  'exit': ['q', 'Q', chr(27), ],
                   }
 
 
@@ -70,7 +70,7 @@ class Lightbar(AnsiWindow):
     def init_theme(self, colors=None, glyphs=None):
         """ Set color and bordering glyphs theme. """
         colors = colors or {'highlight': getterminal().reverse_yellow}
-        glyphs = glyphs or {'strip': u' $'}
+        glyphs = glyphs or {'strip': ' $'}
         AnsiWindow.init_theme(self, colors, glyphs)
 
     def init_keystrokes(self, keyset):
@@ -93,7 +93,7 @@ class Lightbar(AnsiWindow):
         however, must be of a unicode terminal sequence.
         """
         if keyed_uchars is None:
-            keyed_uchars = (None, u'',)
+            keyed_uchars = (None, '',)
         self.content = list(keyed_uchars)
         self.position = (self.vitem_idx, self.vitem_shift)
 
@@ -112,15 +112,15 @@ class Lightbar(AnsiWindow):
         entry = self.vitem_shift + row
         if entry >= len(self.content):
             # out-of-bounds;
-            disp_erase = self.glyphs.get('erase', u' ') * self.visible_width
-            return u''.join((pos, disp_erase,))
+            disp_erase = self.glyphs.get('erase', ' ') * self.visible_width
+            return ''.join((pos, disp_erase,))
 
         def fit_row(ucs):
             """ Strip a unicode row to fit window boundry, if necessary """
             column = self.visible_width - 1
             wrapped = term.wrap(ucs, column)
             if len(wrapped) > 1:
-                marker = self.glyphs.get('strip', u' $')
+                marker = self.glyphs.get('strip', ' $')
                 marker_column = self.visible_width - len(marker)
                 wrapped = term.wrap(ucs, marker_column)
                 ucs = term.ljust(wrapped[0].rstrip(), marker_column) + marker
@@ -129,7 +129,7 @@ class Lightbar(AnsiWindow):
 
         # allow ucs data with '\r\n', to accomidate soft and hardbreaks; just
         # don't display them, really wrecks up cusor positioning.
-        ucs = self.content[entry][1].strip(u'\r\n')
+        ucs = self.content[entry][1].strip('\r\n')
 
         # highlighted entry; strip of ansi sequences, use color 'highlight'
         # trim and append '$ ' if it cannot fit,
@@ -137,9 +137,9 @@ class Lightbar(AnsiWindow):
             ucs = term.strip_seqs(ucs)
             if term.length(ucs) > self.visible_width:
                 ucs = fit_row(ucs)
-            return u''.join((pos,
+            return ''.join((pos,
                              term.normal,
-                             self.colors.get('highlight', u''),
+                             self.colors.get('highlight', ''),
                              self.align(ucs),
                              term.normal,))
         # unselected entry; retain ansi sequences, decode any pipe characters,
@@ -147,8 +147,8 @@ class Lightbar(AnsiWindow):
         ucs = decode_pipe(ucs)
         if term.length(ucs) > self.visible_width:
             ucs = fit_row(ucs)
-        return u''.join((pos,
-                         self.colors.get('lowlight', u''),
+        return ''.join((pos,
+                         self.colors.get('lowlight', ''),
                          self.align(ucs),
                          term.normal,))
 
@@ -159,7 +159,7 @@ class Lightbar(AnsiWindow):
 
     def refresh(self):
         """ Return string sequence suitable for refreshing lightbar. """
-        return u''.join(self.refresh_row(ypos) for ypos in
+        return ''.join(self.refresh_row(ypos) for ypos in
                         range(max(self.visible_bottom, self.visible_height)))
 
     def refresh_quick(self):
@@ -175,7 +175,7 @@ class Lightbar(AnsiWindow):
             else:
                 # just highlight new ..
                 return (self.refresh_row(self.vitem_idx))
-        return u''
+        return ''
 
     def process_keystroke(self, keystroke):
         """
@@ -189,7 +189,7 @@ class Lightbar(AnsiWindow):
         self._selected = False
         self._vitem_lastidx = self.vitem_idx
         self._vitem_lastshift = self.vitem_shift
-        rstr = u''
+        rstr = ''
         if (keystroke in self.keyset['home'] or
                 keystroke.code in self.keyset['home']):
             rstr = self.move_home()
@@ -370,7 +370,7 @@ class Lightbar(AnsiWindow):
         """ Move selection down one row, return string suitable for refresh. """
         if self.at_bottom:
             # bounds check
-            return u''
+            return ''
         if self.vitem_idx + 1 < self.visible_bottom:
             # move down 1 row
             self.vitem_idx += 1
@@ -400,7 +400,7 @@ class Lightbar(AnsiWindow):
         """ Move selection up one row, return string suitable for refresh. """
         if self.at_top:
             # bounds check
-            return u''
+            return ''
         elif self.vitem_idx >= 1:
             # move up 1 row
             self.vitem_idx -= 1
@@ -414,7 +414,7 @@ class Lightbar(AnsiWindow):
         if len(self.content) < self.visible_height:
             # move to last entry
             if self.vitem_idx == len(self.content) - 1:
-                return u''  # already at end
+                return ''  # already at end
             self.vitem_idx = len(self.content) - 1
         elif (self.vitem_shift + self.visible_height
                 < (len(self.content) - self.visible_height)):
@@ -446,7 +446,7 @@ class Lightbar(AnsiWindow):
     def move_home(self):
         """ Move selection to first row, return string suitable for refresh. """
         if (0, 0) == (self.vitem_idx, self.vitem_shift):
-            return u''  # already at home
+            return ''  # already at home
         self.vitem_idx = 0
         self.vitem_shift = 0
         return self.refresh_quick()
@@ -455,7 +455,7 @@ class Lightbar(AnsiWindow):
         """ Move selection to final row, return string suitable for refresh. """
         if len(self.content) < self.visible_height:
             if self.vitem_idx == len(self.content) - 1:
-                return u''  # already at end
+                return ''  # already at end
             self.vitem_idx = len(self.content) - 1
         else:
             self.vitem_shift = len(self.content) - self.visible_height

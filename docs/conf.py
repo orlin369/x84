@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 #
 # x/84 documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb 21 19:55:19 2013.
@@ -40,10 +41,10 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'x/84'
-copyright = u'2003, Jeff Quast'
+project = 'x/84'
+copyright = '2003, Jeff Quast'
 
-# The version info for the project you're documenting, acts as replacement for
+# The version info for the project yore documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
@@ -183,8 +184,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'x84.tex', u'x/84 Documentation',
-   u'Jeff Quast', 'manual'),
+  ('index', 'x84.tex', 'x/84 Documentation',
+   'Jeff Quast', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,8 +214,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'x84', u'x/84 Documentation',
-     [u'Jeff Quast'], 1)
+    ('index', 'x84', 'x/84 Documentation',
+     ['Jeff Quast'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -227,8 +228,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'x84', u'x/84 Documentation',
-   u'Jeff Quast', 'x84', 'One line description of project.',
+  ('index', 'x84', 'x/84 Documentation',
+   'Jeff Quast', 'x84', 'One line description of project.',
    'Miscellaneous'),
 ]
 

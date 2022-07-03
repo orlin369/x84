@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ Pager package for x/84. """
+
 from bbs.ansiwin import AnsiWindow
 from bbs.output import encode_pipe, decode_pipe
 from bbs.session import getterminal
@@ -6,13 +10,13 @@ from bbs.output import echo
 
 VI_KEYSET = {
     'refresh': [chr(12), ],
-    'home': [u'0'],
-    'end': [u'G'],
-    'up': [u'k', u'K'],
-    'down': [u'j', u'J', u'\r'],
-    'pgup': [u'b', u'B', u''],
-    'pgdown': [u'f', u'F', u''],
-    'exit': [u'q', u'Q', chr(27), ],
+    'home': ['0'],
+    'end': [''],
+    'up': ['', 'K'],
+    'down': ['j', 'J', '\r'],
+    'pgup': ['b', 'B', ''],
+    'pgdown': ['f', 'F', ''],
+    'exit': ['q', 'Q', chr(27), ],
 }
 
 
@@ -35,7 +39,7 @@ class Pager(AnsiWindow):
         """
         self._quit = False
         self.init_keystrokes(keyset=kwargs.pop('keyset', VI_KEYSET.copy()))
-        _content = kwargs.pop('content', u'') or u''
+        _content = kwargs.pop('content', '') or ''
         AnsiWindow.__init__(self, *args, **kwargs)
         self.content = _content
         self._position = self.position = kwargs.pop('position', 0) or 0
@@ -105,7 +109,7 @@ class Pager(AnsiWindow):
         :returns: string sequence suitable for refresh.
         """
         self.moved = False
-        rstr = u''
+        rstr = ''
         if (keystroke in self.keyset['refresh'] or
                 keystroke.code in self.keyset['refresh']):
             rstr += self.refresh()
@@ -156,7 +160,7 @@ class Pager(AnsiWindow):
         self.position = 0
         if self.moved:
             return self.refresh()
-        return u''
+        return ''
 
     def move_end(self):
         """
@@ -167,7 +171,7 @@ class Pager(AnsiWindow):
         self.position = len(self._content) - self.visible_height
         if self.moved:
             return self.refresh()
-        return u''
+        return ''
 
     def move_pgup(self, num=1):
         """
@@ -176,7 +180,7 @@ class Pager(AnsiWindow):
         :rtype: str
         """
         self.position -= (num * (self.visible_height))
-        return self.refresh() if self.moved else u''
+        return self.refresh() if self.moved else ''
 
     def move_pgdown(self, num=1):
         """
@@ -185,7 +189,7 @@ class Pager(AnsiWindow):
         :rtype: str
         """
         self.position += (num * (self.visible_height))
-        return self.refresh() if self.moved else u''
+        return self.refresh() if self.moved else ''
 
     def move_down(self, num=1):
         """
@@ -196,7 +200,7 @@ class Pager(AnsiWindow):
         self.position += num
         if self.moved:
             return self.refresh()
-        return u''
+        return ''
 
     def move_up(self, num=1):
         """
@@ -207,7 +211,7 @@ class Pager(AnsiWindow):
         self.position -= num
         if self.moved:
             return self.refresh()
-        return u''
+        return ''
 
     def refresh_row(self, row):
         """
@@ -217,11 +221,11 @@ class Pager(AnsiWindow):
         :rtype: str
         """
         term = getterminal()
-        ucs = u''
+        ucs = ''
         if row < len(self.visible_content):
             ucs = self.visible_content[row]
         disp_position = self.pos(row + self.ypadding, self.xpadding)
-        return u''.join((term.normal,
+        return ''.join((term.normal,
                          disp_position,
                          self.align(ucs),
                          term.normal))
@@ -238,7 +242,7 @@ class Pager(AnsiWindow):
         :rtype: str
         """
         term = getterminal()
-        return u''.join(
+        return ''.join(
             [term.normal] + [
                 self.refresh_row(row)
                 for row in range(start_row, len(self.visible_content))
@@ -277,7 +281,7 @@ class Pager(AnsiWindow):
             if line.strip():
                 lines.extend(term.wrap(line, self.visible_width - 1))
             else:
-                lines.append(u'')
+                lines.append('')
         return lines
 
     def append(self, ucs):

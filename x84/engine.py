@@ -5,7 +5,7 @@
 # Place ALL metadata in setup.py, except where not suitable, place here.
 # For any contributions, feel free to tag __author__ etc. at top of such file.
 __author__ = "Johannes Lundberg (jojo), Jeff Quast (dingo)"
-__url__ = u'https://github.com/jquast/x84/'
+__url__ = 'https://github.com/jquast/x84/'
 __copyright__ = "Copyright 2003"
 __credits__ = [
     # use 'scene' names unless preferred or unavailable.
@@ -439,12 +439,12 @@ def _loop(servers):
     #         Too many local variables (24/15)
     from bbs.ini import CFG
 
-    SELECT_POLL = 0.02  # polling time is 20ms
+    select_poll_time = 0.02  # polling time is 20ms
 
     # WIN32 has no session_fds (multiprocess queues are not polled using
     # select), use a persistently empty set; for WIN32, sessions are always
     # polled for data at every loop.
-    WIN32 = sys.platform.lower().startswith('win32')
+    win32_flag = sys.platform.lower().startswith('win32')
     session_fds = set()
 
     log = logging.getLogger(__name__)
@@ -482,7 +482,7 @@ def _loop(servers):
         for server in servers:
             check_r.append(server.server_socket.fileno())
             check_r.extend(server.client_fds())
-        if not WIN32:
+        if not win32_flag:
             # WIN32's IPC is not done using sockets, so it
             # is not possible to use select.select() on them
             session_fds = get_session_output_fds(servers)
@@ -493,11 +493,12 @@ def _loop(servers):
         # file descriptors for the session i/o.  Unless we loop for
         # additional `session_fds', a connecting client would block.
         try:
-            ready_r, _, _ = select.select(check_r, [], [], SELECT_POLL)
+            ready_r, _, _ = select.select(check_r, [], [], select_poll_time)
+
         except select.error as err:
             # more than likely EBADF (9, 'Bad file descriptor'), it would seem
             # the socket we've just decided to poll has just gone bad.
-            log.debug('continue after select.error: {0}'.format(err))
+            log.debug(f'continue after select.error: {err}')
             continue
 
         for fd in ready_r:
@@ -511,7 +512,7 @@ def _loop(servers):
         terms = get_terminals()
 
         # receive new data from session terminals
-        if WIN32 or set(session_fds) & set(ready_r):
+        if win32_flag or set(session_fds) & set(ready_r):
             try:
                 session_recv(locks, terms, log, tap_events)
             except IOError as err:

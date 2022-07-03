@@ -16,9 +16,9 @@ def prompt_resize_term(session, term, name):
     if want_cols and want_rows and not term.kind.startswith('ansi'):
         while not (term.width == want_cols and
                    term.height == want_rows):
-            resize_msg = (u'Please resize your window to {0} x {1} '
-                          u'current size is {term.width} x {term.height} '
-                          u'or press return.  Press escape to cancel.'
+            resize_msg = ('Please resize your window to {0} x {1} '
+                          'current size is {term.width} x {term.height} '
+                          'or press return.  Press escape to cancel.'
                           .format(want_cols, want_rows, term=term))
             echo(term.normal + term.home + term.clear_eos + term.home)
             pager = Pager(yloc=0, xloc=0, width=want_cols, height=want_rows,
@@ -29,7 +29,7 @@ def prompt_resize_term(session, term, name):
 
             width = min(70, term.width - 5)
             for yoff, line in enumerate(term.wrap(resize_msg, width)):
-                echo(u''.join((term.move(yoff + 1, 5), line.rstrip())))
+                echo(''.join((term.move(yoff + 1, 5), line.rstrip())))
 
             event, data = session.read_events(('input', 'refresh'))
             if event == 'refresh':
@@ -132,7 +132,7 @@ def main(name):
     session, term = getsession(), getterminal()
 
     # clear screen,
-    echo(term.normal + u'\r\n' * term.height + term.move(0, 0))
+    echo(term.normal + '\r\n' * term.height + term.move(0, 0))
 
     # set font,
     if term.kind.startswith('ansi'):
@@ -159,14 +159,14 @@ def main(name):
 
         do_dropfile(name, node)
 
-        session.activity = u'Playing {}'.format(name)
+        session.activity = 'Playing {}'.format(name)
 
         cmd, args = parse_command_args(session, name, node)
         env = get_env(session, name)
         cp437 = get_ini('sesame', '{0}_cp437'.format(name),
                         getter='getboolean')
 
-        _Door = DOSDoor if cmd.endswith('dosemu') else Door
+        _Door = DOSDoor if cmd.endswith('dosem') else Door
         _Door(cmd=cmd, args=args, env=env, cp437=cp437).run()
 
     restore_screen(term, store_columns, store_rows)

@@ -41,20 +41,20 @@ syncterm_font = get_ini(
 
 def prompt_chat_request(term, pos, call_from):
     chat_prompt = (
-        u'{marker}{nick} would like to chat, accept? {lb}{yn}{rb}'
-        .format(marker=term.bold(u' ** '),
+        '{marker}{nick} would like to chat, accept? {lb}{yn}{rb}'
+        .format(marker=term.bold(' ** '),
                 nick=term.bold(call_from),
-                lb=term.bold_black(u'['),
-                rb=term.bold_black(u']'),
-                yn=term.bold(u'yn')))
-    echo(term.normal + u'\a')
+                lb=term.bold_black('['),
+                rb=term.bold_black(']'),
+                yn=term.bold('yn')))
+    echo(term.normal + '\a')
     echo(term.move(pos.yloc, pos.xloc))
     echo(chat_prompt.center(pos.width, ' '))
     while True:
         inp = term.inkey()
-        if inp.lower() == u'y':
+        if inp.lower() == 'y':
             return True
-        elif inp.lower() == u'n':
+        elif inp.lower() == 'n':
             return False
 
 
@@ -62,14 +62,14 @@ def refresh_screen(term, who):
     # create a new, empty screen
     echo(term.normal)
     echo(term.move(term.height - 1, 0))
-    echo(u'\r\n' * (term.height + 1))
+    echo('\r\n' * (term.height + 1))
 
     ans_height, ans_width = 24, 80
     if term.width < ans_width or term.height < ans_height:
         # screen is too small for ansi file, use ytalk-like format
         center_line = term.height // 2
         echo(term.move(center_line, 0))
-        echo(term.center(u'= {0}@{1} ='.format(who, system_bbsname),
+        echo(term.center('= {0}@{1} ='.format(who, system_bbsname),
                          term.width, '-'))
         top_window = WindowDimension(
             yloc=-1, xloc=-1,
@@ -103,7 +103,7 @@ def refresh_screen(term, who):
 
 
 def make_editor_series(winsize, editors):
-    colors = {'highlight': u''}
+    colors = {'highlight': ''}
     # prevent horizontal scrolling prior to final column
     margin_pct = 100 - (100 / (winsize.width - 3))
     # scroll at final column
@@ -112,7 +112,7 @@ def make_editor_series(winsize, editors):
         ScrollingEditor(
             yloc=_yloc, xloc=winsize.xloc, width=winsize.width,
             colors=colors, margin_pct=margin_pct, scroll_pct=scroll_pct,
-            content=(u'' if not editors or _idx >= len(editors)
+            content=('' if not editors or _idx >= len(editors)
                      else editors[_idx].content),
             max_length=winsize.width
         ) for _idx, _yloc in enumerate(range(
@@ -136,7 +136,7 @@ def do_chat(session, term, log, other_sid, dial=None, call_from=None):
     if data:
         log.debug('Flushed chat data: %r', data)
 
-    session.activity = (u'{doing} {call_from}'.format(
+    session.activity = ('{doing} {call_from}'.format(
         doing=('answering call from' if answering else
                'requesting chat with'),
         call_from=call_from))
@@ -190,7 +190,7 @@ def do_chat(session, term, log, other_sid, dial=None, call_from=None):
                 dirty = True
             elif dialing:
                 inp = term.inkey(0)
-                if inp.lower() == u'q' or inp.code == term.KEY_ESCAPE:
+                if inp.lower() == 'q' or inp.code == term.KEY_ESCAPE:
                     break
             else:
                 # process keystroke and send to other party
@@ -224,39 +224,39 @@ def do_chat(session, term, log, other_sid, dial=None, call_from=None):
 
 def display_dialing(term, pos, who):
     echo(term.move(pos.yloc + (pos.height // 2), pos.xloc))
-    echo(u'dialing {0}, [q]uit ...'.format(who).center(pos.width).rstrip())
+    echo('dialing {0}, [q]uit ...'.format(who).center(pos.width).rstrip())
 
 
 def display_answering(term, pos, who):
     echo(term.move(pos.yloc + (pos.height // 2), pos.xloc))
-    echo(u'accept chat from {0} [yn] ?'.format(who).center(pos.width).rstrip())
-    echo(u'\b\b')
+    echo('accept chat from {0} [yn] ?'.format(who).center(pos.width).rstrip())
+    echo('\b\b')
 
 
 def display_hangup(term, pos, who):
     echo(term.move(pos.yloc + (pos.height // 2), pos.xloc))
-    echo(u'{0} hung up.'.format(who).center(pos.width).rstrip())
+    echo('{0} hung up.'.format(who).center(pos.width).rstrip())
 
 
 def display_rejected(term, pos, who):
     echo(term.move(pos.yloc + (pos.height // 2), pos.xloc))
-    echo(u'{0} is rejecting chat requests.'.format(who).center(pos.width).rstrip())
+    echo('{0} is rejecting chat requests.'.format(who).center(pos.width).rstrip())
 
 
 def do_answer(term, session, other_sid):
     while True:
         inp = term.inkey()
-        if inp.lower() == u'y':
+        if inp.lower() == 'y':
             route_data = (other_sid, 'chat') + (ANSWER,)
             session.send_event('route', route_data)
             return True
-        elif inp.lower() == u'n':
+        elif inp.lower() == 'n':
             return False
 
 
 def clear_editor(editor):
     """ Clear content and refresh line editor ``editor``. """
-    editor.update(u'')
+    editor.update('')
     echo(editor.refresh())
 
 
@@ -270,7 +270,7 @@ def recv_input(editors, edit_idx, inp):
     if inp.is_sequence:
         if ((inp.code in editor.keyset['backspace'] or
              inp in editor.keyset['backspace']
-             ) and editor.content == u''):
+             ) and editor.content == ''):
             # editor is empty, and we've backspaced, allow
             # backspacing into previous line
             edit_idx = (len(editors) - 1 if edit_idx == 0

@@ -16,13 +16,7 @@ import os
 
 # local
 from bbs.exception import Disconnected
-from bbs.userbase import (
-    check_new_user,
-    check_bye_user,
-    check_anonymous_user,
-    check_user_password,
-    check_user_pubkey,
-)
+from bbs.userbase import check_new_user, check_bye_user, check_anonymous_user, check_user_password, check_user_pubkey
 
 from terminal import spawn_client_session, on_naws
 from client import BaseClient, BaseConnect
@@ -124,7 +118,7 @@ class SshClient(BaseClient):
         :raises Disconnected: client has disconnected (cannot write to socket).
         """
         if not self.send_ready():
-            self.log.warn('send() called on empty buffer')
+            self.log.warning('send() called on empty buffer')
             return 0
 
         ready_bytes = bytes(''.join(self.send_buffer))
@@ -308,9 +302,9 @@ class SshSessionServer(paramiko.ServerInterface):
         # pylint: disable=W0613
         #         Unused argument 'chanid'
         if kind == 'session':
-            self.log.debug('channel request granted, kind={0}'.format(kind))
+            self.log.debug('channel request granted, kind={}'.format(kind))
             return paramiko.OPEN_SUCCEEDED
-        self.log.debug('channel request denied, kind={0}'.format(kind))
+        self.log.debug(f'channel request denied, kind={kind}')
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
 
     def check_auth_password(self, username, password):

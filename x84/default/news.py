@@ -47,8 +47,8 @@ def main(quick=False):
     session, term = getsession(), getterminal()
 
     if not os.path.exists(news_file):
-        log.warn('No news file, {0}'.format(news_file))
-        echo(u'\r\n\r\n' + term.center(u'No news.').rstrip() + u'\r\n')
+        log.warning('No news file, {0}'.format(news_file))
+        echo('\r\n\r\n' + term.center('No news.').rstrip() + '\r\n')
         return
 
     # return early if 'quick' is True and news is not new
@@ -69,7 +69,7 @@ def main(quick=False):
     news = decode_pipe(codecs.open(
         news_file, 'rb', news_file_encoding).read()
     ).splitlines()
-    echo(u'\r\n\r\n')
+    echo('\r\n\r\n')
 
     # display file contents, decoded, using a command-prompt pager.
     prompt_pager(content=news,

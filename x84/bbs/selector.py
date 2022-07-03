@@ -3,11 +3,11 @@ from bbs.ansiwin import AnsiWindow
 
 VI_KEYSET = {
     'refresh': [chr(12)],
-    'toggle': [u' '],
-    'left': [u'h'],
-    'right': [u'l'],
-    'enter': [u'\r'],
-    'exit': [u'q', u'Q', chr(27), ],
+    'toggle': [' '],
+    'left': ['h'],
+    'right': ['l'],
+    'enter': ['\r'],
+    'exit': ['q', 'Q', chr(27), ],
 }
 
 
@@ -95,7 +95,7 @@ class Selector(AnsiWindow):
         elif (keystroke in self.keyset['enter'] or
               keystroke.code in self.keyset['enter']):
             self._selected = True
-        return u''
+        return ''
 
     def read(self):
         """ Reads input until the ENTER or ESCAPE key is pressed (Blocking). """
@@ -106,7 +106,7 @@ class Selector(AnsiWindow):
         echo(self.refresh())
         term = getterminal()
         while not (self.selected or self.quit):
-            echo(self.process_keystroke(term.inkey()) or u'')
+            echo(self.process_keystroke(term.inkey()) or '')
         if self.quit:
             return None
         return self.selection
@@ -165,13 +165,13 @@ class Selector(AnsiWindow):
         import math
         import bbs.session
         term = bbs.session.getterminal()
-        attr_l = (self.colors.get('selected', u'')
+        attr_l = (self.colors.get('selected', '')
                   if self.selection == self.left
                   else self.colors.get('unselected'))
-        attr_r = (self.colors.get('selected', u'')
+        attr_r = (self.colors.get('selected', '')
                   if self.selection == self.right
                   else self.colors.get('unselected'))
-        return u''.join((
+        return ''.join((
             self.pos(0, 0), term.normal, attr_l,
             self.left.center(int(math.ceil(float(self.width) / 2))),
             term.normal, attr_r,
@@ -183,14 +183,14 @@ class Selector(AnsiWindow):
         if self.selection != self.right:
             self.selection = self.right
             return self.refresh()
-        return u''
+        return ''
 
     def move_left(self):
         """ Move selection left, return string suitable for refresh. """
         if self.selection != self.left:
             self.selection = self.left
             return self.refresh()
-        return u''
+        return ''
 
     def toggle(self):
         """ Toggle selection, return string suitable for refresh. """

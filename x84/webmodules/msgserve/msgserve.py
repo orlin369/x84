@@ -30,7 +30,7 @@ import time
 import web
 
 #: response for general errors
-RESP_FAIL = json.dumps({u'response': False, u'message': u'Error'})
+RESP_FAIL = json.dumps({'response': False, 'message': 'Error'})
 
 #: token validation time in seconds
 AUTH_EXPIREY = 15
@@ -42,8 +42,8 @@ BATCH_MSGS = 20
 VALIDATE_FIELDS = ('network', 'action', 'auth',)
 
 #: sub-fields of 'message'
-VALIDATE_MSG_KEYS = (u'author', u'recipient', u'subject',
-                     u'parent', u'tags', u'ctime', u'body', )
+VALIDATE_MSG_KEYS = ('author', 'recipient', 'subject',
+                     'parent', 'tags', 'ctime', 'body', )
 
 
 def parse_auth(request_data):
@@ -200,17 +200,17 @@ def serve_messages_for(board_id, request_data, db_source):
     num_sent = 0
     for num_sent, msg in enumerate(pending_messages, start=1):
         return_messages.append({
-            u'id': msg.idx,
-            u'author': msg.author,
-            u'recipient': msg.recipient,
-            u'parent': msg.parent,
-            u'subject': msg.subject,
-            u'tags': list(msg.tags ^ set([request_data['network']])),
-            u'ctime': to_utctime(msg.ctime),
-            u'body': msg.body
+            'id': msg.idx,
+            'author': msg.author,
+            'recipient': msg.recipient,
+            'parent': msg.parent,
+            'subject': msg.subject,
+            'tags': list(msg.tags ^ set([request_data['network']])),
+            'ctime': to_utctime(msg.ctime),
+            'body': msg.body
         })
         if num_sent >= BATCH_MSGS:
-            log.warn('[{request_data[network]}] Batch limit reached for '
+            log.warning('[{request_data[network]}] Batch limit reached for '
                      'board {board_id}; halting'
                      .format(request_data=request_data, board_id=board_id))
             break
@@ -221,7 +221,7 @@ def serve_messages_for(board_id, request_data, db_source):
                                                num_sent=num_sent,
                                                board_id=board_id))
 
-    return {u'response': True, u'messages': return_messages}
+    return {'response': True, 'messages': return_messages}
 
 
 def receive_message_from(board_id, request_data,
@@ -263,7 +263,7 @@ def receive_message_from(board_id, request_data,
         db_transactions[msg.idx] = msg.idx
 
     web.ctx.status = '201 Created'
-    return {u'response': True, u'id': msg.idx}
+    return {'response': True, 'id': msg.idx}
 
 
 def get_response(request_data):

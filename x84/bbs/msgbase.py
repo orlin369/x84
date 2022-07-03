@@ -48,7 +48,7 @@ def get_origin_line():
 
 def format_origin_line():
     """ Format origin line for message quoting. """
-    return u''.join((u'\r\n---\r\n', get_origin_line()))
+    return ''.join(('\r\n---\r\n', get_origin_line()))
 
 
 def get_msg(idx=0):
@@ -121,7 +121,7 @@ class Msg(object):
         """
         return self._stime
 
-    def __init__(self, recipient=None, subject=u'', body=u''):
+    def __init__(self, recipient=None, subject='', body=''):
         self.author = None
         session = getsession()
         if session:
@@ -184,7 +184,7 @@ class Msg(object):
             try:
                 parent_msg = get_msg(self.parent)
             except KeyError:
-                log.warn('Child message {0}.parent = {1}: '
+                log.warning('Child message {0}.parent = {1}: '
                          'parent does not exist!'.format(self.idx, self.parent))
             else:
                 if self.idx != parent_msg.idx:
@@ -232,7 +232,7 @@ class Msg(object):
             # message is for a network we host
             if tag in get_ini(section='msg', key='server_tags', split=True):
                 with DBProxy('{0}trans'.format(tag)) as transdb:
-                    self.body = u''.join((self.body, format_origin_line()))
+                    self.body = ''.join((self.body, format_origin_line()))
                     self.save()
                     transdb[self.idx] = self.idx
                 log.info('[{tag}] Stored for network (msgid {self.idx}).'

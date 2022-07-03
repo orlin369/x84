@@ -2,16 +2,22 @@
 # -*- coding: utf8 -*-
 
 """ web server for x/84. """
-import importlib
+
+import sys
+import os
 import threading
 import traceback
 import logging
-import web
-import sys
-import os
+import importlib
 
-# from webmodules.static import *
-# from webmodules.msgserve import *
+from bbs import get_ini
+import bbs.ini
+import cmdline
+
+import web
+from web.wsgiserver import CherryPyWSGIServer
+from cheroot.ssl.pyopenssl import pyOpenSSLAdapter
+from OpenSSL import SSL
 
 class Favicon(object):
 
@@ -24,7 +30,7 @@ class Favicon(object):
 
 def _get_fp(section_key, optional=False):
     """ Return filepath of [web] option by ``section_key``. """
-    from bbs import get_ini
+
     value = get_ini(section='web', key=section_key) or None
     if value:
         value = os.path.expanduser(value)
@@ -55,29 +61,15 @@ def get_urls_funcs(web_modules):
     log.debug('add url {0} => {1}'.format(
         '/favicon.ico', Favicon.__name__))
 
-    
-
     for mod in web_modules:
         module = None
-        # cwf = os.path.dirname(os.path.abspath(__file__))
-        # dirs = os.listdir(cwf)
-        # print(dirs)
-        # module_path = "{}.{}".format("webmodules", mod)
-        # module = __import__(module_path, globals(), locals(), [], 0)
-        # module = importlib.import_module("..webmodules.static", "*")
 
-        # Test purpose only.
-        # import pkgutil
-        # print([name for _, name, _ in pkgutil.iter_modules(["webmodules"])])
+        module_path = "webmodules.{}.{}".format(mod, mod)
+        module = importlib.import_module(module_path)
 
-        # first, check in system PATH (includes SCRIPT_PATH)
-        try:
-            module = __import__('webmodules.{0}'.format(mod),
-                                fromlist=['webmodules'])
-        except ImportError:
-            # failed to import, check in x84's path, raise naturally
-            module = __import__('webmodules.{0}'.format(mod),
-                                fromlist=['webmodules'])
+        # first, check in system PATH (includes script_path)
+        if module is None:
+            raise ImportError("{}".format(module_path))
 
         api = module.web_module()
 
@@ -96,20 +88,13 @@ def get_urls_funcs(web_modules):
                                   url_tuple=(url, f_key,),
                                   f_avail=funcs.keys()))
             else:
-                log.debug('add url {0} => {1}'.format(
-                    url, funcs[f_key].__name__))
+                log.debug('add url {} => {}'.format(url, funcs[f_key].__name__))
         urls += api['urls']
     return urls, funcs
 
 
 def server(urls, funcs):
     """ Main server thread for running the web server """
-    from bbs import get_ini
-    from web.wsgiserver import CherryPyWSGIServer
-    # from web.wsgiserver.ssl_pyopenssl import pyOpenSSLAdapter
-    # from cheroot.wsgi import Server as CherryPyWSGIServer
-    from cheroot.ssl.pyopenssl import pyOpenSSLAdapter
-    from OpenSSL import SSL
 
     log = logging.getLogger(__name__)
 
@@ -164,8 +149,7 @@ def server(urls, funcs):
             traceback.format_exception_only(
                 sys.exc_info()[0],
                 sys.exc_info()[1])).rstrip()
-        raise ValueError('Exception loading ssl certificate file {0!r}: '
-                         '{1}'.format(cert, error))
+        raise ValueError('Exception loading ssl certificate file {}: {}'.format(cert, error))
 
     try:
         CherryPyWSGIServer.ssl_adapter.context.use_privatekey_file(key)
@@ -175,8 +159,7 @@ def server(urls, funcs):
             traceback.format_exception_only(
                 sys.exc_info()[0],
                 sys.exc_info()[1])).rstrip()
-        raise ValueError('Exception loading ssl key file {0!r}: '
-                         '{1}'.format(key, error))
+        raise ValueError('Exception loading ssl key file {}: \'{}\''.format(key, error))
 
     if chain is not None:
         (CherryPyWSGIServer.ssl_adapter.context
@@ -188,8 +171,7 @@ def server(urls, funcs):
 
     web.config.debug = False
 
-    log.info('https listening on {addr}:{port}/tcp'
-             .format(addr=addr, port=port))
+    log.info('https listening on {addr}:{port}/tcp'.format(addr=addr, port=port))
 
     # Runs CherryPy WSGI server hosting WSGI app.wsgifunc().
     web.httpserver.runsimple(app.wsgifunc(), (addr, port))  # blocking
@@ -206,14 +188,13 @@ def main(background_daemon=True):
        Otherwise, function call to ``main()`` is blocking.
     :rtype: None
     """
-    from bbs import get_ini
 
     log = logging.getLogger(__name__)
 
-    SCRIPT_PATH = get_ini(section='system', key='scriptpath', split=True)
+    script_path = get_ini(section='system', key='scriptpath', split=True)
 
-    # ensure the SCRIPT_PATH is in os environment PATH for module lookup.
-    for directory in SCRIPT_PATH:
+    # ensure the script_path is in os environment PATH for module lookup.
+    for directory in script_path:
         sys.path.insert(0, os.path.expanduser(directory))
 
     web_modules = get_ini(section='web', key='modules', split=True)
@@ -223,7 +204,7 @@ def main(background_daemon=True):
                   "defined in section [web]")
         return
 
-    log.debug(u'Ready web modules: {0}'.format(web_modules))
+    log.debug('Ready web modules: {}'.format(web_modules))
     urls, funcs = get_urls_funcs(web_modules)
 
     if background_daemon:
@@ -240,8 +221,7 @@ if __name__ == '__main__':
     # as we are running outside of the 'engine' context, it is necessary
     # for us to initialize the .ini configuration scheme so that the list
     # of web modules and ssl options may be gathered.
-    import bbs.ini
-    import cmdline
+
     bbs.ini.init(*cmdline.parse_args())
 
     # do not execute webserver as a background thread.

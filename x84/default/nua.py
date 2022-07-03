@@ -99,7 +99,7 @@ color_secondary = get_ini(
 #: password hidden character
 hidden_char = get_ini(
     section='nua', key='hidden_char'
-) or u'\u00f7'
+) or '\u00f7'
 
 #: structure for prompting input/validation
 vfield = collections.namedtuple('input_validation', [
@@ -126,21 +126,21 @@ def validate_handle(_, handle):
     """ Validate user ``handle``. """
     errmsg = None
     if find_user(handle):
-        errmsg = u'User by this name already exists.'
+        errmsg = 'User by this name already exists.'
 
     elif len(handle) < username_min_length:
-        errmsg = (u'Username too short, must be at least {0} characters.'
+        errmsg = ('Username too short, must be at least {0} characters.'
                   .format(username_min_length))
 
     elif handle.lower() in invalid_usernames:
-        errmsg = u'Username is not legal form: reserved.'
+        errmsg = 'Username is not legal form: reserved.'
 
     elif os.path.sep in handle:
-        errmsg = u'Username is not legal form: contains OS path separator.'
+        errmsg = 'Username is not legal form: contains OS path separator.'
 
     elif not re.match(username_re_validator, handle):
-        errmsg = (u'Username fails validation of regular expression, '
-                  u'{0!r}.'.format(username_re_validator))
+        errmsg = ('Username fails validation of regular expression, '
+                  '{0!r}.'.format(username_re_validator))
 
     # No validation error
     return errmsg, 0
@@ -149,10 +149,10 @@ def validate_handle(_, handle):
 def validate_password(_, password):
     """ Validate setting ``password`` for ``user``. """
     errmsg = None
-    if password == u'':
-        errmsg = u'Password is required.'
+    if password == '':
+        errmsg = 'Password is required.'
     elif len(password) < password_min_length:
-        errmsg = (u'Password too short, must be at least {0} characters.'
+        errmsg = ('Password too short, must be at least {0} characters.'
                   .format(password_min_length))
 
     # No validation error
@@ -162,13 +162,13 @@ def validate_password(_, password):
 def validate_password_again(user, password):
     """ Validate 2nd round of ``password`` for ``user``. """
     errmsg = None
-    if password == u'':
-        errmsg = u'Password is required.'
+    if password == '':
+        errmsg = 'Password is required.'
     elif len(password) < password_min_length:
-        errmsg = (u'Password too short, must be at least {0} characters.'
+        errmsg = ('Password too short, must be at least {0} characters.'
                   .format(password_min_length))
     elif not user.auth(password):
-        errmsg = u'Password does not match, try again!'
+        errmsg = 'Password does not match, try again!'
 
     # returns -1 as modifier, to return to password prompt.
     return errmsg, -1
@@ -183,26 +183,26 @@ def get_validation_fields(user):
         kwargs={'width': username_max_length},
         validation_function=validate_handle,
         getter=lambda: getattr(user, 'handle', None),
-        description=(u'Handle or Alias you will be known '
-                     u'by on this board.'))
+        description=('Handle or Alias you will be known '
+                     'by on this board.'))
     fields['location'] = vfield(
         name='location',
         prompt_key='Origin (optional)',
         kwargs={'width': location_max_length},
         validation_function=None,
         getter=lambda: getattr(user, 'location', None),
-        description=(u'Group of affiliation, geographic location, '
-                     u'or other moniker which other members will '
-                     u'know as your place or origin.'))
+        description=('Group of affiliation, geographic location, '
+                     'or other moniker which other members will '
+                     'know as your place or origin.'))
     fields['email'] = vfield(
         name='email',
         prompt_key='E-mail (optional)',
         kwargs={'width': email_max_length},
         validation_function=None,
         getter=lambda: getattr(user, 'email', None),
-        description=(u'E-mail address is both private and optional, '
-                     u'allowing the ability to reset your password '
-                     u'should it ever be forgotten.'))
+        description=('E-mail address is both private and optional, '
+                     'allowing the ability to reset your password '
+                     'should it ever be forgotten.'))
     fields['password'] = vfield(
         name='password',
         prompt_key='Password',
@@ -224,16 +224,16 @@ def get_validation_fields(user):
 
 def fixate_next(term, newlines=2):
     """ positions next prompt 40 pixels minus center of screen. """
-    return u''.join((
-        u'\r\n\r\n' * newlines,
+    return ''.join((
+        '\r\n\r\n' * newlines,
         term.move_x(max(0, (term.width // 2) - 40))))
 
 
 def prompt_input(term, key, **kwargs):
     """ Prompt for user input. """
-    sep_ok = getattr(term, color_primary)(u'::')
+    sep_ok = getattr(term, color_primary)('::')
     colors = {'highlight': getattr(term, color_primary)}
-    echo(u'{sep} {key:>18}: '.format(sep=sep_ok, key=key))
+    echo('{sep} {key:>18}: '.format(sep=sep_ok, key=key))
     entry = LineEditor(colors=colors, **kwargs).read()
     if entry is None:
         log.debug('New User Account canceled at prompt key={0}.'.format(key))
@@ -243,14 +243,14 @@ def prompt_input(term, key, **kwargs):
 def prompt_yesno(question):
     """ yes/no user prompt. """
     term = getterminal()
-    sep = getattr(term, color_secondary)(u'**')
+    sep = getattr(term, color_secondary)('**')
     colors = {'highlight': getattr(term, color_secondary)}
     echo(fixate_next(term, newlines=1))
     while True:
-        echo(u'{sep} {question} [yn] ?\b\b'.format(sep=sep, question=question))
-        yn = LineEditor(colors=colors, width=1).read() or u''
-        if yn.lower() in (u'y', u'n'):
-            return yn.lower() == u'y'
+        echo('{sep} {question} [yn] ?\b\b'.format(sep=sep, question=question))
+        yn = LineEditor(colors=colors, width=1).read() or ''
+        if yn.lower() in ('y', 'n'):
+            return yn.lower() == 'y'
         echo(term.move_x(0) + term.clear_eol)
         echo(fixate_next(term, newlines=0))
 
@@ -258,18 +258,18 @@ def prompt_yesno(question):
 def show_validation_error(errmsg):
     """ Display validation error message. """
     term = getterminal()
-    sep_bad = getattr(term, color_secondary)(u'**')
+    sep_bad = getattr(term, color_secondary)('**')
     echo(fixate_next(term, newlines=1))
     for txt in term.wrap(errmsg, width=max(0, min(80, term.width) - 3)):
         echo(fixate_next(term, newlines=0))
-        echo(u'{sep} {txt}'.format(sep=sep_bad, txt=txt))
-        echo(u'\r\n')
+        echo('{sep} {txt}'.format(sep=sep_bad, txt=txt))
+        echo('\r\n')
 
 
 def do_nua(user):
     """ Perform new user account field setting and validation. """
     session, term = getsession(), getterminal()
-    session.activity = u'Applying for an account'
+    session.activity = 'Applying for an account'
 
     idx = 0
     validation_fields = get_validation_fields(user)
@@ -279,7 +279,7 @@ def do_nua(user):
         if field.description:
             show_description(term, field.description,
                              color=getattr(term, color_secondary))
-            echo(u'\r\n')
+            echo('\r\n')
             echo(fixate_next(term, newlines=0))
         value = prompt_input(term=term,
                              key=field.prompt_key,
@@ -312,7 +312,7 @@ def do_nua(user):
     return user
 
 
-def main(handle=u''):
+def main(handle=''):
     """
     Main procedure.
     """
@@ -325,7 +325,7 @@ def main(handle=u''):
     # reset handle to an empty string if it is any
     # of the 'new' user account alias strings
     if handle.lower() in new_usernames:
-        handle = u''
+        handle = ''
 
     user = User(handle)
 

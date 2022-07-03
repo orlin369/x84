@@ -31,21 +31,21 @@ def describe(sessions):
     session id's of array ``sessions``.
     """
     from bbs import getsession, getterminal, ini
-    slen = lambda sessions: len(u'%d' % (len(sessions),))
+    slen = lambda sessions: len('%d' % (len(sessions),))
     session, term = getsession(), getterminal()
     max_user = ini.CFG.getint('nua', 'max_user')
 
-    text = u'\r\n'.join(([u''.join((
+    text = '\r\n'.join(([''.join((
         term.move_x(max(0, (term.width / 2) - 40)), term.green,
-        u'%*d' % (5 + slen(sessions), node), u' ' * 7, term.normal,
-        u'%4is' % (attrs.get('idle', 0),), u' ', u' ' * 8,
-        (term.bold_red(u'%-*s' % (max_user, (
-            u'** diSCONNECtEd' if 'delete' in attrs
-            else attrs.get('handle', u'** CONNECtiNG')),)
-        ) if attrs.get('handle', u'') != session.user.handle
-            else term.red(u'%-*s' % (max_user, session.user.handle))),
-        term.green(u'       '),
-        term.yellow((attrs.get('activity', u''))
+        '%*d' % (5 + slen(sessions), node), ' ' * 7, term.normal,
+        '%4is' % (attrs.get('idle', 0),), ' ', ' ' * 8,
+        (term.bold_red('%-*s' % (max_user, (
+            '** diSCONNECtEd' if 'delete' in attrs
+            else attrs.get('handle', '** CONNECtiNG')),)
+        ) if attrs.get('handle', '') != session.user.handle
+            else term.red('%-*s' % (max_user, session.user.handle))),
+        term.green('       '),
+        term.yellow((attrs.get('activity', ''))
                     if attrs.get('sid') != session.sid else
                     term.yellow(session.activity)),
     )) for node, (_, attrs) in get_nodes(sessions)]))
@@ -67,10 +67,10 @@ def heading():
     for line in showart(
             os.path.join(os.path.dirname(__file__), 'art', 'onlinebar.ans'), 'topaz'):
         bar = bar + term.move_x(max(0, (term.width / 2) - 40)) + line
-    return u'\r\n'.join((
-        u'\r\n'.join([term.center(pline, (term.width))
+    return '\r\n'.join((
+        '\r\n'.join([term.center(pline, (term.width))
                       for pline in prompt()]),
-        u'\r\n', bar))
+        '\r\n', bar))
 
 
 def prompt():
@@ -79,31 +79,31 @@ def prompt():
     """
     from bbs import getsession, getterminal
     session, term = getsession(), getterminal()
-    decorate = lambda key, desc: u''.join((
-        u'(', term.magenta_underline(key,),
-        u')', term.cyan(desc.split()[0]), u' ',
-        u' '.join(desc.split()[1:]), u' ',))
-    return term.wrap(u''.join((
-        u' ' * 2,
-        term.green_reverse(':keys'), u' ',
+    decorate = lambda key, desc: ''.join((
+        '(', term.magenta_underline(key,),
+        ')', term.cyan(desc.split()[0]), ' ',
+        ' '.join(desc.split()[1:]), ' ',))
+    return term.wrap(''.join((
+        ' ' * 2,
+        term.green_reverse(':keys'), ' ',
         decorate('c', 'hAt USR'),
         decorate('s', 'ENd MSG'),
-        (u''.join((
+        (''.join((
             decorate('d', 'iSCONNECt SiD'),
             decorate('e', 'diT USR'),
             decorate('v', 'iEW SiD AttRS'),
-            u' ',)) if 'sysop' in session.user.groups else u''),
+            ' ',)) if 'sysop' in session.user.groups else ''),
         decorate('Escape/q', 'Uit'),
         decorate('Spacebar', 'REfRESh'),
-    )), int(term.width * .8), subsequent_indent=u' ' * 8)
+    )), int(term.width * .8), subsequent_indent=' ' * 8)
 
 
 def get_node(sessions):
     """ Prompt user for session node, Returns node & session attributes. """
     from import ini, LineEditor, echo
     max_user = ini.CFG.getint('nua', 'max_user')
-    invalid = u'\r\ninvalid.'
-    echo(u'\r\n\r\nNOdE: ')
+    invalid = '\r\ninvalid.'
+    echo('\r\n\r\nNOdE: ')
     node = LineEditor(max_user).read()
 
     if node is None or 0 == len(node):
@@ -157,9 +157,9 @@ def view(sessions):
     (node, tgt_session) = get_node(sessions)
     if node is not None:
         maxlen = max([len(key) for key in tgt_session.keys()])
-        echo(u''.join((
-            u'\r\n\r\n',
-            u'\r\n'.join(['%s%s %s' % (
+        echo(''.join((
+            '\r\n\r\n',
+            '\r\n'.join(['%s%s %s' % (
                 term.bold('%*s' % (maxlen, key)),
                 term.bold_green(':'),
                 term.green(str(value)),)
@@ -219,26 +219,26 @@ def main():
     while True:
         ayt_lastfresh = broadcast_ayt(ayt_lastfresh)
         inp = term.inkey(POLL_KEY)
-        if session.poll_event('refresh') or (inp in (u' ', chr(12))):
+        if session.poll_event('refresh') or (inp in (' ', chr(12))):
             dirty = time.time()
             cur_row = 0
-        elif inp.lower() in (u'q', chr(27)) or inp.code == term.KEY_EXIT:
-            echo(u'\r\n\r\n')
+        elif inp.lower() in ('q', chr(27)) or inp.code == term.KEY_EXIT:
+            echo('\r\n\r\n')
             return
-        elif inp.lower() == u'c':
+        elif inp.lower() == 'c':
             cur_row = 0 if chat(sessions) else cur_row
             dirty = time.time()
-        elif inp.lower() == u's':
+        elif inp.lower() == 's':
             cur_row = 0 if sendmsg(sessions) else cur_row
             dirty = time.time()
         elif inp and 'sysop' in session.user.groups:
-            if inp.lower() == u'e':
+            if inp.lower() == 'e':
                 cur_row = 0 if edit(sessions) else cur_row
                 dirty = time.time()
-            elif inp.lower() == u'v':
+            elif inp.lower() == 'v':
                 cur_row = 0 if view(sessions) else cur_row + 3
                 dirty = time.time()
-            elif inp.lower() == u'd':
+            elif inp.lower() == 'd':
                 disconnect(sessions)
                 dirty = time.time()
 
@@ -254,7 +254,7 @@ def main():
                     ('lastfresh', time.time()),
                     ('lastasked', time.time()),))
                 dirty = time.time()
-                echo(u'\a')
+                echo('\a')
 
         # update sessions that respond to info-req
         data = session.poll_event('info-ack')
@@ -296,12 +296,12 @@ def main():
                 otxt_b = banner()
                 otxt_h = heading()
                 cur_row = len(otxt_b.splitlines()) + len(otxt_h.splitlines())
-                echo(u''.join((otxt_b, '\r\n', otxt_h, u'\r\n', otxt)))
+                echo(''.join((otxt_b, '\r\n', otxt_h, '\r\n', otxt)))
             else:
-                echo(u''.join((
-                    u'\r\n',
+                echo(''.join((
+                    '\r\n',
                     '-'.center(term.width).rstrip(),
-                    u'\r\n')))
+                    '\r\n')))
                 echo(otxt)
             cur_row += olen
             dirty = None

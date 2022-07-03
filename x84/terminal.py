@@ -53,8 +53,8 @@ class Terminal(BlessedTerminal):
             return BlessedTerminal.inkey(self, timeout, esc_delay=0.35)
         except UnicodeDecodeError as err:
             log = logging.getLogger(__name__)
-            log.warn('UnicodeDecodeError: {0}'.format(err))
-            return u'?'
+            log.warning('UnicodeDecodeError: {0}'.format(err))
+            return '?'
 
     def set_keyboard_decoder(self, encoding):
         """ Set or change incremental decoder for keyboard input. """

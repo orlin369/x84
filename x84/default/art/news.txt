@@ -84,7 +84,7 @@ As for blessings, the upstream author has not been accepting patches, delayed ov
 
 Release 1.0.5 is now on pypi. This release includes "dropfile" and concise dosemu support. An example lord.py door is used and hosted on 1984.ws.
 
-If you're interested in the telnet protocol, check out another project:
+If yo're interested in the telnet protocol, check out another project:
 
   |02https://github.com/jquast/telnetlib3
 

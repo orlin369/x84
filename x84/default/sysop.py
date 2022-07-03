@@ -29,18 +29,18 @@ def view_leaf_msgnet(server_tag=None, board_id=None):
         return
 
     with DBProxy('{0}keys'.format(server_tag)) as key_db:
-        echo(u'\r\n[msgnet_{0}]'.format(server_tag))
-        echo(u'\r\nurl_base = https://{addr}:{port}/'
+        echo('\r\n[msgnet_{0}]'.format(server_tag))
+        echo('\r\nurl_base = https://{addr}:{port}/'
              .format(addr=get_ini('web', 'addr'),
                      port=get_ini('web', 'port')))
-        echo(u'\r\nboard_id = {0}'.format(board_id))
-        echo(u'\r\ntoken = {0}'.format(key_db[board_id]))
-        echo(u'\r\npoll_interval = 300')
-        echo(u'\r\n')
-        echo(u'\r\n[msg]')
-        echo(u'\r\nnetwork_tags = {0}'.format(server_tag))
-    echo(u'\r\n')
-    echo(u'-' * 40)
+        echo('\r\nboard_id = {0}'.format(board_id))
+        echo('\r\ntoken = {0}'.format(key_db[board_id]))
+        echo('\r\npoll_interval = 300')
+        echo('\r\n')
+        echo('\r\n[msg]')
+        echo('\r\nnetwork_tags = {0}'.format(server_tag))
+    echo('\r\n')
+    echo('-' * 40)
 
 
 def add_leaf_msgnet():
@@ -56,8 +56,8 @@ def add_leaf_msgnet():
             echo('chose a server tag: ')
             idx = 0
             for idx, tag in server_tags:
-                echo(u'\r\n{0}. {1}'.format(idx, tag))
-            echo(u'\r\n: ')
+                echo('\r\n{0}. {1}'.format(idx, tag))
+            echo('\r\n: ')
             inp = LineEditor(width=len(str(idx)).read())
             if inp is None:
                 return
@@ -71,8 +71,8 @@ def add_leaf_msgnet():
         board_id = max(map(int, key_db.keys()) or [-1]) + 1
         client_key = cryptography.fernet.Fernet.generate_key()
         key_db[board_id] = client_key
-    echo(u'\r\n')
-    echo(u'-' * 40)
+    echo('\r\n')
+    echo('-' * 40)
     view_leaf_msgnet(server_tag, board_id)
 
 
@@ -83,27 +83,27 @@ def main():
     dirty = True
     while True:
         if dirty:
-            echo(u'\r\n\r\nmessage network functions:\r\n')
-            echo(u'    [a]dd new leaf node.\r\n')
-            echo(u'    [v]iew leaf nodes.\r\n')
-            echo(u'\r\n\r\n')
-            echo(u'[q]uit\r\n')
+            echo('\r\n\r\nmessage network functions:\r\n')
+            echo('    [a]dd new leaf node.\r\n')
+            echo('    [v]iew leaf nodes.\r\n')
+            echo('\r\n\r\n')
+            echo('[q]uit\r\n')
             dirty = False
-        echo(u'\r\nsysop cmd: ')
+        echo('\r\nsysop cmd: ')
         inp = term.inkey()
-        if inp.lower() == u'q':
+        if inp.lower() == 'q':
             echo(inp)
-            echo(u'\r\n')
+            echo('\r\n')
             return
-        elif inp.lower() == u'a':
+        elif inp.lower() == 'a':
             echo(inp)
             add_leaf_msgnet()
             dirty = True
-        elif inp.lower() == u'v':
+        elif inp.lower() == 'v':
             echo(inp)
-            echo(u'\r\n')
-            echo(u'-' * 40)
+            echo('\r\n')
+            echo('-' * 40)
             view_leaf_msgnet()
-            echo(u'\r\n\r\nPress any key.')
+            echo('\r\n\r\nPress any key.')
             term.inkey()
             dirty = True

@@ -109,53 +109,53 @@ def get_menu_items(session):
 # ugh, the upstream 'irc' module is a PITA, it has broken dependencies
 # in the the jaraco.* modules, they're not well-managed or declared,
 # all cross-wired and broken and not python 2 compatible when they aren't
-#        MenuItem(inp_key=u'irc',
-#                 text=u'irc chat',
+#        MenuItem(inp_key='irc',
+#                 text='irc chat',
 #                 script='ircchat',
 #                 args=(), kwargs={}),
-        MenuItem(inp_key=u'who',
+        MenuItem(inp_key='who',
                  text=u"who's online",
                  script='online',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'pe',
-                 text=u'profile editor',
+        MenuItem(inp_key='pe',
+                 text='profile editor',
                  script='profile',
                  args=(), kwargs={}),
-#        MenuItem(inp_key=u'weather',
-#                 text=u'weather forecast',
+#        MenuItem(inp_key='weather',
+#                 text='weather forecast',
 #                 script='weather',
 #                 args=(), kwargs={}),
-        MenuItem(inp_key=u'ct',
-                 text=u'24-bit colortest',
+        MenuItem(inp_key='ct',
+                 text='24-bit colortest',
                  script='plasma',
                  args=(), kwargs={}),
 
-        MenuItem(inp_key=u'hn',
-                 text=u'hacker news',
+        MenuItem(inp_key='hn',
+                 text='hacker news',
                  script='hackernews',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'ol',
-                 text=u'one-liners',
+        MenuItem(inp_key='ol',
+                 text='one-liners',
                  script='ol',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'vote',
-                 text=u'voting booth',
+        MenuItem(inp_key='vote',
+                 text='voting booth',
                  script='vote',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'user',
-                 text=u'user list',
+        MenuItem(inp_key='user',
+                 text='user list',
                  script='userlist',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'news',
-                 text=u'news reader',
+        MenuItem(inp_key='news',
+                 text='news reader',
                  script='news',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'si',
-                 text=u'system info',
+        MenuItem(inp_key='si',
+                 text='system info',
                  script='si',
                  args=(), kwargs={}),
-        MenuItem(inp_key=u'g',
-                 text=u'logoff system',
+        MenuItem(inp_key='g',
+                 text='logoff system',
                  script='logoff',
                  args=(), kwargs={}),
 
@@ -165,7 +165,7 @@ def get_menu_items(session):
 #    if session.user.is_sysop:
 #        menu_items.append(
 #            MenuItem(inp_key='sysop',
-#                     text=u'sysop area',
+#                     text='sysop area',
 #                     script='sysop',
 #                     args=(), kwargs={}))
 
@@ -188,7 +188,7 @@ def main():
     """ Main menu entry point. """
     session, term = getsession(), getterminal()
 
-    text, width, height, dirty = u'', -1, -1, 2
+    text, width, height, dirty = '', -1, -1, 2
     menu_items = get_menu_items(session)
     editor = get_line_editor(term, menu_items)
     colors = {}
@@ -203,14 +203,14 @@ def main():
             if syncterm_font and term.kind.startswith('ansi'):
                 echo(syncterm_setfont(syncterm_font))
         if dirty:
-            session.activity = 'main menu'
+            session.activity = 'main men'
             top_margin = display_banner(art_file, encoding=art_encoding) + 1
-            echo(u'\r\n')
+            echo('\r\n')
             if width != term.width or height != term.height:
                 width, height = term.width, term.height
                 text = render_menu_entries(
                     term, top_margin, menu_items, colors)
-            echo(u''.join((text,
+            echo(''.join((text,
                            display_prompt(term, colors),
                            editor.refresh())))
             dirty = 0
@@ -233,19 +233,19 @@ def main():
                     # find matching menu item,
                     for item in menu_items:
                         if item.inp_key == editor.content.strip():
-                            echo(term.normal + u'\r\n')
+                            echo(term.normal + '\r\n')
                             gosub(item.script, *item.args, **item.kwargs)
-                            editor.content = u''
+                            editor.content = ''
                             dirty = 2
                             break
                     else:
                         if editor.content:
                             # command not found, clear prompt.
-                            echo(u''.join((
-                                (u'\b' * len(editor.content)),
-                                (u' ' * len(editor.content)),
-                                (u'\b' * len(editor.content)),)))
-                            editor.content = u''
+                            echo(''.join((
+                                ('\b' * len(editor.content)),
+                                (' ' * len(editor.content)),
+                                ('\b' * len(editor.content)),)))
+                            editor.content = ''
                             echo(editor.refresh())
                 elif inp.is_sequence:
                     echo(editor.process_keystroke(inp.code))

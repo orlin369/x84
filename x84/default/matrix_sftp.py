@@ -34,7 +34,7 @@ def main(anonymous=False, new=False, username=''):
     session.activity = 'sftp'
 
     if anonymous:
-        user = User(u'anonymous')
+        user = User('anonymous')
     else:
         assert not new, ("new@ user not supported by SFTP.")
 
@@ -51,4 +51,4 @@ def main(anonymous=False, new=False, username=''):
     while True:
         inp = term.inkey()  # should block indefinately
         log = logging.getLogger(__name__)
-        log.warn('Got inkey: {0!r}'.format(inp))
+        log.warning('Got inkey: {0!r}'.format(inp))

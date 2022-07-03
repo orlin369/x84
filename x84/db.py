@@ -52,9 +52,10 @@ def check_db(filepath):
 
 def get_db_filepath(schema):
     """ Return filesystem path of given database ``schema``. """
+
     from bbs.ini import get_ini
     folder = get_ini('system', 'datapath')
-    return os.path.join(folder, '{0}.sqlite3'.format(schema))
+    return os.path.join(folder, '{}.sqlite3'.format(schema))
 
 
 def get_db_lock(schema, table):

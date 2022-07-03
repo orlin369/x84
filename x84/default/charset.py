@@ -42,25 +42,25 @@ prompt_padding = 10
 
 def _show_opt(term, keys):
     """ Display characters ``key`` highlighted as keystroke """
-    return u''.join((term.bold_black(u'['),
+    return ''.join((term.bold_black('['),
                      term.bold_green_underline(keys),
-                     term.bold_black(u']')))
+                     term.bold_black(']')))
 
 
 def display_prompt(term):
     """ Display prompt of user choices. """
-    echo(u'\r\n\r\n')
+    echo('\r\n\r\n')
     width = min(term.width, 80 - prompt_padding)
     for line in term.wrap(prompt_text, width):
-        echo(u' ' * ((term.width - width) / 2))
+        echo(' ' * ((term.width - width) / 2))
         echo(line + '\r\n')
 
-    echo(u'\r\n')
-    echo(term.center(u'{0}tf8, {1}p437, {2}one:'
-                     .format(_show_opt(term, u'u'),
-                             _show_opt(term, u'c'),
-                             _show_opt(term, u'd'))
-                     ).rstrip() + u' ')
+    echo('\r\n')
+    echo(term.center('{0}tf8, {1}p437, {2}one:'
+                     .format(_show_opt(term, ''),
+                             _show_opt(term, 'c'),
+                             _show_opt(term, 'd'))
+                     ).rstrip() + ' ')
 
 
 def do_select_encoding(term, session):
@@ -85,8 +85,8 @@ def do_select_encoding(term, session):
             break
         elif len(inp):
             # bad input -- reposition cursor for next LineEditor()
-            echo(u'\b')
-        if inp.lower() == u'u' and session.encoding != 'utf8':
+            echo('\b')
+        if inp.lower() == '' and session.encoding != 'utf8':
             # switch to utf8,
             session.encoding = 'utf8'
             dirty = True
@@ -99,7 +99,7 @@ def do_select_encoding(term, session):
 def main():
     """ Script entry point. """
     session, term = getsession(), getterminal()
-    session.activity = u'Selecting character set'
+    session.activity = 'Selecting character set'
 
     # set syncterm font, if any
     if syncterm_font and term.kind.startswith('ansi'):

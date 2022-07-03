@@ -29,20 +29,20 @@ def main(host, port=None, encoding='cp437'):
     echo(u"\r\n\r\nEscape character is 'ctrl-^.'")
     if not session.user.get('expert', False):
         term.inkey(3)
-    echo(u'\r\nTrying %s:%s... ' % (host, port,))
+    echo('\r\nTrying %s:%s... ' % (host, port,))
     # pylint: disable=W0703
     #         Catching too general exception Exception
     try:
         telnet_client.open(host, port)
     except Exception as err:
         echo(term.bold_red('\r\n%s\r\n' % (err,)))
-        echo(u'\r\n press any key ..')
+        echo('\r\n press any key ..')
         term.inkey()
         return
 
-    echo(u'\r\n... ')
+    echo('\r\n... ')
     inp = session.read_event('input', timeout=0)
-    echo(u'\r\nConnected to %s.' % (host,))
+    echo('\r\nConnected to %s.' % (host,))
     session.activity = 'connected to %s' % (host,)
     carriage_returned = False
     with term.fullscreen():
@@ -60,7 +60,7 @@ def main(host, port=None, encoding='cp437'):
             if inp is not None:
                 if inp == chr(30):  # ctrl-^
                     telnet_client.close()
-                    echo(u'\r\n' + term.clear_el + term.normal)
+                    echo('\r\n' + term.clear_el + term.normal)
                     break
                 elif not carriage_returned and inp in (b'\x0d', b'\x0a'):
                     telnet_client.write(b'\x0d')
@@ -73,9 +73,9 @@ def main(host, port=None, encoding='cp437'):
                     log.debug('send {!r}'.format(inp))
                     carriage_returned = False
             inp = session.read_event('input', timeout=KEY_POLL)
-    echo(u'\r\nConnection closed.\r\n')
-    echo(u''.join(('\r\n\r\n', term.clear_el, term.normal, 'press any key')))
-    echo(u'\x1b[r')  # unset 'set scrolling region', sometimes set by BBS's
+    echo('\r\nConnection closed.\r\n')
+    echo(''.join(('\r\n\r\n', term.clear_el, term.normal, 'press any key')))
+    echo('\x1b[r')  # unset 'set scrolling region', sometimes set by BBS's
     session.flush_event('input')
     term.inkey()
     return

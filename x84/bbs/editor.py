@@ -18,7 +18,7 @@ from bbs.output import echo
 PC_KEYSET = {'refresh': [chr(12), ],
              'backspace': [chr(8), chr(127), ],
              'backword': [chr(23), ],
-             'enter': [u'\r', ],
+             'enter': ['\r', ],
              'exit': [chr(27), ], }
 
 
@@ -36,7 +36,7 @@ class LineEditor(object):
     # pylint: disable=R0913
     #         Too many arguments (7/5) (col 4)
 
-    def __init__(self, width=None, content=u'', hidden=False,
+    def __init__(self, width=None, content='', hidden=False,
                  colors=None, glyphs=None, keyset=None):
         """
         Class initializer.
@@ -49,7 +49,7 @@ class LineEditor(object):
         :param dict keyset: optional dictionary of line editing values.
         """
         self._term = getterminal()
-        self.content = content or u''
+        self.content = content or ''
         self.hidden = hidden
         self._width = width
         self._input_length = self._term.length(content)
@@ -126,15 +126,15 @@ class LineEditor(object):
 
         No movement or positional sequences are returned.
         """
-        disp_lightbar = u''.join((
+        disp_lightbar = ''.join((
             self._term.normal,
-            self.colors.get('highlight', u''),
+            self.colors.get('highlight', ''),
             ' ' * self.width,
             '\b' * self.width))
         content = self.content
         if self.hidden:
             content = self.hidden * self._term.length(self.content)
-        return u''.join((disp_lightbar, content, self._term.cursor_visible))
+        return ''.join((disp_lightbar, content, self._term.cursor_visible))
 
     def process_keystroke(self, keystroke):
         """
@@ -147,37 +147,37 @@ class LineEditor(object):
         self._quit = False
         keystroke = hasattr(keystroke, 'code') and keystroke.code or keystroke
         if keystroke in self.keyset['refresh']:
-            return u'\b' * self._term.length(self.content) + self.refresh()
+            return '\b' * self._term.length(self.content) + self.refresh()
         elif keystroke in self.keyset['backspace']:
             if len(self.content) != 0:
                 len_toss = self._term.length(self.content[-1])
                 self.content = self.content[:-1]
-                return u''.join((
-                    u'\b' * len_toss,
-                    u' ' * len_toss,
-                    u'\b',))
+                return ''.join((
+                    '\b' * len_toss,
+                    ' ' * len_toss,
+                    'b',))
         elif keystroke in self.keyset['backword']:
             if len(self.content) != 0:
                 ridx = self.content.rstrip().rfind(' ') + 1
                 toss = self._term.length(self.content[ridx:])
                 move = len(self.content[ridx:])
                 self.content = self.content[:ridx]
-                return u''.join((
-                    u'\b' * toss,
-                    u' ' * move,
-                    u'\b' * move,))
+                return ''.join((
+                    '\b' * toss,
+                    ' ' * move,
+                    '\b' * move))
         elif keystroke in self.keyset['enter']:
             self._carriage_returned = True
         elif keystroke in self.keyset['exit']:
             self._quit = True
         elif isinstance(keystroke, int):
-            return u''
+            return ''
         elif (ord(keystroke) >= ord(' ') and
                 (self._term.length(self.content) < self.width
                  or self.width is None)):
             self.content += keystroke
             return keystroke if not self.hidden else self.hidden
-        return u''
+        return ''
 
     def read(self):
         """
@@ -233,7 +233,7 @@ class ScrollingEditor(AnsiWindow):
         self._max_length = kwargs.pop('max_length', 0)
         self._quit = False
         self._bell = False
-        self.content = kwargs.pop('content', u'')
+        self.content = kwargs.pop('content', '')
         self._input_length = self._term.length(self.content)
         # there are some flaws about how a 'height' of a window must be
         # '3', even though we only want 1; we must also offset (y, x) by
@@ -248,7 +248,7 @@ class ScrollingEditor(AnsiWindow):
         if 'highlight' not in self.colors:
             self.colors['highlight'] = self._term.yellow_reverse
         if 'strip' not in self.glyphs:
-            self.glyphs['strip'] = u'$ '
+            self.glyphs['strip'] = '$ '
 
     def init_keystrokes(self, keyset):
         """ Sets keyboard keys for various editing keystrokes. """
@@ -394,7 +394,7 @@ class ScrollingEditor(AnsiWindow):
         :returns: string sequence suitable for refresh.
         """
         self._quit = False
-        rstr = u''
+        rstr = ''
         if (keystroke in self.keyset['refresh'] or
                 keystroke.code in self.keyset['refresh']):
             rstr = self.refresh()
@@ -407,14 +407,14 @@ class ScrollingEditor(AnsiWindow):
         elif (keystroke in self.keyset['enter'] or
               keystroke.code in self.keyset['enter']):
             self._carriage_returned = True
-            rstr = u''
+            rstr = ''
         elif (keystroke in self.keyset['exit'] or
               keystroke.code in self.keyset['exit']):
             self._quit = True
-            rstr = u''
+            rstr = ''
         elif keystroke.is_sequence:
             # could beep also, (error)
-            rstr = u''
+            rstr = ''
         else:
             if ord(keystroke) >= 0x20:
                 rstr = self.add(keystroke)
@@ -469,15 +469,15 @@ class ScrollingEditor(AnsiWindow):
             self._horiz_pos += 1
         if self._horiz_shift > 0:
             self._horiz_shift += len(self.glyphs['strip'])
-            prnt = u''.join((
+            prnt = ''.join((
                 self.glyphs['strip'],
                 self.content[self._horiz_shift:],))
         else:
             prnt = self.content
-        return u''.join((
+        return ''.join((
             self.pos(self.ypadding, self.xpadding),
             self._term.normal,
-            self.colors.get('highlight', u''),
+            self.colors.get('highlight', ''),
             self.align(prnt),
             self.fixate(),))
 
@@ -488,7 +488,7 @@ class ScrollingEditor(AnsiWindow):
         In gnu-readline this is unix-word-rubout (C-w).
         """
         if 0 == len(self.content):
-            return u''
+            return ''
         ridx = self.content.rstrip().rfind(' ') + 1
         self.content = self.content[:ridx]
         return self.refresh()
@@ -496,8 +496,8 @@ class ScrollingEditor(AnsiWindow):
     def backspace(self):
         """ Remove character from end of buffer, scroll as necessary. """
         if 0 == len(self.content):
-            return u''
-        rstr = u''
+            return ''
+        rstr = ''
         # measured backspace erases over double-wide (wcwidth)
         len_toss = self._term.length(self.content[-1])
         len_move = 1
@@ -508,15 +508,15 @@ class ScrollingEditor(AnsiWindow):
             self._horiz_pos += self.scroll_amt
             rstr += self.refresh()
         else:
-            rstr += u''.join((
+            rstr += ''.join((
                 self.fixate(0),
-                u'\b' * len_toss,
-                u' ' * len_move,
-                u'\b' * len_move,))
+                '\b' * len_toss,
+                ' ' * len_move,
+                '\b' * len_move,))
             self._horiz_pos -= 1
         return rstr
 
-    def update(self, ucs=u''):
+    def update(self, ucs=''):
         """
         Replace or reset content.
 
@@ -541,7 +541,7 @@ class ScrollingEditor(AnsiWindow):
         """
         if self.eol:
             # cannot input, at end of line!
-            return u''
+            return ''
 
         # append input to content directly to the backend variable,
         # so that we adjust the length only by the most recently-added

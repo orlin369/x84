@@ -44,7 +44,7 @@ Point = collections.namedtuple('Point', ['y', 'x'])
 field = collections.namedtuple('input_validation', [
     # field's value
     'value',
-    # field format, u'{lb}{key}{rb}mail:    {email}'
+    # field format, '{lb}{key}{rb}mail:    {email}'
     'field_fmt',
     # field text y/x loc,
     'display_location',
@@ -76,7 +76,7 @@ def get_display_fields(user, point):
     #              1 calls, 1 posts
     fields['user'] = field(
         value=user.handle,
-        field_fmt=u'{rb}{value}{lb}',
+        field_fmt='{rb}{value}{lb}',
         display_location=Point(y=point.y, x=point.x),
         edit_location=Point(y=point.y, x=point.x + 1),
         key=None, width=nua.username_max_length, validate_fn=None,
@@ -84,28 +84,28 @@ def get_display_fields(user, point):
     )
     fields['ago'] = field(
         value=timeago(time.time() - user.lastcall),
-        field_fmt=u'last called {value} ago',
+        field_fmt='last called {value} ago',
         display_location=Point(y=point.y, x=_indent),
         edit_location=Point(None, None),
         key=None, width=None, validate_fn=None, description=None,
     )
     fields['last_from'] = field(
         value=user.get('last_from', 'None'),
-        field_fmt=u'from {value}',
+        field_fmt='from {value}',
         display_location=Point(y=point.y + 1, x=_indent),
         edit_location=Point(None, None),
         key=None, width=None, validate_fn=None, description=None,
     )
     fields['calls'] = field(
         value=str(user.calls),
-        field_fmt=u'{value} calls',
+        field_fmt='{value} calls',
         display_location=Point(y=point.y + 2, x=_indent),
         edit_location=Point(None, None),
         key=None, width=None, validate_fn=None, description=None,
     )
     fields['posts'] = field(
         value=str(user.get('msgs_sent', 0)),
-        field_fmt=u'{value} posts',
+        field_fmt='{value} posts',
         display_location=Point(y=point.y + 2,
                                x=_indent + len('1999 calls') + 1),
         edit_location=Point(None, None),
@@ -113,39 +113,39 @@ def get_display_fields(user, point):
     )
     # go ahead, show them the password salt; it gets trimmed, and its gibberish,
     # maybe it gives them confidence that we don't know their actual password.
-    _password = u''
+    _password = ''
     if user.handle != 'anonymous':
-        _password = u''.join(user.password)
+        _password = ''.join(user.password)
     fields['password'] = field(
         value=_password,
-        field_fmt=u'{lb}{key}{rb}assword{colon} {value}',
+        field_fmt='{lb}{key}{rb}assword{colon} {value}',
         display_location=Point(y=point.y + 5, x=point.x),
         edit_location=Point(y=point.y + 5, x=point.x + 12),
-        key=u'p', width=nua.password_max_length,
+        key='p', width=nua.password_max_length,
         validate_fn=nua.validate_password, description=None,
     )
     fields['location'] = field(
         value=user.location,
-        field_fmt=u'{lb}{key}{rb}rigin{colon}   {value}',
+        field_fmt='{lb}{key}{rb}rigin{colon}   {value}',
         display_location=Point(y=point.y + 7, x=point.x),
         edit_location=Point(y=point.y + 7, x=point.x + 12),
-        key=u'o', width=nua.location_max_length,
+        key='o', width=nua.location_max_length,
         validate_fn=None, description=descriptions.get('location'),
     )
     fields['email'] = field(
         value=user.email,
-        field_fmt=u'{lb}{key}{rb}mail{colon}    {value}',
+        field_fmt='{lb}{key}{rb}mail{colon}    {value}',
         display_location=Point(y=point.y + 9, x=point.x),
         edit_location=Point(y=point.y + 9, x=point.x + 12),
-        key=u'e', width=nua.email_max_length,
+        key='e', width=nua.email_max_length,
         validate_fn=None, description=descriptions.get('email'),
     )
     fields['timeout'] = field(
         value=str(user.get('timeout', 'no')),
-        field_fmt=u'{lb}{key}{rb}dle off{colon} {value}',
+        field_fmt='{lb}{key}{rb}dle off{colon} {value}',
         display_location=Point(y=point.y + 11, x=point.x),
         edit_location=Point(y=point.y + 11, x=point.x + 12),
-        key=u'i', width=5,
+        key='i', width=5,
         # XXX
         validate_fn=None,
         description=(u"When set, Your session will be disconnected after this "
@@ -153,10 +153,10 @@ def get_display_fields(user, point):
     )
     fields['pubkey'] = field(
         value=user.get('pubkey') or 'no',
-        field_fmt=u'{lb}{key}{rb}sh-key{colon}  {value}',
+        field_fmt='{lb}{key}{rb}sh-key{colon}  {value}',
         display_location=Point(y=point.y + 11, x=point.x + 19),
         edit_location=Point(y=point.y + 11, x=point.x + 31),
-        key=u's', width=20,
+        key='s', width=20,
         # XXX
         validate_fn=None,
         description=(u"Place your OpenSSH-compatible ssh public key into your "
@@ -166,10 +166,10 @@ def get_display_fields(user, point):
     )
     fields['groups'] = field(
         value=','.join(user.groups),
-        field_fmt=u'{lb}{key}{rb}roups{colon}   {value}',
+        field_fmt='{lb}{key}{rb}roups{colon}   {value}',
         display_location=Point(y=point.y + 13, x=point.x),
         edit_location=Point(y=point.y + 13, x=point.x + 12),
-        key=u'g', width=30,
+        key='g', width=30,
         validate_fn=None,
         description=(u"Groups this user is a member of, separated by comma.  "
                      u"Notably, group 'sysop' has system-wide access, and "
@@ -186,7 +186,7 @@ def show_banner(term):
     else:
         echo(term.move(term.height - 1, 0))
         # create a new, empty screen
-        echo(u'\r\n' * (term.height + 1))
+        echo('\r\n' * (term.height + 1))
         yloc = 1
     return Point(y=yloc, x=max(5, (term.width // 2) - 30))
 
@@ -201,13 +201,13 @@ def display_options(term, fields):
                        color_field_edit)]
 
     lb, rb, colon = _color1('['), _color1(']'), _color1(':')
-    out_text = u''
+    out_text = ''
     for field_name, field in fields.items():
         # trim and padd field-value to maximum length,
         _align = term.center if field_name == 'user' else term.ljust
         _value = (
             # field value is greater than field width, trim to size
-            u'.. ' + field.value[-(field.width - len(u'.. ')):]
+            '.. ' + field.value[-(field.width - len('.. ')):]
             if field.width and term.length(field.value) > field.width
             # left-adjust string to length of field, except for user,
             # which is always centered
@@ -227,7 +227,7 @@ def display_options(term, fields):
         _key = _color2(field.key) if field.key else None
 
         out_text += (
-            u'{move_yx}{text}{clear_eol}'.format(
+            '{move_yx}{text}{clear_eol}'.format(
                 move_yx=term.move(*field.display_location),
                 text=field.field_fmt.format(
                     rb=rb, lb=lb, colon=colon, value=_value, key=_key),
@@ -244,33 +244,33 @@ def display_prompt(term, session, point):
 
     out_text = term.move(*point)
     if session.user.is_sysop:
-        out_text = u''.join(
+        out_text = ''.join(
             (out_text,
-             u'{lb}{key_lt}{rb}prev, '
-             .format(lb=lb, key_lt=_color2(u'<'), rb=rb)))
+             '{lb}{key_lt}{rb}prev, '
+             .format(lb=lb, key_lt=_color2('<'), rb=rb)))
 
-    out_text = u''.join(
+    out_text = ''.join(
         (out_text,
-         u'{lb}{key_d}{rb}elete, '
-         u'{lb}{key_q}{rb}uit'
+         '{lb}{key_d}{rb}elete, '
+         '{lb}{key_q}{rb}uit'
          .format(lb=lb, rb=rb,
-                 key_q=_color2(u'q'),
-                 key_d=_color2(u'd'),
+                 key_q=_color2('q'),
+                 key_d=_color2('d'),
                  )))
 
     if session.user.is_sysop:
         # administrative functions (sysops only)
-        out_text = u''.join(
+        out_text = ''.join(
             (out_text,
-             u', {lb}{key_f}{rb}ind user, '
-             u'{lb}{key_gt}{rb}next'
+             ', {lb}{key_f}{rb}ind user, '
+             '{lb}{key_gt}{rb}next'
              .format(lb=lb, rb=rb,
-                     key_f=_color2(u'f'),
-                     key_gt=_color2(u'>'))))
+                     key_f=_color2('f'),
+                     key_gt=_color2('>'))))
 
-    out_text = u''.join(
+    out_text = ''.join(
         (out_text,
-         u'{colon}{clear_eos} ?\b\b'
+         '{colon}{clear_eos} ?\b\b'
          .format(colon=colon, clear_eos=term.clear_eos)))
 
     return out_text
@@ -322,7 +322,7 @@ def do_command(term, session, inp, fields, tgt_user, point):
     width = term.width - (point.x * 2)
 
     # show field description and cancellation
-    description = (field.description or u'') + '  Press escape to cancel.'
+    description = (field.description or '') + '  Press escape to cancel.'
     description_text = term.wrap(description, width=width)
     for y_offset, txt in enumerate(description_text):
         echo(term.move(point.y + y_offset, point.x))
@@ -395,13 +395,13 @@ def delete_user(term, tgt_user, point):
     lb, rb, colon = _color1('['), _color1(']'), _color1(':')
 
     echo(term.move(*point))
-    echo(u'Delete {handle} {lb}yN{rb}{colon}{clear_eos} ?\b\b'
+    echo('Delete {handle} {lb}yN{rb}{colon}{clear_eos} ?\b\b'
          .format(handle=_color2(tgt_user.handle),
                  rb=rb, lb=lb, colon=colon,
                  clear_eos=term.clear_eos))
     inp = term.inkey()
     echo(inp + term.move(point.y + 2, point.x))
-    if inp == u'y':
+    if inp == 'y':
         if tgt_user.handle != 'anonymous':
             tgt_user.delete()
         echo(_color2('Deleted !'))
@@ -421,7 +421,7 @@ def locate_user(term, point):
 
     # show help
     width = term.width - (point.x * 2)
-    help_txt = (u'Enter username or glob pattern.  Press escape to cancel.')
+    help_txt = ('Enter username or glob pattern.  Press escape to cancel.')
     y_offset = 0
     for y_offset, txt in enumerate(term.wrap(help_txt, width=width)):
         echo(term.move(point.y + y_offset, point.x))
@@ -432,26 +432,26 @@ def locate_user(term, point):
     while True:
         # prompt for handle
         echo(term.move(*point_prompt))
-        echo(u'handle: ' + term.clear_eol)
+        echo('handle: ' + term.clear_eol)
         inp = editor.read()
 
         point = Point(y=point_prompt.y + 2, x=point.x)
         if inp is None:
             # canceled (escape)
             return
-        elif u'*' in inp or u'?' in inp:
+        elif '*' in inp or '?' in inp:
             # a glob pattern, fetch all usernames
             handles = fnmatch.filter(list_users(), inp)
             if len(handles) == 0:
-                echo(u''.join((term.move(*point),
-                               u'No matches for {0}.'.format(_color2(inp)),
+                echo(''.join((term.move(*point),
+                               'No matches for {0}.'.format(_color2(inp)),
                                term.clear_eos)))
             elif len(handles) == 1:
                 return get_user(handles[0])
             else:
                 matches_text = (
-                    u'{0} accounts matched, chose one: {1}.'.format(
-                        _color2(str(len(handles))), u', '.join(
+                    '{0} accounts matched, chose one: {1}.'.format(
+                        _color2(str(len(handles))), ', '.join(
                             _color2(handle) for handle in handles)))
                 echo(term.move(*point))
                 for y_offset, txt in enumerate(
@@ -466,8 +466,8 @@ def locate_user(term, point):
             handle = find_user(inp)
             if handle is not None:
                 return get_user(handle)
-            echo(u''.join((term.move(*point),
-                           u'No matches for {0}.'.format(_color2(inp)),
+            echo(''.join((term.move(*point),
+                           'No matches for {0}.'.format(_color2(inp)),
                            term.clear_eos)))
 
 
@@ -502,7 +502,7 @@ def main(handle=None):
     dirty = -1
     session, term = getsession(), getterminal()
     tgt_user = get_user(handle) if handle else session.user
-    legal_input_characters = string.letters + u'<>'
+    legal_input_characters = string.letters + '<>'
 
     # re-display entire screen on loop,
     while True:
@@ -542,18 +542,18 @@ def main(handle=None):
                 # display command input
                 echo(inp.decode('ascii'))
 
-            if inp == u'q':
+            if inp == 'q':
                 # [q]uit
-                echo(u'\r\n')
+                echo('\r\n')
                 return
-            elif inp == u'\x0c':
+            elif inp == '\x0c':
                 # [^L] refresh
                 dirty = -1
                 break
-            elif inp == u'f' and session.user.is_sysop:
+            elif inp == 'f' and session.user.is_sysop:
                 tgt_user = locate_user(term, point_prompt) or tgt_user
                 break
-            elif inp == u'd':
+            elif inp == 'd':
                 # yes, you can delete yourself !!
                 if delete_user(term, tgt_user, point_prompt):
                     if tgt_user == session.user:
@@ -564,10 +564,10 @@ def main(handle=None):
                     # otherwise, move to next user
                     tgt_user = get_next_user(tgt_user)
                 break
-            elif inp == u'<' and session.user.is_sysop:
+            elif inp == '<' and session.user.is_sysop:
                 tgt_user = get_prev_user(tgt_user)
                 break
-            elif inp == u'>' and session.user.is_sysop:
+            elif inp == '>' and session.user.is_sysop:
                 tgt_user = get_next_user(tgt_user)
                 break
             elif inp in string.letters:
@@ -578,10 +578,10 @@ def main(handle=None):
                 else:
                     # otherwise, clean prompt field
                     time.sleep(0.2)
-                    echo(u'\b \b')
+                    echo('\b \b')
             elif inp in legal_input_characters:
                 # though legal, not authorized: clean prompt field
                 time.sleep(0.2)
-                echo(u'\b \b')
+                echo('\b \b')
             event = None
         dirty = dirty or 1

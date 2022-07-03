@@ -13,9 +13,9 @@ def main():
     session.activity = 'playing tetris'
 
     if term.width < 79 or term.height < 24:
-        echo(u'Sorry, your terminal is not large enough (72x22), ')
-        echo(u'your size: {term.width}x{term.height}'.format(term=term))
-        echo(u'\r\n\r\nPress any key.')
+        echo('Sorry, your terminal is not large enough (72x22), ')
+        echo('your size: {term.width}x{term.height}'.format(term=term))
+        echo('\r\n\r\nPress any key.')
         term.inkey()
         return
 
@@ -47,7 +47,7 @@ def show_scores():
     # the math brings it out to 2 columns, but fmt is adjustable
     pager_title = term.blue_reverse_underline('- hiGh SCOREs -')
     len_handle = ini.CFG.getint('nua', 'max_user')
-    score_fmt = u'%s %s %s %s'
+    score_fmt = '%s %s %s %s'
     len_pos = 2
     len_score = 10
     len_level = 3
@@ -55,8 +55,8 @@ def show_scores():
     yloc, xloc = 10, 3
     pager = Pager(height=height, width=width, yloc=yloc, xloc=xloc)
     pager.xpadding = 1
-    pager.glyphs['left-vert'] = u''
-    pager.glyphs['right-vert'] = u''
+    pager.glyphs['left-vert'] = ''
+    pager.glyphs['right-vert'] = ''
     pager.colors['border'] = term.blue_reverse
     pager.alignment = 'center'
     # pre-fesh pager border before fetch
@@ -89,9 +89,9 @@ def show_scores():
         pos += 1
         pager.append(score_fmt % (
             term.bold_blue(str(pos + 1).ljust(len_pos)),
-            term.bold_black(u'.'.ljust(len_score)),
-            term.bold_black(u'.'.ljust(len_level)),
-            term.bold_black(u'.'.rjust(len_handle)),))
+            term.bold_black('.'.ljust(len_score)),
+            term.bold_black('.'.ljust(len_level)),
+            term.bold_black('.'.rjust(len_handle)),))
 
     dirty = 2  # 2=do not refresh border & title
     pager.move_home()
@@ -99,12 +99,12 @@ def show_scores():
         # 1=full refresh
         dirty = 1 if session.poll_event('refresh') else dirty
         if dirty:
-            echo(u''.join((
+            echo(''.join((
                 term.normal,
                 ((pager.border() + pager.title(pager_title))
-                    if dirty != 2 else u''),
+                    if dirty != 2 else ''),
                 pager.refresh(),
-                pager.footer(u''.join((
+                pager.footer(''.join((
                     term.underline_blue('q'),
                     term.bold_blue('uit')))),
             )))
@@ -121,7 +121,7 @@ def play():
     term = getterminal()
     field = []
     global charcache
-    charcache = u''
+    charcache = ''
     field_width = 10
     field_height = 20
     # Access scheme looks like this:
@@ -303,11 +303,11 @@ def play():
         global charcache
         charcache += s
     assert term.height > (field_height + 1)
-    echo_unbuffered(u''.join((
-        u'\r\n\r\n',
-        u'REAdY YOUR tERMiNAl %s ' % (term.bold_blue('(!)'),),
-        u'\r\n\r\n',
-        u'%s PRESS ANY kEY' % (term.bold_black('...'),),
+    echo_unbuffered(''.join((
+        '\r\n\r\n',
+        'REAdY YOUR tERMiNAl %s ' % (term.bold_blue('(!)'),),
+        '\r\n\r\n',
+        '%s PRESS ANY kEY' % (term.bold_black('...'),),
     )))
 
     term.inkey()
@@ -316,7 +316,7 @@ def play():
     if term.kind.startswith('ansi'):
         echo_unbuffered(syncterm_setfont('cp437'))
     artfile = os.path.join(os.path.dirname(__file__), 'art', 'tetris.ans')
-    echo_unbuffered(u'\r\n' * term.height)  # cls
+    echo_unbuffered('\r\n' * term.height)  # cls
     if os.path.exists(artfile):
         echo_unbuffered(from_cp437(open(artfile).read()).rstrip())
 
@@ -325,7 +325,7 @@ def play():
 
     def plotblock(color, lastcolor):
         if color:
-            c = u'\u2588\u2588'  # '\xDB\xDB'
+            c = '\u2588\u2588'  # '\xDB\xDB'
         else:  # both empty
             c = '  '
             color = 0
@@ -357,15 +357,15 @@ def play():
             for x in range(field_width):
                 color = field[y][x] + field[y + 1][x] * 8
                 if field[y][x] and field[y + 1][x]:
-                    c = u'\u2588'  # '\xDB'
+                    c = '\u2588'  # '\xDB'
                     if field[y][x] == field[y + 1][x]:
                         color = color % 8
                     else:
-                        c = u'\u2580'  # '\xDF'
+                        c = '\u2580'  # '\xDF'
                 elif field[y][x] and not field[y + 1][x]:
-                    c = u'\u2580'  # '\xDF'
+                    c = '\u2580'  # '\xDF'
                 elif not field[y][x] and field[y + 1][x]:
-                    c = u'\u2584'  # '\xDC'
+                    c = '\u2584'  # '\xDC'
                 else:  # both empty
                     c = ' '
                 # Output optimization
@@ -403,7 +403,7 @@ def play():
     def flush():
         global charcache
         echo_unbuffered(charcache)
-        charcache = u''
+        charcache = ''
 
     def fillpiece(x, y, p, r, value):
         row = 0
@@ -457,7 +457,7 @@ def play():
         r = 0
         for y in range(4):
             gotoxy(26, 18 + y)
-            echo(u' ' * 4)
+            echo(' ' * 4)
 
         echo(term.color(layoutcolor[p]))
 
@@ -468,7 +468,7 @@ def play():
                 val = layout[p][r][y][x]
                 if val:
                     gotoxy(26 + x + xoffset, 18 + y + yoffset)
-                    echo(u'\u2588\u2588')
+                    echo('\u2588\u2588')
 
     def drawstats():
         echo(term.move(scorey1, scorex1) + '%d' % level)
@@ -501,16 +501,16 @@ def play():
         now = time.time()
         # hidepiece()
         if key is not None:
-            if key in (u'q', u'Q'):
+            if key in ('q', 'Q'):
                 return (0, 0, 0)
-            elif key.code == term.KEY_LEFT or key == u'h':
+            elif key.code == term.KEY_LEFT or key == 'h':
                 xpos, ypos, r, m = movepiece(xpos - 1, ypos, r)
-            elif key.code == term.KEY_RIGHT or key == u'l':
+            elif key.code == term.KEY_RIGHT or key == 'l':
                 xpos, ypos, r, m = movepiece(xpos + 1, ypos, r)
-            elif key.code == term.KEY_UP or key == u'k':
+            elif key.code == term.KEY_UP or key == 'k':
                 xpos, ypos, r, m = movepiece(
                     xpos, ypos, (r + 1) % len(layout[p]))
-            elif key.code == term.KEY_DOWN or key == u'j':
+            elif key.code == term.KEY_DOWN or key == 'j':
                 xpos, ypos, r, m = movepiece(xpos, ypos + 1, r)
             elif key in (' ',):
                 m = True
@@ -537,10 +537,10 @@ def play():
                     echo_unbuffered(
                         term.move(fieldy1 + 10 / 2 + 1, fieldx1 - 11))
                     echo_unbuffered((
-                                    u'!! gAME OVeR!! Score was: %i' % (score,)).center(40))
+                                    '!! gAME OVeR!! Score was: %i' % (score,)).center(40))
                     echo_unbuffered(
                         term.move(fieldy1 + 10 / 2 + 3, fieldx1 - 11))
-                    echo_unbuffered(u'press RETURN'.center(40))
+                    echo_unbuffered('press RETURN'.center(40))
                     while True:
                         inp = term.inkey()
                         if inp.code == term.KEY_ENTER:

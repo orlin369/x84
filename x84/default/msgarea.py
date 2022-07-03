@@ -106,23 +106,23 @@ def get_menu(messages):
     items = []
     if messages['new']:
         items.extend([
-            MenuItem(u'n', u'new ({0})'.format(len(messages['new']))),
-            MenuItem(u'm', u'mark all read'),
+            MenuItem('n', 'new ({0})'.format(len(messages['new']))),
+            MenuItem('m', 'mark all read'),
         ])
     if messages['all']:
         items.append(
-            MenuItem(u'a', u'all ({0})'.format(len(messages['all'])))
+            MenuItem('a', 'all ({0})'.format(len(messages['all'])))
         )
     if messages['private']:
         items.append(
-            MenuItem(u'v', u'private ({0})'.format(len(messages['private'])))
+            MenuItem('v', 'private ({0})'.format(len(messages['private'])))
         )
     items.extend([
-        MenuItem(u'p', u'post public'),
-        MenuItem(u'w', u'write private'),
-        MenuItem(u'c', u'change area'),
-        MenuItem(u'?', u'help'),
-        MenuItem(u'q', u'quit'),
+        MenuItem('p', 'post public'),
+        MenuItem('w', 'write private'),
+        MenuItem('c', 'change area'),
+        MenuItem('?', 'help'),
+        MenuItem('q', 'quit'),
     ])
     return items
 
@@ -164,21 +164,21 @@ def get_messages_by_subscription(session, subscription):
 
 def describe_message_area(term, subscription, messages_bytags, colors):
     get_num = lambda lookup, tag_pattern, grp: len(lookup[tag_pattern][grp])
-    return u''.join((
-        colors['highlight'](u'msgarea: '),
-        colors['text'](u', ').join((
-            u''.join((
+    return ''.join((
+        colors['highlight']('msgarea: '),
+        colors['text'](', ').join((
+            ''.join((
                 quote(tag_pattern, colors),
-                u'({num_new}/{num_all})'.format(
+                '({num_new}/{num_all})'.format(
                     num_new=get_num(messages_bytags, tag_pattern, 'new'),
                     num_all=get_num(messages_bytags, tag_pattern, 'all'))
             )) for tag_pattern in subscription)),
-        u'\r\n\r\n',
+        '\r\n\r\n',
     ))
 
 
 def validate_tag_patterns(tag_patterns):
-    all_tags = list_tags() or set([u'public'])
+    all_tags = list_tags() or set(['public'])
     removed = []
     for tag_pattern in set(tag_patterns):
         if not fnmatch.filter(all_tags, tag_pattern):
@@ -188,22 +188,22 @@ def validate_tag_patterns(tag_patterns):
 
 
 def quote(txt, colors):
-    return u''.join(((u'"'), colors['highlight'](txt), (u'"')))
+    return ''.join((('"'), colors['highlight'](txt), ('"')))
 
 
 def do_describe_available_tags(term, colors):
     sorted_tags = sorted([(len(list_msgs(tags=(tag,))), tag)
-                          for tag in list_tags() or [u'public']
+                          for tag in list_tags() or ['public']
                           ], reverse=True)
     decorated_tags = [
         colors['text'](tag) +
         colors['lowlight']('({0})'.format(num_msgs))
         for num_msgs, tag in sorted_tags]
 
-    description = u''.join((
-        colors['highlight'](u'available tags'), ': ',
-        colors['text'](u', ').join(decorated_tags),
-        colors['text'](u'.'),
+    description = ''.join((
+        colors['highlight']('available tags'), ': ',
+        colors['text'](', ').join(decorated_tags),
+        colors['text']('.'),
     ))
     return show_description(term, description, color=None)
 
@@ -214,22 +214,22 @@ def get_network_tag_description(term, colors):
     network_tags = get_ini('msg', 'network_tags', split=True)
 
     if not (network_tags or server_tags):
-        return u''
-    return u''.join((
-        u'\r\n\r\n',
-        colors['text'](u'This board participates in intra-bbs '
+        return ''
+    return ''.join((
+        '\r\n\r\n',
+        colors['text']('This board participates in intra-bbs '
                        'messaging, '),
-        u''.join((
-            colors['text'](u'hosting network messages by tag '),
-            u', '.join(quote(tag, colors) for tag in server_tags),
-        )) if server_tags else u'',
+        ''.join((
+            colors['text']('hosting network messages by tag '),
+            ', '.join(quote(tag, colors) for tag in server_tags),
+        )) if server_tags else '',
         (colors['text'](
-            u' and ') if (server_tags and network_tags) else u''),
-        u''.join((
-            colors['text'](u'participating in network messages by tag '),
-            u', '.join(quote(tag, colors) for tag in network_tags),
-        )) if network_tags else u'',
-        u'.',
+            ' and ') if (server_tags and network_tags) else ''),
+        ''.join((
+            colors['text']('participating in network messages by tag '),
+            ', '.join(quote(tag, colors) for tag in network_tags),
+        )) if network_tags else '',
+        '.',
     ))
 
 
@@ -239,46 +239,46 @@ def do_describe_message_system(term, colors):
     def describe_group_tags():
         groups = getsession().user.groups
         if not groups:
-            return u''
+            return ''
 
-        return u''.join((
-            u'\r\n\r\n',
+        return ''.join((
+            '\r\n\r\n',
             colors['text'](
-                u'Finally, private messages may be shared among groups.  You '
-                u'may post messages to any group you are a member of: '),
+                'Finally, private messages may be shared among groups.  You '
+                'may post messages to any group you are a member of: '),
             colors['text'](
-                u', '.join(quote(grp, colors) for grp in groups)),
-            colors['text'](u'.')
+                ', '.join(quote(grp, colors) for grp in groups)),
+            colors['text']('.')
         ))
 
-    description = u''.join((
-        u'\r\n',
+    description = ''.join((
+        '\r\n',
         colors['text'](
-            u'You can think of tags as a system of providing context to any '
-            u'message stored on this system.  A tag might provide the '
-            u'general label of the topic of conversation, which may be '
-            u'subscribed to.  For example, '),
-        quote(u'python', colors),
+            'You can think of tags as a system of providing context to any '
+            'message stored on this system.  A tag might provide the '
+            'general label of the topic of conversation, which may be '
+            'subscribed to.  For example, '),
+        quote('python', colors),
         colors['text'](
-            u' may be used for topics related to the python programming '
-            u'language.  This is similar to flicker or gmail tags, or '
-            u'hashtags.  Public messages are always tagged '),
-        quote(u'public', colors),
-        colors['text'](u'.  '),
+            ' may be used for topics related to the python programming '
+            'language.  This is similar to flicker or gmail tags, or '
+            'hashtags.  Public messages are always tagged '),
+        quote('public', colors),
+        colors['text']('.  '),
         get_network_tag_description(term, colors),
-        u'\r\n\r\n',
+        '\r\n\r\n',
         colors['text'](
-            u'Furthermore, glob expressions may be used such as '),
-        quote(u'*', colors),
-        u' ',
+            'Furthermore, glob expressions may be used such as '),
+        quote('*', colors),
+        ' ',
         colors['text']('for all messages, or expression '),
-        quote(u'lang-*', colors),
-        u' ',
+        quote('lang-*', colors),
+        ' ',
         colors['text']('might subscribe to both '),
-        quote(u'lang-python', colors),
-        colors['text'](u' and '),
-        quote(u'lang-go', colors),
-        colors['text'](u'.'),
+        quote('lang-python', colors),
+        colors['text'](' and '),
+        quote('lang-go', colors),
+        colors['text']('.'),
         describe_group_tags(),
     ))
     return show_description(term, description, color=None)
@@ -297,7 +297,7 @@ def prompt_subscription(session, term, yloc, subscription, colors):
     if session.user.get('msg_subscription', None) is None:
         # force-display introductory description for first-time users.
         yloc += do_describe_message_system(term, colors)
-        echo(u'\r\n\r\n')
+        echo('\r\n\r\n')
         yloc += 2
 
     # remind ourselves of all available tags
@@ -305,13 +305,13 @@ def prompt_subscription(session, term, yloc, subscription, colors):
 
     # for small screens, scroll and leave room for prompt & errors
     if yloc > term.height + 3:
-        echo(u'\r\n' * 3)
+        echo('\r\n' * 3)
         yloc = term.height - 3
 
     # and prompt for setting of message tags
     xloc = max(0, (term.width // 2) - 40)
-    input_prefix = u':: subscription tags:'
-    echo(u''.join((term.move(yloc, xloc), input_prefix)))
+    input_prefix = ':: subscription tags:'
+    echo(''.join((term.move(yloc, xloc), input_prefix)))
 
     xloc += len(input_prefix)
     wide = min(40, (term.width - xloc - 2))
@@ -319,14 +319,14 @@ def prompt_subscription(session, term, yloc, subscription, colors):
     while True:
         editor = ScrollingEditor(xloc=xloc, yloc=yloc - 1, width=wide,
                                  colors={'highlight': colors['backlight']},
-                                 content=u', '.join(subscription),
+                                 content=', '.join(subscription),
                                  max_length=100)
 
         # Prompt for and evaluate the given input, splitting by comma,
         # removing any empty items, and defaulting to ['*'] on escape.
-        inp = editor.read() or u''
+        inp = editor.read() or ''
         subscription = filter(None, set(map(unicode.strip, inp.split(',')))
-                              ) or set([u'*'])
+                              ) or set(['*'])
 
         # Then, reduce to only validate tag patterns, tracking those
         # that do not match any known tags, and display a warning and
@@ -334,12 +334,12 @@ def prompt_subscription(session, term, yloc, subscription, colors):
         removed, subscription = validate_tag_patterns(subscription)
 
         # clear existing warning, if any
-        echo(u''.join((term.normal, u'\r\n\r\n', term.clear_eos)))
+        echo(''.join((term.normal, '\r\n\r\n', term.clear_eos)))
         if removed:
             # and display any unmatched tags as a warning, re-prompt
             txt = ''.join((
                 term.bold_red(u"The following patterns are not matched: "),
-                u', '.join(removed)))
+                ', '.join(removed)))
             show_description(term, txt, color=None)
             continue
 
@@ -416,9 +416,9 @@ def quote_body(msg):
     txt_sent = msg.stime.replace(
         tzinfo=dateutil.tz.tzlocal()
     ).astimezone(dateutil.tz.tzutc()).strftime(TIME_FMT)
-    txt_who = u'|13{0}|07'.format(msg.author)
-    return (u'On {txt_sent}, {txt_who} wrote:\r\n'
-            u'{quotesep}\r\n{msg.body}\r\n{quotesep}'
+    txt_who = '|13{0}|07'.format(msg.author)
+    return ('On {txt_sent}, {txt_who} wrote:\r\n'
+            '{quotesep}\r\n{msg.body}\r\n{quotesep}'
             .format(txt_sent=txt_sent, txt_who=txt_who,
                     quotesep=(quotesep_char * quotesep_len),
                     msg=msg))
@@ -439,23 +439,23 @@ def display_message(session, term, msg_index, colors):
                 .total_seconds()).strip())
     txt_to = color_handle(msg.recipient)
     txt_private = (colors['highlight'](' (private)')
-                   if not 'public' in msg.tags else u'')
+                   if not 'public' in msg.tags else '')
     txt_from = color_handle(msg.author)
-    txt_tags = u', '.join((quote(tag, colors)
+    txt_tags = ', '.join((quote(tag, colors)
                            for tag in msg.tags))
     txt_subject = colors['highlight'](msg.subject)
     txt_body = decode_pipe(msg.body)
-    txt_breaker = ('-' if session.encoding == 'ansi' else u'\u2500'
+    txt_breaker = ('-' if session.encoding == 'ansi' else '\u2500'
                    ) * min(80, term.width)
     msg_txt = (
-        u'\r\n{txt_breaker}\r\n'
-        u'   from: {txt_from}\r\n'
-        u'     to: {txt_to}{txt_private}\r\n'
-        u'   sent: {txt_sent} ({txt_sentago} ago)\r\n'
-        u'   tags: {txt_tags}\r\n'
-        u'subject: {txt_subject}\r\n'
-        u'\r\n'
-        u'{txt_body}\r\n'
+        '\r\n{txt_breaker}\r\n'
+        '   from: {txt_from}\r\n'
+        '     to: {txt_to}{txt_private}\r\n'
+        '   sent: {txt_sent} ({txt_sentago} ago)\r\n'
+        '   tags: {txt_tags}\r\n'
+        'subject: {txt_subject}\r\n'
+        '\r\n'
+        '{txt_body}\r\n'
         .format(txt_breaker=txt_breaker,
                 txt_from=txt_from, txt_to=txt_to,
                 txt_sent=txt_sent, txt_sentago=txt_sentago,
@@ -466,7 +466,7 @@ def display_message(session, term, msg_index, colors):
 
     prompt_pager(content=msg_txt.splitlines(), line_no=0,
                  width=min(80, term.width),
-                 colors=colors, breaker=u'- ', end_prompt=False,
+                 colors=colors, breaker='- ', end_prompt=False,
                  break_long_words=True)
 
 
@@ -480,9 +480,9 @@ def can_delete(session):
 def delete_message(msg):
     """ Experimental message delete! """
     # ! belongs as msg.delete() function !
-    msg.recipient = u''
-    msg.subject = u''
-    msg.body = u''
+    msg.recipient = ''
+    msg.subject = ''
+    msg.body = ''
     msg.children = set()
     msg.parent = None
     msg.tags = set()
@@ -520,48 +520,48 @@ def do_reader_prompt(session, term, index, message_indices, colors):
     opts += (('idx', ''),)
     while True:
         echo(term.move_x(xpos))
-        echo(u''.join((
-            colors['lowlight'](u'['),
+        echo(''.join((
+            colors['lowlight']('['),
             colors['highlight'](str(index + 1)),
-            u'/{0}'.format(len(message_indices)),
-            colors['lowlight'](u']'),
-            u' ',
-            u', '.join((
-                u''.join((colors['lowlight'](u'['),
+            '/{0}'.format(len(message_indices)),
+            colors['lowlight'](']'),
+            ' ',
+            ', '.join((
+                ''.join((colors['lowlight']('['),
                           colors['highlight'](key),
-                          colors['lowlight'](u']'),
+                          colors['lowlight'](']'),
                           value
                           )) for key, value in opts)),
-            u': ',
+            ': ',
             term.clear_eol,
         )))
         width = max(2, len(str(len(message_indices))))
         inp = LineEditor(width, colors={'highlight': colors['backlight']}).read()
-        if inp is None or inp.lower() == u'q':
+        if inp is None or inp.lower() == 'q':
             return None
-        elif inp in (u'n', u''):
+        elif inp in ('n', ''):
             # 'n'ext or return key
             echo(term.move_x(xpos) + term.clear_eol)
             if index == len(message_indices) - 1:
                 # no more messages,
                 return None
             return index + 1
-        elif inp == u'p' and index > 0:
+        elif inp == 'p' and index > 0:
             # prev
             echo(term.move_x(xpos) + term.clear_eol)
             return index - 1
-        elif inp == u'e' and allow_tag(session, message_indices[index]):
+        elif inp == 'e' and allow_tag(session, message_indices[index]):
             msg = get_msg(message_indices[index])
-            echo(u'\r\n')
+            echo('\r\n')
             if prompt_tags(session=session, term=term, msg=msg,
                            colors=colors, public='public' in msg.tags):
-                echo(u'\r\n')
+                echo('\r\n')
                 msg.save()
             return index
-        elif inp == u'D' and can_delete(session):
+        elif inp == 'D' and can_delete(session):
             delete_message(msg=get_msg(message_indices[index]))
             return None
-        elif inp == u'r':
+        elif inp == 'r':
             # write message reply
             msg = create_reply_message(session=session,
                                        idx=message_indices[index])
@@ -646,7 +646,7 @@ def main(quick=False):
             # display header art,
             yloc = display_banner(art_file, encoding=art_encoding, center=True)
             xloc = max(0, (term.width // 2) - 40)
-            echo(u'\r\n')
+            echo('\r\n')
             top_margin = yloc = (yloc + 1)
 
         elif dirty:
@@ -670,7 +670,7 @@ def main(quick=False):
             # When quick login ('y') selected in top.py, return immediately
             # when no new messages are matched any longer.
             if quick and not messages['new']:
-                echo(term.move_x(xloc) + u'\r\nNo new messages.\r\n')
+                echo(term.move_x(xloc) + '\r\nNo new messages.\r\n')
                 return waitprompt(term)
 
             txt = describe_message_area(
@@ -686,7 +686,7 @@ def main(quick=False):
                 menu_items=get_menu(messages),
                 colors=colors, max_cols=2))
             echo(display_prompt(term=term, colors=colors))
-            echo(colors['backlight'](u' \b'))
+            echo(colors['backlight'](' \b'))
             dirty = False
 
         event, data = session.read_events(('refresh', 'newmsg', 'input'))
@@ -703,7 +703,7 @@ def main(quick=False):
                 session, subscription)
             if nxt_msgs['new'] - messages['new']:
                 # beep and re-display when a new message has arrived.
-                echo(u'\b')
+                echo('\b')
                 messages, messages_bytags = nxt_msgs, nxt_bytags
                 dirty = True
                 continue
@@ -720,7 +720,7 @@ def main(quick=False):
                 continue
 
             inp = given_inp.strip()
-            if inp.lower() in (u'n', 'a', 'v'):
+            if inp.lower() in ('n', 'a', 'v'):
                 # read new/all/private messages
                 message_indices = sorted(list(
                     {'n': messages['new'],
@@ -732,14 +732,14 @@ def main(quick=False):
                     read_messages(session=session, term=term,
                                   message_indices=message_indices,
                                   colors=colors)
-            elif inp.lower() == u'm' and messages['new']:
+            elif inp.lower() == 'm' and messages['new']:
                 # mark all messages as read
                 dirty = 1
                 do_mark_as_read(session, messages['new'])
-            elif inp.lower() in (u'p', u'w'):
+            elif inp.lower() in ('p', 'w'):
                 # write new public/private message
                 dirty = 2
-                public = bool(inp.lower() == u'p')
+                public = bool(inp.lower() == 'p')
                 msg = Msg()
                 if (
                         not prompt_recipient(
@@ -756,36 +756,36 @@ def main(quick=False):
                     continue
                 do_send_message(session=session, term=term,
                                 msg=msg, colors=colors)
-            elif inp.lower() == u'c':
+            elif inp.lower() == 'c':
                 # prompt for new tag subscription (at next loop)
                 subscription = []
                 dirty = 1
-            elif inp.lower() == u'?':
+            elif inp.lower() == '?':
                 # help
                 echo(term.move(top_margin, 0) + term.clear_eos)
                 do_describe_message_system(term, colors)
                 waitprompt(term)
                 dirty = 2
-            elif inp.lower() == u'q':
+            elif inp.lower() == 'q':
                 return
             if given_inp:
                 # clear out line editor prompt
-                echo(colors['backlight'](u'\b \b'))
+                echo(colors['backlight']('\b \b'))
 
 
 def prompt_recipient(term, msg, colors, public=True):
     """ Prompt for recipient of message. """
     xpos = max(0, (term.width // 2) - (80 // 2))
     echo(term.move_x(xpos) + term.clear_eos)
-    echo(u'Enter handle{0}.\r\n'.format(
-        u', empty to address to all' if public else u''))
+    echo('Enter handle{0}.\r\n'.format(
+        ', empty to address to all' if public else ''))
     echo(term.move_x(xpos) + ':: ')
     inp = LineEditor(username_max_length, msg.recipient,
                      colors={'highlight': colors['backlight']}
                      ).read()
 
     if inp is None:
-        echo(u''.join((term.move_x(xpos),
+        echo(''.join((term.move_x(xpos),
                        colors['highlight']('Canceled.'),
                        term.clear_eol)))
         term.inkey(1)
@@ -805,31 +805,31 @@ def prompt_recipient(term, msg, colors, public=True):
     if inp in userlist:
         # exact match,
         msg.recipient = inp
-        echo(u'\r\n')
+        echo('\r\n')
         return True
 
     # nearest match
     for match in difflib.get_close_matches(inp.strip(), userlist):
-        echo(u''.join((
+        echo(''.join((
             term.move_x(xpos),
-            u'{0} [yn]'.format(colors['highlight'](match)),
+            '{0} [yn]'.format(colors['highlight'](match)),
             term.clear_eol,
-            u' ?\b\b')))
+            ' ?\b\b')))
         while True:
             inp = term.inkey()
             if inp.code == term.KEY_ESCAPE:
                 # escape/cancel
                 return False
-            elif inp.lower() == u'y':
+            elif inp.lower() == 'y':
                 # accept match
                 msg.recipient = match
-                echo(u'\r\n')
+                echo('\r\n')
                 return True
-            elif inp.lower() == u'n':
+            elif inp.lower() == 'n':
                 # next match
                 break
 
-    echo(u''.join((term.move_x(xpos),
+    echo(''.join((term.move_x(xpos),
                    colors['highlight']('No match.'),
                    term.clear_eol)))
     term.inkey(1)
@@ -839,17 +839,17 @@ def prompt_recipient(term, msg, colors, public=True):
 def prompt_subject(term, msg, colors):
     """ Prompt for subject of message. """
     xpos = max(0, (term.width // 2) - (80 // 2))
-    echo(u''.join((term.move_x(xpos),
+    echo(''.join((term.move_x(xpos),
                    term.clear_eos,
-                   u'Enter Subject.\r\n',
+                   'Enter Subject.\r\n',
                    term.move_x(xpos),
-                   u':: ')))
+                   ':: ')))
     inp = LineEditor(subject_max_length, msg.subject,
                      colors={'highlight': colors['backlight']}
                      ).read()
 
     if inp is None or not inp.strip():
-        echo(u''.join((term.move_x(xpos),
+        echo(''.join((term.move_x(xpos),
                        colors['highlight']('Canceled.'),
                        term.clear_eol)))
         term.inkey(1)
@@ -867,12 +867,12 @@ def prompt_body(term, msg, colors):
     # set syncterm font, if any
     if term.kind.startswith('ansi'):
         echo(syncterm_setfont(syncterm_font))
-    echo(term.move(term.height, 0) + term.normal + u'\r\n')
+    echo(term.move(term.height, 0) + term.normal + '\r\n')
     if content and content.strip():
         msg.body = content
         return True
     xpos = max(0, (term.width // 2) - (80 // 2))
-    echo(u''.join((term.move_x(xpos),
+    echo(''.join((term.move_x(xpos),
                    colors['highlight']('Message canceled.'),
                    term.clear_eol)))
     term.inkey(1)
@@ -900,20 +900,20 @@ def prompt_tags(session, term, msg, colors, public=True):
     if description:
         show_description(term=term, color=None, description=description)
 
-    echo(u''.join((term.move_x(xpos),
+    echo(''.join((term.move_x(xpos),
                    term.clear_eos,
-                   u'Enter tags, separated by commas.\r\n',
+                   'Enter tags, separated by commas.\r\n',
                    term.move_x(xpos),
-                   u':: ')))
+                   ':: ')))
 
     all_tags = list_tags()
 
     while True:
-        inp = LineEditor(subject_max_length, u', '.join(sorted(msg.tags)),
+        inp = LineEditor(subject_max_length, ', '.join(sorted(msg.tags)),
                          colors={'highlight': colors['backlight']}
                          ).read()
         if inp is None:
-            echo(u''.join((term.move_x(xpos),
+            echo(''.join((term.move_x(xpos),
                            colors['highlight']('Message canceled.'),
                            term.clear_eol)))
             term.inkey(1)
@@ -923,10 +923,10 @@ def prompt_tags(session, term, msg, colors, public=True):
         if moderated and not (tag_moderators | session.user.groups):
             cannot_tag = [_tag for _tag in msg.tags if _tag not in all_tags]
             if cannot_tag:
-                echo(u''.join((u'\r\n', term.move_x(xpos),
-                               u', '.join((quote(tag, colors)
+                echo(''.join(('\r\n', term.move_x(xpos),
+                               ', '.join((quote(tag, colors)
                                            for tag in cannot_tag)),
-                               u': not allowed; this system is moderated.')))
+                               ': not allowed; this system is moderated.')))
                 term.inkey(2)
                 echo(term.move_up)
                 map(msg.tags.remove, cannot_tag)
@@ -939,7 +939,7 @@ def do_send_message(session, term, msg, colors):
     xpos = max(0, (term.width // 2) - (80 // 2))
     msg.save()
     do_mark_as_read(session, [msg.idx])
-    echo(u''.join((u'\r\n',
+    echo(''.join(('\r\n',
                    term.move_x(xpos),
                    colors['highlight']('message sent!'))))
     session.send_event('global', ('newmsg', msg.idx,))

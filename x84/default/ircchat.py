@@ -67,7 +67,7 @@ class IRCChat(object):
     This is a class instead of a collection of functions at script-level scope
     because this allows us to easily use the _dispatcher trick... this means
     that we don't have to use add_global_handler() for each and every event we
-    want to respond to; just add on_<eventname> as a method and you're done!
+    want to respond to; just add on_<eventname> as a method and yo're done!
     """
 
     # pylint: disable=R0904
@@ -123,12 +123,12 @@ class IRCChat(object):
                 '\x12': self.term.reverse,
                 '\x16': self.term.reverse,
             }
-            return u'{0}{1}'.format(translate[match.group(1)], match.group(2))
+            return '{0}{1}'.format(translate[match.group(1)], match.group(2))
 
         text = re.sub(r'\x03(\d{1,2})(?:,(\d{1,2}))?', color_repl, text)
         text = text.replace('\x03', self.term.normal)
         text = re.sub('(\x0f|\x02|\x1f|\x15|\x12|\x16)(.*?)', mode_repl, text)
-        text = u''.join([text, self.term.normal])
+        text = ''.join([text, self.term.normal])
         return text
 
     def _dispatcher(self, connection, event):
@@ -141,8 +141,8 @@ class IRCChat(object):
     def queue(self, message):
         """ Queue up a message (with timestamp) to be displayed """
         now = datetime.datetime.now()
-        data = u'{0} {1}'.format(
-            self.term.bold_black(u'{0}:{1}'.format(
+        data = '{0} {1}'.format(
+            self.term.bold_black('{0}:{1}'.format(
                 '%02d' % now.hour, '%02d' % now.minute)),
             self._mirc_convert(message))
         self.session.buffer_event('irc', (data,))
@@ -151,9 +151,9 @@ class IRCChat(object):
         """ Construct an indicator to be used in output """
         # pylint: disable=R0201
         color = color or self.term.white
-        character = character or u'*'
-        return (u'{0}{1}{0}'.format(
-            self.term.bold_black(u'-'), color(character)))
+        character = character or '*'
+        return ('{0}{1}{0}'.format(
+            self.term.bold_black('-'), color(character)))
 
     def help(self):
         """ Show /HELP text """
@@ -161,59 +161,59 @@ class IRCChat(object):
         # pylint: disable=W0141
         commands = map(
             self.term.bold, [
-                u'/HELP', u'/COLORS', u'/ME', u'/TOPIC', u'/NAMES'])
-        self.queue(u'{0} Use {1} to quit. Other commands: {2}'.format(
+                '/HELP', '/COLORS', '/ME', '/TOPIC', '/NAMES'])
+        self.queue('{0} Use {1} to quit. Other commands: {2}'.format(
             self._indicator(),
-            self.term.bold(u'/QUIT'),
-            self.term.white(u', ').join(commands),
+            self.term.bold('/QUIT'),
+            self.term.white(', ').join(commands),
         ))
 
     def colors(self):
         """ Show color codes """
 
-        self.queue(u''.join((u'{0} Color codes are available through use of ',
-                             u'the pipe character.'))
+        self.queue(''.join(('{0} Color codes are available through use of ',
+                             'the pipe character.'))
                    .format(self._indicator()))
 
-        fgc = u'{0} Foreground: '
+        fgc = '{0} Foreground: '
 
         for x in range(0, 8):
-            val = u'0' + unicode(x)
+            val = '0' + unicode(x)
 
             if x == 0:
                 fgc += self.term.on_white
 
-            fgc += u''.join((getattr(self.term, ANSI_COLORS[x]), u'|', val,
-                             self.term.normal, u' '))
+            fgc += ''.join((getattr(self.term, ANSI_COLORS[x]), '|', val,
+                             self.term.normal, ' '))
 
         for x in range(0, 8):
             val = unicode(x + 8)
 
             if len(val) == 1:
-                val = u'0' + val
+                val = '0' + val
 
-            fgc += u''.join((getattr(self.term, 'bold_' + ANSI_COLORS[x]),
-                             u'|', val, self.term.normal, u' '))
+            fgc += ''.join((getattr(self.term, 'bold_' + ANSI_COLORS[x]),
+                             '|', val, self.term.normal, ' '))
 
         self.queue(fgc.format(self._indicator()))
 
-        bgc = u'{0} Background: '
+        bgc = '{0} Background: '
 
         for x in range(0, 8):
-            val = u'b' + unicode(x)
+            val = 'b' + unicode(x)
 
             if x > 0:
                 bgc += self.term.bright_white
 
-            bgc += u''.join((getattr(self.term, 'on_' + ANSI_COLORS[x]), u'|',
-                             val, self.term.normal, u' '))
+            bgc += ''.join((getattr(self.term, 'on_' + ANSI_COLORS[x]), '|',
+                             val, self.term.normal, ' '))
 
         self.queue(bgc.format(self._indicator()))
-        self.queue(u'{0} Other: {1} {2} {3} |nn normal'
+        self.queue('{0} Other: {1} {2} {3} |nn normal'
                    .format(self._indicator(),
-                           self.term.bold(u'|bb bold'),
-                           self.term.underline(u'|uu underline'),
-                           self.term.reverse(u'|rr reverse')))
+                           self.term.bold('|bb bold'),
+                           self.term.underline('|uu underline'),
+                           self.term.reverse('|rr reverse')))
 
 
     def connect(self, *args, **kwargs):
@@ -232,12 +232,12 @@ class IRCChat(object):
         # pylint: disable=W0613
         self.session.buffer_event('irc-connected')
         self.connected = True
-        echo(u''.join([self.term.normal, u'\r\n',
-                       u'Your nickname is in use or illegal. Pick a new one '
-                       u'(blank to quit):\r\n']))
+        echo(''.join([self.term.normal, '\r\n',
+                       'Your nickname is in use or illegal. Pick a new one '
+                       '(blank to quit):\r\n']))
         led = LineEditor(width=MAX_NICK)
         newnick = led.read()
-        echo(u'\r\n')
+        echo('\r\n')
         if not newnick:
             self.session.buffer_event('irc-quit', 'canceled')
             return
@@ -255,7 +255,7 @@ class IRCChat(object):
         self.nick = connection.get_nickname()
         self.session.buffer_event('irc-welcome')
         self.help()
-        self.queue(u'{0} Server: {1}'.format(
+        self.queue('{0} Server: {1}'.format(
             self._indicator(),
             self.term.bold(self.connection.server)
         ))
@@ -264,7 +264,7 @@ class IRCChat(object):
 
     def on_quit(self, _, event):
         """ Someone has /QUIT IRC """
-        self.queue(u'{0} {1} has quit ({2})'.format(
+        self.queue('{0} {1} has quit ({2})'.format(
             self._indicator(color=self.term.red),
             self.term.bold(event.source.nick),
             self.term.bold(event.arguments[0])
@@ -281,21 +281,21 @@ class IRCChat(object):
                              else nick)
             if stripped_nick != self.nick:
                 nicks.append(nick)
-        self.queue(u'{0} Users: {1}'.format(
+        self.queue('{0} Users: {1}'.format(
             self._indicator(),
-            self.term.bold(u', '.join(nicks) if nicks else u'<nobody>')
+            self.term.bold(', '.join(nicks) if nicks else '<nobody>')
         ))
 
     def on_currenttopic(self, _, event):
         """ Reply received from /TOPIC command """
-        self.queue(u'{0} Topic: {1}'.format(
+        self.queue('{0} Topic: {1}'.format(
             self._indicator(),
             self.term.bold(event.arguments[1])
         ))
 
     def on_topic(self, _, event):
         """ Someone has changed the channel topic """
-        self.queue(u'{0} {1} has changed the topic to {2}'.format(
+        self.queue('{0} {1} has changed the topic to {2}'.format(
             self._indicator(color=self.term.bold),
             self.term.bold(event.source.nick),
             self.term.bold(event.arguments[0])
@@ -310,8 +310,8 @@ class IRCChat(object):
         """ Helper to format public messages. """
         # pylint: disable=R0201
         color = self.term.bold if mode is None else mode
-        nick = color(u'<{0}>'.format(source))
-        return u'{0} {1}'.format(nick, msg)
+        nick = color('<{0}>'.format(source))
+        return '{0} {1}'.format(nick, msg)
 
     def on_pubmsg(self, _, event):
         """ Public message has been received. """
@@ -325,19 +325,19 @@ class IRCChat(object):
         """ Someone has joined the channel """
         # if it's the current user that has joined, display it differently
         if event.source.nick == connection.get_nickname():
-            self.queue(u'{0} Channel: {1}'.format(
+            self.queue('{0} Channel: {1}'.format(
                 self._indicator(),
                 self.term.bold(CHANNEL)
             ))
         else:
-            self.queue(u'{0} {1} has joined the channel'.format(
+            self.queue('{0} {1} has joined the channel'.format(
                 self._indicator(color=self.term.green),
                 self.term.bold(event.source.nick)
             ))
 
     def on_kick(self, connection, event):
         """ Someone has been kicked from the channel """
-        self.queue(u'{0} {1} has kicked {2} ({3})'.format(
+        self.queue('{0} {1} has kicked {2} ({3})'.format(
             self._indicator(color=self.term.red),
             self.term.bold(event.source.nick),
             self.term.bold(event.arguments[0]),
@@ -350,7 +350,7 @@ class IRCChat(object):
 
     def on_part(self, _, event):
         """ Someone has /PART-ed the channel """
-        self.queue(u'{0} {1} has left the channel'.format(
+        self.queue('{0} {1} has left the channel'.format(
             self._indicator(color=self.term.red),
             self.term.bold(event.source.nick)
         ))
@@ -358,8 +358,8 @@ class IRCChat(object):
     def format_action(self, source, action, color=None):
         """ Helper for formatting action messages """
         color = self.term.bold_white if color is None else color
-        return u'{0} {1} {2}'.format(
-            self._indicator(character=u'+', color=self.term.bold_black),
+        return '{0} {1} {2}'.format(
+            self._indicator(character='+', color=self.term.bold_black),
             color(source), action)
 
     def on_action(self, _, event):
@@ -372,7 +372,7 @@ class IRCChat(object):
 
     def on_nick(self, _, event):
         """ Someone has changed their nickname """
-        self.queue(u'{0} {1} has changed their nickname to {2}'.format(
+        self.queue('{0} {1} has changed their nickname to {2}'.format(
             self._indicator(),
             self.term.bold(event.source.nick),
             self.term.bold(event.target)
@@ -380,27 +380,27 @@ class IRCChat(object):
 
     def on_mode(self, _, event):
         """ Someone has changed modes on the channel or a user """
-        self.queue(u'{0} {1} sets mode {2}'.format(
+        self.queue('{0} {1} sets mode {2}'.format(
             self._indicator(color=self.term.bold),
             self.term.bold(event.source.nick),
-            self.term.bold(u' '.join(event.arguments))
+            self.term.bold(' '.join(event.arguments))
         ))
 
     def on_pubnotice(self, _, event):
         """ Public notice has been received """
-        self.queue(u'{0} NOTICE ({1}) {2}'.format(
+        self.queue('{0} NOTICE ({1}) {2}'.format(
             self._indicator(),
             self.term.bold(event.source.nick),
-            self.term.bold(u' '.join(event.arguments))
+            self.term.bold(' '.join(event.arguments))
         ))
 
     def on_error(self, _, event):
         """ Some error has been received """
-        err_desc = (u'error (type={event.type}, source={event.source}, '
+        err_desc = ('error (type={event.type}, source={event.source}, '
                     'target={event.target}, arguments={event.arguments}'
                     .format(event=event))
         self.log.error('error: {0}'.format(err_desc))
-        self.queue(u'{0} ERROR: {1} '.format(
+        self.queue('{0} ERROR: {1} '.format(
             self._indicator(color=self.term.bold_red), err_desc))
 
 
@@ -425,9 +425,9 @@ def establish_connection(term, session):
     if PASSWORD is not None:
         kwargs['password'] = PASSWORD
 
-    echo(u'Connecting to {server}:{port} for channel {chan}.\r\n\r\n'
+    echo('Connecting to {server}:{port} for channel {chan}.\r\n\r\n'
          'press [{key_q}] to abort ... '.format(
-             server=SERVER, port=PORT, chan=CHANNEL, key_q=term.bold(u'q')))
+             server=SERVER, port=PORT, chan=CHANNEL, key_q=term.bold('q')))
 
     client = IRCChat(term, session)
     irc_handle = session.user.handle.replace(' ', '_')
@@ -435,7 +435,7 @@ def establish_connection(term, session):
         # pylint: disable=W0142
         client.connect(SERVER, PORT, irc_handle, **kwargs)
     except irc.client.ServerConnectionError:
-        echo(term.bold_red(u'Connection error!'))
+        echo(term.bold_red('Connection error!'))
         term.inkey(3)
         raise EOFError()
 
@@ -445,7 +445,7 @@ def establish_connection(term, session):
             ('irc', 'irc-quit', 'irc-connected', 'input'), timeout=0.02)
         if event == 'irc':
             # show on-connect motd data if any received
-            echo(u'\r\n{0}'.format(data[0]))
+            echo('\r\n{0}'.format(data[0]))
             scrollback.append(data[0])
         elif event == 'irc-connected':
             break
@@ -453,12 +453,12 @@ def establish_connection(term, session):
             session.buffer_input(data, pushback=True)
             inp = term.inkey(0)
             while not inp:
-                if inp.lower() == u'q' or inp.code == term.KEY_ESCAPE:
-                    echo(u'Canceled!')
+                if inp.lower() == 'q' or inp.code == term.KEY_ESCAPE:
+                    echo('Canceled!')
                     raise EOFError()
                 inp = term.inkey(0)
         elif event == 'irc-quit':
-            echo(term.bold_red(u'\r\nConnection failed: {0}!'.format(data)))
+            echo(term.bold_red('\r\nConnection failed: {0}!'.format(data)))
             term.inkey(3)
             raise EOFError()
 
@@ -468,18 +468,18 @@ def establish_connection(term, session):
             ('irc', 'irc-welcome', 'irc-quit', 'input'), timeout=0.2)
         if event == 'irc':
             # show on-connect motd data if any received
-            echo(u'\r\n{0}'.format(data[0]))
+            echo('\r\n{0}'.format(data[0]))
             scrollback.append(data[0])
         if event == 'irc-quit':
-            echo(term.bold_red(u'\r\nConnection lost: {0}!'.format(data)))
+            echo(term.bold_red('\r\nConnection lost: {0}!'.format(data)))
             term.inkey(3)
             raise EOFError()
         elif event == 'input':
             session.buffer_input(data, pushback=True)
             inp = term.inkey(0)
             while not inp:
-                if inp.lower() == u'q' or inp.code == term.KEY_ESCAPE:
-                    echo(u'Canceled!')
+                if inp.lower() == 'q' or inp.code == term.KEY_ESCAPE:
+                    echo('Canceled!')
                     raise EOFError()
                 inp = term.inkey(0)
         elif event == 'irc-welcome':
@@ -504,11 +504,11 @@ def refresh_event(term, scrollback, editor):
         if sofar >= numlines:
             break
     output = output[numlines * -1:]
-    echo(u''.join([
+    echo(''.join([
         term.normal, term.home, term.clear_eos,
         term.move(editor.yloc + 1, 0),
-        u'\r\n'.join(output),
-        u'\r\n', editor.refresh()]))
+        '\r\n'.join(output),
+        '\r\n', editor.refresh()]))
 
 
 def irc_event(term, data, scrollback, editor):
@@ -519,15 +519,15 @@ def irc_event(term, data, scrollback, editor):
     scrollback.append(data)
 
     # blank out the line with the input bar, wrap output, redraw input bar
-    echo(u''.join([
+    echo(''.join([
         term.normal,
         term.move(editor.yloc + 1, 0),
         term.clear_eol,
         term.move_x(0),
-        u'\r\n'.join(term.wrap(data, term.width - 1,
+        '\r\n'.join(term.wrap(data, term.width - 1,
                                break_long_words=True)),
         term.move(editor.yloc + 1, 0),
-        u'\r\n',
+        '\r\n',
         term.move(editor.yloc, 0),
         editor.refresh(),
     ]))
@@ -545,18 +545,18 @@ def ansi_encode(term, text):
 
     pipes = re.compile(r'\|(0[0-9]|1[0-5]|b[0-7]|bb|uu|rr|nn)',
                        flags=re.IGNORECASE)
-    output = u''
+    output = ''
     ptr = 0
     match = None
 
     for match in pipes.finditer(text):
         val = match.group(1).lower()
-        attr = u''
+        attr = ''
 
         if not val.isnumeric():
             if val == 'bb':
                 attr = term.bold
-            elif val == 'uu':
+            elif val == 'u':
                 attr = term.underline
             elif val == 'rr':
                 attr = term.reverse
@@ -579,9 +579,9 @@ def ansi_encode(term, text):
         output += text[ptr:match.start()] + attr
         ptr = match.end()
 
-    output = text if match is None else u''.join((output, text[match.end():]))
+    output = text if match is None else ''.join((output, text[match.end():]))
 
-    return u''.join((output, term.normal))
+    return ''.join((output, term.normal))
 
 
 def mirc_encode(term, text):
@@ -598,39 +598,39 @@ def mirc_encode(term, text):
     mirc_map = (1, 2, 3, 10, 5, 6, 7, 15, 14, 12, 9, 11, 4, 13, 8, 0)
     pipes = re.compile(r'\|(0[0-9]|1[0-5]|b[0-7]|bb|uu|rr|nn)',
                        flags=re.IGNORECASE)
-    output = u''
+    output = ''
     ptr = 0
     match = None
 
     for match in pipes.finditer(text):
         val = match.group(1).lower()
-        attr = u''
+        attr = ''
 
         if not val.isnumeric():
             if val == 'bb':
-                attr = u'\x02'
-            elif val == 'uu':
-                attr = u'\x1f'
+                attr = '\x02'
+            elif val == 'u':
+                attr = '\x1f'
             elif val == 'rr':
-                attr = u'\x16'
+                attr = '\x16'
             elif val == 'nn':
-                attr = u'\x0f'
+                attr = '\x0f'
             elif val[0] == 'b':
                 int_value = int(val[1], 10)
-                attr = u''.join((u'\x030,', unicode(mirc_map[int_value])))
+                attr = ''.join(('\x030,', unicode(mirc_map[int_value])))
         else:
             if val.startswith('0'):
                 val = val[1:]
 
             int_value = int(val, 10)
-            attr = u''.join((u'\x03', unicode(mirc_map[int_value])))
+            attr = ''.join(('\x03', unicode(mirc_map[int_value])))
 
         output += text[ptr:match.start()] + attr
         ptr = match.end()
 
-    output = text if match is None else u''.join((output, text[match.end():]))
+    output = text if match is None else ''.join((output, text[match.end():]))
 
-    return u''.join((output, u'\x0f'))
+    return ''.join((output, '\x0f'))
 
 
 def input_event(term, client, editor):
@@ -651,29 +651,29 @@ def input_event(term, client, editor):
             line = editor.content.rstrip()
 
             # clear editor
-            editor.update(u'')
+            editor.update('')
             echo(editor.refresh())
 
             lowered = line.lower()
 
             # parse input for potential commands
-            if lowered == u'/quit':
+            if lowered == '/quit':
                 client.connection.quit(
-                    u'x/84 bbs https://github.com/jquast/x84')
+                    'x/84 bbs https://github.com/jquast/x84')
                 retval = False
-            elif lowered == u'/topic':
+            elif lowered == '/topic':
                 client.connection.topic(CHANNEL)
-            elif lowered in (u'/names', u'/who',):
+            elif lowered in ('/names', '/who',):
                 client.connection.names(CHANNEL)
-            elif lowered.startswith(u'/me ') and len(lowered) > 4:
+            elif lowered.startswith('/me ') and len(lowered) > 4:
                 client.connection.action(CHANNEL, line[4:])
                 client.queue(client.format_action(client.nick, line[4:],
                                                   term.bold_blue))
-            elif lowered == u'/help':
+            elif lowered == '/help':
                 client.help()
-            elif lowered == u'/colors':
+            elif lowered == '/colors':
                 client.colors()
-            elif line.startswith(u'/'):
+            elif line.startswith('/'):
                 # some other .. unsupported command
                 retval = True
             else:
@@ -691,14 +691,14 @@ def main():
     """ x/84 script launch point """
 
     term, session = getterminal(), getsession()
-    session.activity = u'Chatting on IRC'
+    session.activity = 'Chatting on IRC'
     session.flush_event('irc')
 
     # move to bottom of screen, reset attribute
     echo(term.pos(term.height) + term.normal)
 
     # create a new, empty screen
-    echo(u'\r\n' * (term.height + 1))
+    echo('\r\n' * (term.height + 1))
     echo(term.home + term.clear)
 
     # set font

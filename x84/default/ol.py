@@ -11,7 +11,7 @@ configure a section in your .ini file::
     idkey = id-key-here-ask-frost-lol
     restkey = rest-key-here-ask-frost-too
 
-You'll have to contact a guy named 'frost',
+Yo'll have to contact a guy named 'frost',
 more than likely found on telnet://bbs.shroo.ms.
 """
 import threading
@@ -197,7 +197,7 @@ def post_shroo_ms(message, username):
         result = requests.post(shroo_ms_api_url, data=payload, headers=headers)
     except Exception as err:
         # log exception string, cause message to post locally
-        log.warn(err)
+        log.warning(err)
         return False
     else:
         if result.status_code >= 400:
@@ -279,13 +279,13 @@ def get_keymap(term, offset, height):
     # vanilla keymap is just a mapping of ascii characters and their simulated
     # keystroke codes, which just maps back into seq{}.
     van = {
-        u'k': term.KEY_UP,
-        u'j': term.KEY_DOWN,
-        u'b': term.KEY_PGUP,
-        u'f': term.KEY_PGDOWN,
-        u' ': term.KEY_PGDOWN,
-        u'G': term.KEY_END,
-        u'0': term.KEY_HOME,
+        'k': term.KEY_UP,
+        'j': term.KEY_DOWN,
+        'b': term.KEY_PGUP,
+        'f': term.KEY_PGDOWN,
+        ' ': term.KEY_PGDOWN,
+        'G': term.KEY_END,
+        '0': term.KEY_HOME,
     }
     return seq, van
 
@@ -301,14 +301,14 @@ def say_something(term, session):
     if MIN_ELAPSED:
         lastliner = session.user.get('lastliner', 0)
         if lastliner and time.time() - lastliner > MIN_ELAPSED:
-            echo(term.red_bold("You've said enough already!"))
+            echo(term.red_bold("Yo've said enough already!"))
             term.inkey(timeout=1)
             echo(term.move_x(0))
             # only re-draw prompt (user canceled)
             return False
 
     echo(term.move_x(xpos))
-    echo(term.red('say ') + term.bold_red('>') + u' ')
+    echo(term.red('say ') + term.bold_red('>') + ' ')
     inp = LineEditor(MAX_MSGLEN, colors=colors).read()
     if not inp or not len(inp.strip()):
         # canceled
@@ -335,7 +335,7 @@ def display_prompt(term, yloc):
     # cursor backwards after '?' -- centered.
     echo(term.move(yloc, 0) + term.clear_eol)
     echo(term.center(
-        u''.join(('Say something',
+        ''.join(('Say something',
                   term.bold_white('? ['),
                   'y',
                   term.underline('N'),
@@ -375,7 +375,7 @@ def generate_recent_oneliners(term, n_liners, offset):
 
     # build up one large text field; refresh is smoother when
     # all text is received as a single packet
-    final_text_field = u''
+    final_text_field = ''
     count = 0
     for count, oneliner in enumerate(oneliners[start:end]):
         _color = palette[count % len(palette)]
@@ -383,12 +383,12 @@ def generate_recent_oneliners(term, n_liners, offset):
         alias = oneliner.get('alias', 'anonymous')
         bbsname = ('' if not shroo_ms_enabled else
                    oneliner.get('bbsname', 'untergrund'))
-        content = (oneliner.get('oneliner', u''))
+        content = (oneliner.get('oneliner', ''))
         max_msglen = MAX_MSGLEN
         if len(alias) > username_max_length:
             max_msglen -= (len(alias) - username_max_length)
         for _ in range(10):
-            left_part = u'{0}: {1} '.format(
+            left_part = '{0}: {1} '.format(
                 alias.rjust(username_max_length),
                 term.ljust(decode_pipe(content[:max_msglen]), max_msglen)
             )
@@ -400,12 +400,12 @@ def generate_recent_oneliners(term, n_liners, offset):
                 txt_field = left_part
                 break
             max_msglen -= 2
-        final_text_field = u''.join((
+        final_text_field = ''.join((
             final_text_field,
             term.move_x(max(0, (term.width / 2) - 45)),
             txt_field,
             term.clear_eol,
-            u'\r\n')
+            '\r\n')
         )
 
     # return text, vertical height, and adjusted offset
@@ -417,8 +417,8 @@ def display_oneliners(term, top_margin, offset):
     _padding = 3
     n_liners = term.height - _padding - top_margin
     txt, count, offset = generate_recent_oneliners(term, n_liners, offset)
-    echo(u''.join((term.move(top_margin + 1, 0),
-                   txt, u'\r\n')))
+    echo(''.join((term.move(top_margin + 1, 0),
+                   txt, '\r\n')))
     bot_margin = top_margin + count + _padding
     return bot_margin, offset
 
@@ -438,7 +438,7 @@ def do_prompt(term, session):
             # re-display entire screen on-load, only. there
             # should never be any need to re-draw the art here-forward.
             top_margin = display_banner(art_file, encoding=art_encoding)
-            echo(u'\r\n')
+            echo('\r\n')
             top_margin += 1
             dirty = 1
 
@@ -460,7 +460,7 @@ def do_prompt(term, session):
 
         if dirty:
             # always re-prompt on any dirty flag
-            session.activity = u'Viewing Oneliners'
+            session.activity = 'Viewing Oneliners'
             display_prompt(term, yloc=bot_margin)
             dirty = 0
 
@@ -477,7 +477,7 @@ def do_prompt(term, session):
 
             inp = term.inkey(0)
             while inp:
-                if inp.lower() in (u'y',):
+                if inp.lower() in ('y',):
                     # say something, refresh after
                     echo(inp)
                     say_retval = say_something(term, session)
@@ -495,8 +495,8 @@ def do_prompt(term, session):
 
                     # only redraw prompt (user canceled)
                     dirty = 2
-                elif inp.lower() in (u'n', u'q', u'\r', u'\n'):
-                    echo(inp + u'\r\n')
+                elif inp.lower() in ('n', 'q', '\r', '\n'):
+                    echo(inp + '\r\n')
                     do_quit = True
                     break
 
@@ -520,7 +520,7 @@ def main():
     """ Script entry point. """
     session, term = getsession(), getterminal()
 
-    echo(u'\r\n')
+    echo('\r\n')
 
     # set syncterm font, if any
     if syncterm_font and term.kind.startswith('ansi'):

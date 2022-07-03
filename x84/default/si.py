@@ -21,23 +21,23 @@ def main():
     #         platform
     system, _, release, _, machine, _ = platform.uname()
 
-    body = [u'authors:',
-            u'Johannes Lundberg',
-            u'Jeffrey Quast',
-            u'Wijnand Modderman-Lenstra',
-            u'',
-            u'artwork:',
-            u'hellbeard!impure',
-            u'\r\n',
-            u'system: %s %s %s' % (system, release, machine),
-            u'software: x/84',
+    body = ['authors:',
+            'Johannes Lundberg',
+            'Jeffrey Quast',
+            'Wijnand Modderman-Lenstra',
+            '',
+            'artwork:',
+            'hellbeard!impure',
+            '\r\n',
+            'system: %s %s %s' % (system, release, machine),
+            'software: x/84',
             url,
-            u'\r\n',
-            (platform.python_implementation() + u' '
+            '\r\n',
+            (platform.python_implementation() + ' '
                 + '-'.join(map(str, sys.version_info[3:])))
-            + u' ' + (platform.python_version()
+            + ' ' + (platform.python_version()
                       if hasattr(platform, 'python_implementation')
-                      else u'.'.join(map(str, sys.version_info[:3]))),
+                      else '.'.join(map(str, sys.version_info[:3]))),
             ]
     melt_colors = (
         [term.normal]
@@ -51,12 +51,12 @@ def main():
         + [term.bold_white]
         + [term.normal])
     art = open(artfile).read().decode('cp437_art') \
-        if os.path.exists(artfile) else u''
+        if os.path.exists(artfile) else ''
     otxt = list(art.splitlines())
     for num, line in enumerate(body):
         while num > len(otxt):
-            otxt += [u'', ]
-        otxt[num] = otxt[num][:int(term.width / 2.5)] + u' ' + line
+            otxt += ['', ]
+        otxt[num] = otxt[num][:int(term.width / 2.5)] + ' ' + line
     width = max([term.length(line) for line in otxt])
     height = len(otxt)
     num_stars = int((term.width * term.height) * .005)
@@ -74,33 +74,33 @@ def main():
         # set syncterm font to cp437
         if term.kind.startswith('ansi'):
             echo(syncterm_setfont('cp437'))
-        echo(u'\r\n\r\n')
+        echo('\r\n\r\n')
         if term.width < width:
-            echo(u''.join((
+            echo(''.join((
                 term.move(term.height, 0),
-                u'\r\n\r\n',
+                '\r\n\r\n',
                 term.bold_red + 'screen too thin! (%s/%s)' % (
                     term.width, width,),
-                u'\r\n\r\n',
-                u'press any key...',)))
+                '\r\n\r\n',
+                'press any key...',)))
             term.inkey()
             return (None, None)
         if term.height < height:
-            echo(u''.join((
+            echo(''.join((
                 term.move(term.height, 0),
-                u'\r\n\r\n',
+                '\r\n\r\n',
                 term.bold_red + 'screen too short! (%s/%s)' % (
                     term.height, height),
-                u'\r\n\r\n',
-                u'press any key...',)))
+                '\r\n\r\n',
+                'press any key...',)))
             term.inkey()
             return (None, None)
         xloc = (term.width / 2) - (width / 2)
         yloc = (term.height / 2) - (height / 2)
-        echo(u''.join((
+        echo(''.join((
             term.normal,
-            (u'\r\n' + term.clear_eol) * term.height,
-            u''.join([term.move(yloc + abs_y, xloc) + line
+            ('\r\n' + term.clear_eol) * term.height,
+            ''.join([term.move(yloc + abs_y, xloc) + line
                       for abs_y, line in enumerate(otxt)]),)))
         return xloc, yloc
 
@@ -110,7 +110,7 @@ def main():
 
     def char_at_pos(yloc, xloc, txt_y, txt_x):
         """ Return art (y, x) for location """
-        return (u' ' if yloc - txt_y < 0 or yloc - txt_y >= height
+        return (' ' if yloc - txt_y < 0 or yloc - txt_y >= height
                 or xloc - txt_x < 0 or xloc - txt_x >= len(otxt[yloc - txt_y])
                 else otxt[yloc - txt_y][xloc - txt_x])
 
@@ -157,7 +157,7 @@ def main():
         """ erase old star before moving .. """
         if show_star:
             _, xloc, yloc = stars[star_idx]
-            echo(u''.join((term.move(int(yloc), int(xloc)), term.normal,
+            echo(''.join((term.move(int(yloc), int(xloc)), term.normal,
                            char_at_pos(int(yloc), int(xloc), txt_y, txt_x),)))
 
     def melt():
@@ -168,7 +168,7 @@ def main():
             if 0 == melting[(yloc, xloc)]:
                 del melting[(yloc, xloc)]
         for (yloc, xloc), phase in melting.items():
-            echo(u''.join((term.move(yloc, xloc), melt_colors[phase - 1],
+            echo(''.join((term.move(yloc, xloc), melt_colors[phase - 1],
                            char_at_pos(yloc, xloc, txt_y, txt_x),)))
             melted(yloc, xloc)
 
@@ -193,35 +193,35 @@ def main():
                 otxt = list(art.splitlines())
                 for num, line in enumerate(body):
                     while num > len(otxt):
-                        otxt += [u'', ]
+                        otxt += ['', ]
                     otxt[num] = (otxt[num][:int(term.width / 2.5)]
-                                 + u' ' + line)
+                                 + ' ' + line)
                 txt_x, txt_y = refresh()
                 continue
 
             inp = term.inkey(tm_out)
 
-            if inp.code == term.KEY_UP or inp.lower() == u'k':
+            if inp.code == term.KEY_UP or inp.lower() == 'k':
                 if tm_out >= tm_min:
                     tm_out -= tm_step
-            elif inp.code == term.KEY_DOWN or inp.lower() == u'j':
+            elif inp.code == term.KEY_DOWN or inp.lower() == 'j':
                 if tm_out <= tm_max:
                     tm_out += tm_step
-            elif inp.code == term.KEY_LEFT or inp.lower() == u'h':
+            elif inp.code == term.KEY_LEFT or inp.lower() == 'h':
                 if num_stars > 2:
                     num_stars = int(num_stars * .5)
                     stars = dict([(n, (random.choice('\\|/-'),
                                        float(random.choice(range(term.width))),
                                        float(random.choice(range(term.height)))
                                        )) for n in range(num_stars)])
-            elif inp.code == term.KEY_RIGHT or inp.lower() == u'l':
+            elif inp.code == term.KEY_RIGHT or inp.lower() == 'l':
                 if num_stars < (term.width * term.height) / 4:
                     num_stars = int(num_stars * 1.5)
                     stars = dict([(n, (random.choice('\\|/-'),
                                        float(random.choice(range(term.width))),
                                        float(random.choice(range(term.height)))
                                        )) for n in range(num_stars)])
-            elif inp in (u'*',):
+            elif inp in ('*',):
                 show_star = not show_star
                 if not show_star:
                     for star in stars:

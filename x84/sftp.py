@@ -84,7 +84,7 @@ class X84SFTPServer(SFTPServerInterface):
         # given `username' authenticated by ssh
         from bbs.userbase import get_user, User
         _ssh_session = kwargs.pop('ssh_session')
-        self.user = (User(u'anonymous') if _ssh_session.anonymous
+        self.user = (User('anonymous') if _ssh_session.anonymous
                      else get_user(_ssh_session.username))
         self.flagged = set()
 
@@ -129,7 +129,7 @@ class X84SFTPServer(SFTPServerInterface):
             return []
         try:
             out = []
-            if path == u'/':
+            if path == '/':
                 out.append(self._dummy_dir_stat())
             elif flagged_dirname in path:
                 self.flagged = self.user.get('flaggedfiles', set())

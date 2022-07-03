@@ -1,11 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ Userbase record database and utility functions for x/84. """
+
 import logging
+
 from bbs.dbproxy import DBProxy
 
 FN_PASSWORD_DIGEST = None
 GROUPDB = 'groupbase'
 USERDB = 'userbase'
-
 
 def list_users():
     """
@@ -97,12 +101,12 @@ class User(object):
 
     """ A simple user record. """
 
-    def __init__(self, handle=u'anonymous'):
+    def __init__(self, handle='anonymous'):
         """ Class initializer. """
         self._handle = handle
         self._password = (None, None)
-        self._location = u''
-        self._email = u''
+        self._location = ''
+        self._email = ''
         self._groups = set()
         self._calls = 0
         self._lastcall = 0
@@ -250,13 +254,13 @@ class User(object):
         assert isinstance(self._handle, unicode), ('handle must be unicode')
         assert len(self._handle) > 0, ('handle must be non-zero length')
         assert (None, None) != self._password, ('password must be set')
-        assert self._handle != u'anonymous', ('anonymous may not be saved.')
+        assert self._handle != 'nonymous', ('anonymous may not be saved.')
         udb = DBProxy(USERDB)
         with udb:
             if 0 == len(udb) and self.is_sysop is False:
-                log.warn('{!r}: First new user becomes sysop.'
+                log.warning('{!r}: First new user becomes sysop.'
                          .format(self.handle))
-                self.group_add(u'sysop')
+                self.group_add('sysop')
             is_new = self.handle not in udb
             udb[self.handle] = self
             if is_new:
@@ -285,7 +289,7 @@ class User(object):
     @property
     def is_sysop(self):
         """ Whether the user is in the 'sysop' group. """
-        return u'sysop' in self._groups
+        return 'sysop' in self._groups
 
     @property
     def lastcall(self):

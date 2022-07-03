@@ -173,7 +173,7 @@ class Dropfile(object):
     @property
     def sysopname(self):
         """ name of sysop. """
-        return get_ini('system', 'sysop') or u''
+        return get_ini('system', 'sysop') or ''
 
     @property
     def alias(self):
@@ -217,130 +217,130 @@ class Dropfile(object):
 
     def _get_doorsys(self):
         """ Return door.sys-formatted dropfile content. """
-        return (u'{self.comport}:\r\n'
-                u'{self.comspeed}\r\n'
-                u'{self.parity}\r\n'
-                u'{self.node}\r\n'
-                u'{self.comspeed}\r\n'
-                u'Y\r\n'                     # screen?
-                u'Y\r\n'                     # printer?
-                u'Y\r\n'                     # pager alarm?
-                u'Y\r\n'                     # caller alartm?
-                u'{self.fullname}\r\n'
-                u'{self.location}\r\n'
-                u'123-456-7890\r\n'          # phone number1
-                u'123-456-7890\r\n'          # phone number2
-                u'{self.password}\r\n'
-                u'{self.securitylevel}\r\n'
-                u'{self.numcalls}\r\n'
-                u'{self.lastcall_date}\r\n'
-                u'{self.remaining_secs}\r\n'
-                u'{self.remaining_mins}\r\n'
-                u'GR\r\n'                    # graphics mode
-                u'{self.pageheight}\r\n'
-                u'N\r\n'                     # expert mode?
-                u'1,2,3,4,5,6,7\r\n'         # conferences
-                u'1\r\n'                     # conf. sel, exp. date
-                u'01/01/99\r\n'              # exp. date
-                u'{self.usernum}\r\n'
-                u'{self.xferprotocol}\r\n'
-                u'0\r\n'                     # total num. uploads
-                u'0\r\n'                     # total num, downloads
-                u'0\r\n'                     # daily d/l limit
-                u'9999999\r\n'               # return val/write val
-                u'01/01/2001\r\n'            # birthdate
+        return ('{self.comport}:\r\n'
+                '{self.comspeed}\r\n'
+                '{self.parity}\r\n'
+                '{self.node}\r\n'
+                '{self.comspeed}\r\n'
+                'Y\r\n'                     # screen?
+                'Y\r\n'                     # printer?
+                'Y\r\n'                     # pager alarm?
+                'Y\r\n'                     # caller alartm?
+                '{self.fullname}\r\n'
+                '{self.location}\r\n'
+                '123-456-7890\r\n'          # phone number1
+                '123-456-7890\r\n'          # phone number2
+                '{self.password}\r\n'
+                '{self.securitylevel}\r\n'
+                '{self.numcalls}\r\n'
+                '{self.lastcall_date}\r\n'
+                '{self.remaining_secs}\r\n'
+                '{self.remaining_mins}\r\n'
+                'GR\r\n'                    # graphics mode
+                '{self.pageheight}\r\n'
+                'N\r\n'                     # expert mode?
+                '1,2,3,4,5,6,7\r\n'         # conferences
+                '1\r\n'                     # conf. sel, exp. date
+                '01/01/99\r\n'              # exp. date
+                '{self.usernum}\r\n'
+                '{self.xferprotocol}\r\n'
+                '0\r\n'                     # total num. uploads
+                '0\r\n'                     # total num, downloads
+                '0\r\n'                     # daily d/l limit
+                '9999999\r\n'               # return val/write val
+                '01/01/2001\r\n'            # birthdate
                 # TODO
-                u'C:\\XXX\r\n'               # filepaths to bbs files ...
-                u'C:\\XXX\r\n'               # filepaths to bbs files ...
-                u'{self.sysopname}\r\n'      # sysop's name
-                u'{self.alias}\r\n'          # user's alias
-                u'00:05\r\n'                 # event time(?)
-                u'Y\r\n'                     # error-correcting connection
-                u'Y\r\n'                     # is ANSI in NG mode?
-                u'Y\r\n'                     # use record locking?
-                u'7\r\n'                     # default color ..
-                u'{self.remaining_mins}\r\n'
-                u'09/09/99\r\n'              # last new file scan,
-                u'{self.lastcall_time}\r\n'  # time of this call
-                u'{self.lastcall_time}\r\n'  # time of last call
-                u'9999\r\n'                  # max daily files
-                u'0\r\n'                     # num. files today
-                u'0\r\n'                     # u/l Kb today
-                u'0\r\n'                     # d/l Kb today
-                u'None\r\n'                  # user comment
-                u'0\r\n'                     # doors opened
-                u'0\n'                       # msgs left
+                'C:\\XXX\r\n'               # filepaths to bbs files ...
+                'C:\\XXX\r\n'               # filepaths to bbs files ...
+                '{self.sysopname}\r\n'      # sysop's name
+                '{self.alias}\r\n'          # user's alias
+                '00:05\r\n'                 # event time(?)
+                'Y\r\n'                     # error-correcting connection
+                'Y\r\n'                     # is ANSI in NG mode?
+                'Y\r\n'                     # use record locking?
+                '7\r\n'                     # default color ..
+                '{self.remaining_mins}\r\n'
+                '09/09/99\r\n'              # last new file scan,
+                '{self.lastcall_time}\r\n'  # time of this call
+                '{self.lastcall_time}\r\n'  # time of last call
+                '9999\r\n'                  # max daily files
+                '0\r\n'                     # num. files today
+                '0\r\n'                     # u/l Kb today
+                '0\r\n'                     # d/l Kb today
+                'None\r\n'                  # user comment
+                '0\r\n'                     # doors opened
+                '0\n'                       # msgs left
                 .format(self=self))
 
     def _get_door32(self):
         """ Return door32.sys-formatted dropfile content. """
-        return (u'{self.comtype}\r\n'
-                u'{self.comhandle}\r\n'
-                u'{self.comspeed}\r\n'
-                u'{self.systemname}\r\n'
-                u'{self.usernum}\r\n'
-                u'{self.fullname}\r\n'
-                u'{self.alias}\r\n'
-                u'{self.securitylevel}\r\n'
-                u'{self.remaining_mins}\r\n'
-                u'1\r\n'                  # emulation (1=ansi)
-                u'{self.node}\n'
+        return ('{self.comtype}\r\n'
+                'self.comhandle}\r\n'
+                '{self.comspeed}\r\n'
+                '{self.systemname}\r\n'
+                '{self.usernum}\r\n'
+                '{self.fullname}\r\n'
+                '{self.alias}\r\n'
+                '{self.securitylevel}\r\n'
+                '{self.remaining_mins}\r\n'
+                '1\r\n'                  # emulation (1=ansi)
+                '{self.node}\n'
                 .format(self=self))
 
     def _get_callinfo(self):
         """ Return callinfo.BBS-formatted dropfile content. """
-        return (u'{self.alias}\r\n'
-                u'{self.comspeed}\r\n'
-                u'{self.location}\r\n'
-                u'{self.securitylevel}\r\n'
-                u'{self.remaining_mins}\r\n'
-                u'COLOR\r\n'              # COLOR=ansi
-                u'{self.password}\r\n'
-                u'{self.usernum}\r\n'
-                u'{self.time_used}\r\n'
-                u'01:23\r\n'              # 1
-                u'01:23 01/02/90\r\n'     # ..
-                u'ABCDEFGH\r\n'           # ..
-                u'0\r\n'                  # ..
-                u'99\r\n'                 # ..
-                u'0\r\n'                  # ..
-                u'9999\r\n'               # 7 unknown fields,
-                u'123-456-7890\r\n'       # phone number
-                u'01/01/90 02:34\r\n'     # unknown date/time
-                u'NOVICE\r\n'             # expert mode (off)
-                u'{self.xferprotocol}\r\n'
-                u'01/01/90\r\n'           # unknown date
-                u'{self.numcalls}\r\n'
-                u'{self.pageheight}\r\n'
-                u'0\r\n'                  # ptr to new msgs?
-                u'0\r\n'                  # total u/l
-                u'0\r\n'                  # total d/l
-                u'{self.parity}\r\n'      # ?? like 8,N,1 ??
-                u'REMOTE\r\n'             # local or remote?
-                u'{self.comport}\r\n'
-                u'{self.comspeed}\r\n'
-                u'FALSE\r\n'              # unknown,
-                u'Normal Connection\r\n'  # unknown,
-                u'01/02/94 01:20\r\n'     # unknown date/time
-                u'0\r\n'                  # task #
-                u'1\n'                    # door #
+        return ('{self.alias}\r\n'
+                '{self.comspeed}\r\n'
+                '{self.location}\r\n'
+                '{self.securitylevel}\r\n'
+                '{self.remaining_mins}\r\n'
+                'COLOR\r\n'              # COLOR=ansi
+                '{self.password}\r\n'
+                '{self.usernum}\r\n'
+                '{self.time_used}\r\n'
+                '01:23\r\n'              # 1
+                '01:23 01/02/90\r\n'     # ..
+                'ABCDEFGH\r\n'           # ..
+                '0\r\n'                  # ..
+                '99\r\n'                 # ..
+                '0\r\n'                  # ..
+                '9999\r\n'               # 7 unknown fields,
+                '123-456-7890\r\n'       # phone number
+                '01/01/90 02:34\r\n'     # unknown date/time
+                'NOVICE\r\n'             # expert mode (off)
+                '{self.xferprotocol}\r\n'
+                '01/01/90\r\n'           # unknown date
+                '{self.numcalls}\r\n'
+                '{self.pageheight}\r\n'
+                '0\r\n'                  # ptr to new msgs?
+                '0\r\n'                  # total u/l
+                '0\r\n'                  # total d/l
+                '{self.parity}\r\n'      # ?? like 8,N,1 ??
+                'REMOTE\r\n'             # local or remote?
+                '{self.comport}\r\n'
+                '{self.comspeed}\r\n'
+                'FALSE\r\n'              # unknown,
+                'Normal Connection\r\n'  # unknown,
+                '01/02/94 01:20\r\n'     # unknown date/time
+                '0\r\n'                  # task #
+                '1\n'                    # door #
                 .format(self=self))
 
     def _get_dorinfo(self):
         """ Return DORINFO.DEF-formatted dropfile content. """
-        return (u'{self.systemname}\r\n'
-                u'{self.sysopname}\r\n'   # sysop f.name
-                u'{self.sysopname}\r\n'   # sysop l.name
-                u'{self.comport}\r\n'
-                u'{self.comspeed}\r\n'
-                u'0\r\n'                  # "networked"?
-                u'{self.alias}\r\n'       # user f.name
-                u'{self.alias}\r\n'       # user l.name
-                u'{self.location}\r\n'
-                u'1\r\n'                  # term (1=ansi)
-                u'{self.securitylevel}\r\n'
-                u'{self.remaining_mins}\r\n'
-                u'-1\n'                   # fossil (-1=external)
+        return ('{self.systemname}\r\n'
+                '{self.sysopname}\r\n'   # sysop f.name
+                '{self.sysopname}\r\n'   # sysop l.name
+                '{self.comport}\r\n'
+                '{self.comspeed}\r\n'
+                '0\r\n'                  # "networked"?
+                '{self.alias}\r\n'       # user f.name
+                '{self.alias}\r\n'       # user l.name
+                '{self.location}\r\n'
+                '1\r\n'                  # term (1=ansi)
+                '{self.securitylevel}\r\n'
+                '{self.remaining_mins}\r\n'
+                '-1\n'                   # fossil (-1=external)
                 .format(self=self))
 
 
@@ -499,7 +499,7 @@ class Door(object):
             ucs = self._utf8_decoder.decode(byte, final=False)
             if ucs is not None:
                 decoded.append(ucs)
-        return u''.join(decoded)
+        return ''.join(decoded)
 
     def resize(self):
         """ Signal resize of terminal to pty. """
@@ -553,7 +553,7 @@ class Door(object):
                         # not all. re-buffer remaining bytes back into
                         # session for next poll
                         self._session.buffer_input(data[n_written:])
-                        self.log.warn('re-buffer_input(%r)!', data[n_written:])
+                        self.log.warning('re-buffer_input(%r)!', data[n_written:])
 
 
 class DOSDoor(Door):
@@ -614,8 +614,8 @@ class DOSDoor(Door):
                                          flags=re.DOTALL)
         self._re_trim_none = re.compile(self.RE_REPWITH_NONE,
                                         flags=re.DOTALL)
-        self._replace_clear = u''.join((self._term.move(25, 0),
-                                        (u'\r\n' * 25),
+        self._replace_clear = ''.join((self._term.move(25, 0),
+                                        ('\r\n' * 25),
                                         self._term.home))
 
     def output_filter(self, data):
@@ -626,12 +626,12 @@ class DOSDoor(Door):
             data = re.sub(pattern=self._re_trim_clear,
                           repl=(self._replace_clear), string=data)
             data = re.sub(pattern=self._re_trim_none,
-                          repl=u'\r\n', string=data)
+                          repl='\r\n', string=data)
         return data
 
     def input_filter(self, data):
         """ filter keyboard input (used for "throway" bug workaround). """
-        return data if time.time() - self._stime > self.START_BLOCK else u''
+        return data if time.time() - self._stime > self.START_BLOCK else ''
 
     def resize(self):
         """ Signal resize of terminal to DOS -- does nothing. """
@@ -655,11 +655,11 @@ class DOSDoor(Door):
 
         # fight against 'set scrolling region' by resetting, LORD
         # contains, for example: \x1b[3;22r after 'E'nter the realm
-        echo(u''.join((self._term.normal,
+        echo(''.join((self._term.normal,
                        self._term.move(self._term.height, self._term.width),
                        u"\x1b[r",
                        self._term.move(self._term.height, 0),
-                       u'\r\n\r\n')))
+                       '\r\n\r\n')))
 
         # flush any previously decoded but unreceived keystrokes,
         # and any unprocessed input from telnet session not yet processed.

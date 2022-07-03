@@ -37,7 +37,7 @@ def goto(script_name, *args, **kwargs):
     raise Goto(script_name, *args, **kwargs)
 
 
-def disconnect(reason=u''):
+def disconnect(reason=''):
     """ Disconnect session. Does not return. """
     raise Disconnected(reason,)
 
@@ -57,7 +57,7 @@ def getch(timeout=None):
     # return None to indicate timeout; but it is more correct to always
     # return strings, so that .lower() and such operations are always
     # successful without conditional 'is None' checks.
-    if keystroke == u'':
+    if keystroke == '':
         return None
     if keystroke.is_sequence:
         return keystroke.code
@@ -193,7 +193,7 @@ class Session(object):
         This also updates xterm titles, and is globally broadcasted
         as a "current activity" in the Who's online script, for example.
         """
-        return self._activity or u'<uninitialized>'
+        return self._activity or '<uninitialized>'
 
     @activity.setter
     def activity(self, value):
@@ -205,7 +205,7 @@ class Session(object):
 
             if (self.terminal.kind.startswith('xterm') or
                     self.terminal.kind.startswith('rxvt')):
-                self.write(u'\x1b]2;{0}\x07'.format(value))
+                self.write('\x1b]2;{0}\x07'.format(value))
 
     @property
     def user(self):
@@ -327,20 +327,20 @@ class Session(object):
         if 0 != len(self._script_stack):
             # recover from exception
             fault = self._script_stack.pop()
-            prefix = u'stop'
+            prefix = 'stop'
             if len(self._script_stack):
                 # scripts remaining on the script_stack, resume the script that
                 # called us. Make sure your calling script queries for input or
                 # some other decision before chaining a gosub(), or you could
                 # end up in an infinite loop of gosub() followed by a crash (!)
                 resume = self.current_script
-                prefix = u'resume {resume.name}'.format(resume=resume)
+                prefix = 'resume {resume.name}'.format(resume=resume)
 
             # display error to local log handler and to the user,
-            msg = (u'{prefix} after general exception in {fault.name}'
+            msg = ('{prefix} after general exception in {fault.name}'
                    .format(prefix=prefix, fault=fault))
             self.log.error(msg)
-            self.write(u'\r\n\r\n{msg}\r\n'.format(msg=msg))
+            self.write('\r\n\r\n{msg}\r\n'.format(msg=msg))
 
             # give time for exception to write down the IPC queue before
             # continuing or exiting, esp. exiting, otherwise STOP message
@@ -376,7 +376,7 @@ class Session(object):
                     # Pokemon exception, log and Cc: client, then resume.
                     e_type, e_value, e_tb = sys.exc_info()
                     if self.show_traceback:
-                        self.write(self.terminal.normal + u'\r\n')
+                        self.write(self.terminal.normal + '\r\n')
 
                     terrs = list()
                     for line in traceback.format_tb(e_tb):
@@ -388,7 +388,7 @@ class Session(object):
                     for e_txt in map(str.rstrip, terrs):
                         self.log.error(e_txt)
                         if self.show_traceback:
-                            self.write(e_txt + u'\r\n')
+                            self.write(e_txt + '\r\n')
 
                 # recover from general exception
                 self.__error_recovery()

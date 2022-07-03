@@ -16,9 +16,9 @@ from bbs import syncterm_setfont
 # so, instead of on every line change.  This should
 # significantly improve performance, especially on Raspberry Pi.
 
-WHITESPACE = u' '
-SOFTWRAP = u'\n'
-HARDWRAP = u'\r\n'
+WHITESPACE = ' '
+SOFTWRAP = '\n'
+HARDWRAP = '\r\n'
 UNDO = list()
 UNDOLEVELS = 9
 
@@ -61,7 +61,7 @@ def show_help(term):
 
 
 def wrap_rstrip(value):
-    r""" Remove hardwrap ``u'\r\n'`` and softwrap ``u'\n'`` from value """
+    r""" Remove hardwrap ``'\r\n'`` and softwrap ``'\n'`` from value """
     if value[-len(HARDWRAP):] == HARDWRAP:
         value = value[:-len(HARDWRAP)]
     if value[-len(SOFTWRAP):] == SOFTWRAP:
@@ -102,7 +102,7 @@ def get_lbcontent(lightbar):
             # SOFTWRAP, strip that softwrap and re-assign value to a
             # whitespace-joined value by current line value.
             lines[-1] = WHITESPACE.join((lines[-1].rstrip(), ucs.lstrip(),))
-    retval = encode_pipe(u''.join(lines))
+    retval = encode_pipe(''.join(lines))
     return retval
 
 
@@ -120,8 +120,8 @@ def set_lbcontent(lightbar, ucs):
         ucs_joined = WHITESPACE.join(ucs_line.split(SOFTWRAP))
         ucs_wrapped = term.wrap(text=ucs_joined, width=lightbar.visible_width)
         for inner_lno, inner_line in enumerate(ucs_wrapped):
-            softwrap = SOFTWRAP if inner_lno != len(ucs_wrapped) - 1 else u''
-            content[lno] = u''.join((inner_line, softwrap))
+            softwrap = SOFTWRAP if inner_lno != len(ucs_wrapped) - 1 else ''
+            content[lno] = ''.join((inner_line, softwrap))
             lno += 1
         if 0 == len(ucs_wrapped):
             content[lno] = HARDWRAP
@@ -137,13 +137,13 @@ def yes_no(lightbar, msg, prompt_msg='are you sure? ', attr=None):
     """ Prompt user for yes/no, returns True for yes, False for no. """
     term = getterminal()
     keyset = {
-        'yes': (u'y', u'Y'),
-        'no': (u'n', u'N'),
+        'yes': ('y', 'Y'),
+        'no': ('n', 'N'),
     }
-    echo(u''.join((
+    echo(''.join((
         lightbar.border(),
         lightbar.pos(lightbar.yloc + lightbar.height - 1, lightbar.xpadding),
-        msg, u' ', prompt_msg,)))
+        msg, ' ', prompt_msg,)))
     sel = Selector(yloc=lightbar.yloc + lightbar.height - 1,
                    xloc=term.width - 25, width=18,
                    left='Yes', right=' No ')
@@ -173,7 +173,7 @@ def get_lightbar(ucs):
     height = term.height - yloc - 1
     xloc = max(0, (term.width / 2) - (width / 2))
     lightbar = Lightbar(height, width, yloc, xloc)
-    lightbar.glyphs['left-vert'] = lightbar.glyphs['right-vert'] = u''
+    lightbar.glyphs['left-vert'] = lightbar.glyphs['right-vert'] = ''
     lightbar.colors['highlight'] = term.yellow_reverse
     set_lbcontent(lightbar, ucs)
     return lightbar
@@ -188,12 +188,12 @@ def get_lneditor(lightbar):
     lneditor = ScrollingEditor(width=width, yloc=yloc, xloc=xloc)
     lneditor.enable_scrolling = True
     lneditor.max_length = 65534
-    lneditor.glyphs['bot-horiz'] = u''
-    lneditor.glyphs['top-horiz'] = u''
+    lneditor.glyphs['bot-horiz'] = ''
+    lneditor.glyphs['top-horiz'] = ''
     lneditor.colors['highlight'] = term.red_reverse
     lneditor.colors['border'] = term.bold_red
-    # converts u'xxxxxx\r\n' to 'xxxxxx',
-    # or 'zzzz\nxxxxxx\n' to u'zzzz xxxxxx',
+    # converts 'xxxxxx\r\n' to 'xxxxxx',
+    # or 'zzzz\nxxxxxx\n' to 'zzzz xxxxxx',
     lneditor.update(softwrap_join(wrap_rstrip(lightbar.selection[1])))
     return lneditor
 
@@ -222,16 +222,16 @@ def main(save_key=None, continue_draft=False):
 
     movement = (term.KEY_UP, term.KEY_DOWN, term.KEY_NPAGE,
                 term.KEY_PPAGE, term.KEY_HOME, term.KEY_END,
-                u'\r', term.KEY_ENTER)
+                '\r', term.KEY_ENTER)
     keyset = {'edit': ('\r', '\n'),
               'command': (chr(27),),
-              'kill': (u'K',),
-              'undo': (u'u', 'U',),
-              'goto': (u'G',),
-              'insert': (u'I',),
-              'insert-before': (u'O',),
-              'insert-after': (u'o',),
-              'join': (u'J',),
+              'kill': ('K',),
+              'undo': ('', '',),
+              'goto': ('G',),
+              'insert': ('I',),
+              'insert-before': ('O',),
+              'insert-after': ('o',),
+              'join': ('J',),
               'rubout': (chr(8), chr(127), chr(23)),
               }
 
@@ -263,49 +263,49 @@ def main(save_key=None, continue_draft=False):
         Display status line and command help on ``lightbar`` borders
         """
         lightbar.colors['border'] = term.red if edit else term.yellow
-        keyset_cmd = u''
+        keyset_cmd = ''
         if not edit:
-            keyset_cmd = u''.join((
-                term.yellow(u'-( '),
-                term.yellow_underline(u'S'), u':', term.bold(u'ave'),
-                u' ',
-                term.yellow_underline(u'A'), u':', term.bold(u'bort'),
-                u' ',
-                term.yellow_underline(u'?'), u':', term.bold(u'help'),
-                term.yellow(u' )-'),))
+            keyset_cmd = ''.join((
+                term.yellow('-( '),
+                term.yellow_underline('S'), ':', term.bold('ave'),
+                ' ',
+                term.yellow_underline('A'), ':', term.bold('bort'),
+                ' ',
+                term.yellow_underline('?'), ':', term.bold('help'),
+                term.yellow(' )-'),))
             keyset_xpos = max(0, lightbar.width -
                               (term.length(keyset_cmd) + 3))
             keyset_cmd = lightbar.pos(lightbar.yloc + lightbar.height - 1,
                                       keyset_xpos
                                       ) + keyset_cmd
-        return u''.join((
+        return ''.join((
             lightbar.border(),
             keyset_cmd,
             lightbar.pos(lightbar.yloc + lightbar.height - 1,
                          lightbar.xpadding),
-            u''.join((
-                term.red(u'-[ '),
-                u'EditiNG liNE ',
+            ''.join((
+                term.red('-[ '),
+                'EditiNG liNE ',
                 term.reverse_red('%d' % (lightbar.index + 1,)),
-                term.red(u' ]-'),)) if edit else u''.join((
-                    term.yellow(u'-( '),
-                    u'liNE ',
+                term.red(' ]-'),)) if edit else ''.join((
+                    term.yellow('-( '),
+                    'liNE ',
                     term.yellow('%d/%d ' % (
                         lightbar.index + 1,
                         len(lightbar.content),)),
                     '%3d%% ' % (
                         int((float(lightbar.index + 1)
                              / max(1, len(lightbar.content))) * 100)),
-                    term.yellow(u' )-'),)),
-            lightbar.title(u''.join((
+                    term.yellow(' )-'),)),
+            lightbar.title(''.join((
                 term.red('-] '),
-                term.bold(u'Escape'),
-                u':', term.bold_red(u'command mode'),
+                term.bold('Escape'),
+                ':', term.bold_red('command mode'),
                 term.red(' [-'),)
-            ) if edit else u''.join((
+            ) if edit else ''.join((
                 term.yellow('-( '),
-                term.bold(u'Enter'),
-                u':', term.bold_yellow(u'edit mode'),
+                term.bold('Enter'),
+                ':', term.bold_yellow('edit mode'),
                 term.yellow(' )-'),))),
             lightbar.fixate(),
         ))
@@ -334,7 +334,7 @@ def main(save_key=None, continue_draft=False):
         """
         Returns string suitable clearing screen
         """
-        return u''.join((
+        return ''.join((
             term.move(0, 0),
             term.normal,
             term.clear))
@@ -344,15 +344,15 @@ def main(save_key=None, continue_draft=False):
         Returns ucs suitable for redrawing Lightbar
         and ScrollingEditor UI elements.
         """
-        return u''.join((
+        return ''.join((
             term.normal,
             redraw_lightbar(lightbar),
-            redraw_lneditor(lightbar, lneditor) if edit else u'',
+            redraw_lneditor(lightbar, lneditor) if edit else '',
         ))
 
     def redraw_lightbar(lightbar):
         """ Returns ucs suitable for redrawing Lightbar. """
-        return u''.join((
+        return ''.join((
             statusline(lightbar),
             lightbar.refresh(),))
 
@@ -368,12 +368,12 @@ def main(save_key=None, continue_draft=False):
     if continue_draft:
         ucs = continue_draft
     else:
-        ucs = u''
+        ucs = ''
     lightbar, lneditor = get_ui(ucs, None)
     echo(banner())
     dirty = True
     edit = False
-    digbuf, num_repeat = u'', -1
+    digbuf, num_repeat = '', -1
     count_repeat = lambda: range(max(num_repeat, 1))
     while True:
         # poll for refresh
@@ -394,7 +394,7 @@ def main(save_key=None, continue_draft=False):
             digbuf += inp
             if len(digbuf) > 10:
                 # overflow,
-                echo(u'\a')
+                echo('\a')
                 digbuf = inp
             try:
                 num_repeat = int(digbuf)
@@ -405,7 +405,7 @@ def main(save_key=None, continue_draft=False):
                     pass
             continue
         else:
-            digbuf = u''
+            digbuf = ''
 
         # toggle edit mode,
         if (inp in keyset['command']) or not edit and inp in keyset['edit']:
@@ -490,7 +490,7 @@ def main(save_key=None, continue_draft=False):
                     set_lbcontent(lightbar, UNDO.pop())
                     dirty = True
                 else:
-                    echo(u'\a')
+                    echo('\a')
                     break
 
         # command mode, join line
@@ -510,23 +510,23 @@ def main(save_key=None, continue_draft=False):
                         lightbar.move_down()
                     dirty = True
                 else:
-                    echo(u'\a')
+                    echo('\a')
                     break
             if dirty:
                 save_draft(save_key, get_lbcontent(lightbar))
 
         # command mode, basic cmds & movement
         elif not edit and inp:
-            if inp in (u'a', u'A',):
-                if yes_no(lightbar, term.yellow(u'- ')
-                          + term.bold_red(u'AbORt')
-                          + term.yellow(u' -')):
+            if inp in ('a', 'A',):
+                if yes_no(lightbar, term.yellow('- ')
+                          + term.bold_red('AbORt')
+                          + term.yellow(' -')):
                     return False
                 dirty = True
-            elif inp in (u's', u'S',):
-                if yes_no(lightbar, term.yellow(u'- ')
-                          + term.bold_green(u'SAVE')
-                          + term.yellow(u' -'), term.reverse_green):
+            elif inp in ('s', 'S',):
+                if yes_no(lightbar, term.yellow('- ')
+                          + term.bold_green('SAVE')
+                          + term.yellow(' -'), term.reverse_green):
                     # save contents to user attribtue
                     content = get_contents(lightbar)
                     if not save_key:
@@ -535,7 +535,7 @@ def main(save_key=None, continue_draft=False):
                     save(save_key, content)
                     return True
                 dirty = True
-            elif inp in (u'?',):
+            elif inp in ('?',):
                 show_help(term)
                 term.inkey()
                 dirty = True
@@ -550,9 +550,9 @@ def main(save_key=None, continue_draft=False):
         # edit mode; movement
         elif edit and (inp in movement or inp.code in movement):
             dirty = merge()
-            if inp in (u'\r', u'\n') or inp.code == term.KEY_ENTER:
+            if inp in ('\r', '\n') or inp.code == term.KEY_ENTER:
                 lightbar.content.insert(lightbar.index + 1,
-                                        [lightbar.selection[0] + 1, u''])
+                                        [lightbar.selection[0] + 1, ''])
                 lightbar.move_down()
                 dirty = True
             ucs = lightbar.process_keystroke(inp)

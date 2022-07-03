@@ -67,22 +67,22 @@ def main():
             location=term.bold('location'.ljust(location_max_length)),
             lastcall=term.bold('time ago').ljust(8))
 
-    userlist_fmt = u'| {handle} | {location} | {lastcall} |'
+    userlist_fmt = '| {handle} | {location} | {lastcall} |'
 
     header = make_header(userlist_fmt)
     header_length = term.length(header)
 
     # for smaller screens, remove 'location' field.
     if header_length > term.width:
-        userlist_fmt = u'| {handle} | {lastcall} |'
+        userlist_fmt = '| {handle} | {lastcall} |'
         header = make_header(userlist_fmt)
         header_length = term.length(header)
 
     userlist = [header] + ['-' * header_length]
 
-    echo(u'Fetching ... ')
+    echo('Fetching ... ')
     for _ur in iter_userlist():
-        location_txt = u''
+        location_txt = ''
         if 'location' in userlist_fmt:
             location_txt = colors['lowlight'](
                 _ur.location.ljust(location_max_length))
@@ -94,7 +94,7 @@ def main():
             location=location_txt,
             lastcall=timeago_txt))
 
-    echo(term.move_x(0) + term.clear_eol + u'Processing ...' + term.move_x(0))
+    echo(term.move_x(0) + term.clear_eol + 'Processing ...' + term.move_x(0))
 
     # display users, using a command-prompt pager.
     prompt_pager(content=userlist,

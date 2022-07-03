@@ -26,11 +26,11 @@ def main(anonymous=False, new=False, username=''):
 
     # http://www.termsys.demon.co.uk/vtansi.htm
     # disable line-wrapping
-    echo(chr(27) + u'[7l')
+    echo(chr(27) + '[7l')
 
     # http://www.xfree86.org/4.5.0/ctlseqs.html
     # Save xterm icon and window title on stack.
-    echo(chr(27) + u'[22;0t')
+    echo(chr(27) + '[22;0t')
 
     if anonymous:
         # user ssh'd in as anonymous@

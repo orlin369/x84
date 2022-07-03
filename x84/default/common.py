@@ -11,9 +11,9 @@ from bbs import getterminal, LineEditor
 
 def decorate_menu_item(menu_item, colors):
     """ Return menu item decorated. """
-    key_text = (u'{lb}{inp_key}{rb}'.format(
-        lb=colors['lowlight'](u'['),
-        rb=colors['lowlight'](u']'),
+    key_text = ('{lb}{inp_key}{rb}'.format(
+        lb=colors['lowlight'](''),
+        rb=colors['lowlight']('),
         inp_key=colors['highlight'](menu_item.inp_key)))
 
     # set the inp_key within the key_text if matching
@@ -21,7 +21,7 @@ def decorate_menu_item(menu_item, colors):
         return menu_item.text.replace(menu_item.inp_key, key_text, 1)
 
     # otherwise prefixed with space
-    return (u'{key_text} {menu_text}'.format(
+    return ('{key_text} {menu_text}'.format(
         key_text=key_text, menu_text=menu_item.text))
 
 
@@ -75,24 +75,24 @@ def render_menu_entries(term, top_margin, menu_items,
     row_spacing = min(max(1, min(3, int(math.floor(height / rows)))), max_rowsp)
 
     column = 1
-    output = u''
+    output = ''
     for idx, item in enumerate(rendered_menuitems):
-        padding_left = term.move_x(xpos) if column == 1 and xpos else u''
+        padding_left = term.move_x(xpos) if column == 1 and xpos else ''
         padding_right = ' ' * (padding - column_widths[idx])
         if idx == len(rendered_menuitems) - 1:
             # last item, two newlines
-            padding_right = u'\r\n' * 2
+            padding_right = '\r\n' * 2
         elif column == n_columns:
             # newline(s) on last column only
-            padding_right = u'\r\n' * row_spacing
+            padding_right = '\r\n' * row_spacing
         column = 1 if column == n_columns else column + 1
-        output = u''.join((output, padding_left, item, padding_right))
+        output = ''.join((output, padding_left, item, padding_right))
     return output
 
 
 def waitprompt(term):
     """ Display simple "press enter to continue prompt". """
-    echo(u''.join((
+    echo(''.join((
         term.normal, '\r\n',
         term.move_x(max(0, (term.width // 2) - 40)),
         term.magenta('('), term.green('..'),
@@ -122,10 +122,10 @@ def display_banner(filepattern, vertical_padding=0, **kwargs):
     echo(term.move(term.height, 0) + term.normal)
 
     # create a new, empty screen
-    echo(u'\r\n' * (term.height + 1))
+    echo('\r\n' * (term.height + 1))
 
     # move to home, insert vertical padding
-    echo(term.home + (u'\r\n' * vertical_padding))
+    echo(term.home + ('\r\n' * vertical_padding))
 
     art_generator = showart(filepattern, **kwargs)
     line_no = 0
@@ -138,7 +138,7 @@ def display_banner(filepattern, vertical_padding=0, **kwargs):
 
 
 def prompt_pager(content, line_no=0, colors=None, width=None,
-                 breaker=u'- ', end_prompt=True, **kwargs):
+                 breaker='- ', end_prompt=True, **kwargs):
     """ Display text, using a stop/continuous/next-page prompt.
 
     :param iterable content: iterable of text contents.
@@ -159,19 +159,19 @@ def prompt_pager(content, line_no=0, colors=None, width=None,
         'highlight': term.yellow,
         'lowlight': term.green
     }
-    pager_prompt = (u'{bl}{s}{br}top, {bl}{c}{br}ontinuous, or '
-                    u'{bl}{enter}{br} for next page {br} {bl}\b\b'
-                    .format(bl=colors['lowlight'](u'['),
-                            br=colors['lowlight'](u']'),
-                            s=colors['highlight'](u's'),
-                            c=colors['highlight'](u'c'),
-                            enter=colors['highlight'](u'return')))
+    pager_prompt = ('{bl}{s}{br}top, {bl}{c}{br}ontinuous, or '
+                    '{bl}{enter}{br} for next page {br} {bl}\b\b'
+                    .format(bl=colors['lowlight']('['),
+                            br=colors['lowlight'](']'),
+                            s=colors['highlight'](''),
+                            c=colors['highlight'](''),
+                            enter=colors['highlight']('return')))
 
     should_break = lambda line_no, height: line_no % (height - 3) == 0
 
     def show_breaker():
         if not breaker:
-            return u''
+            return ''
         attr = colors['highlight']
         breaker_bar = breaker * (min(80, term.width - 1) // len(breaker))
         echo(attr(term.center(breaker_bar).rstrip()))
@@ -185,7 +185,7 @@ def prompt_pager(content, line_no=0, colors=None, width=None,
         if txt.rstrip():
             result.extend(term.wrap(txt, width, **kwargs))
         else:
-            result.append(u'')
+            result.append('')
 
     xpos = 0
     if term.width:
@@ -194,28 +194,28 @@ def prompt_pager(content, line_no=0, colors=None, width=None,
         line_no += 1
         if xpos:
             echo(term.move_x(xpos))
-        echo(txt.rstrip() + term.normal + term.clear_eol + u'\r\n')
+        echo(txt.rstrip() + term.normal + term.clear_eol + '\r\n')
         if (line_no and line_no != len(result) - 1
                 and not continuous
                 and should_break(line_no, term.height)):
             show_breaker()
-            echo(u'\r\n')
+            echo('\r\n')
             if xpos:
                 echo(term.move_x(xpos))
             echo(pager_prompt)
             while True:
                 inp = LineEditor(1, colors=colors).read()
-                if inp is None or inp and inp.lower() in u'sqx':
+                if inp is None or inp and inp.lower() in 'sqx':
                     # s/q/x/escape: quit
-                    echo(u'\r\n')
+                    echo('\r\n')
                     return
                 if len(inp) == 1:
-                    echo(u'\b')
+                    echo('\b')
                 if inp.lower() == 'c':
                     # c: enable continuous
                     continuous = True
                     break
-                elif inp == u'':
+                elif inp == '':
                     # return: next page
                     break
             # remove pager
@@ -226,36 +226,36 @@ def prompt_pager(content, line_no=0, colors=None, width=None,
 
     if end_prompt:
         show_breaker()
-        echo(u'\r\n')
+        echo('\r\n')
         if term.width > 80:
             echo(term.move_x(max(0, (term.width // 2) - 40)))
-        echo(u'Press {enter}.'.format(
-            enter=colors['highlight'](u'enter')))
+        echo('Press {enter}.'.format(
+            enter=colors['highlight']('enter')))
         inp = LineEditor(0, colors=colors).read()
 
 
-def prompt_input(term, key, sep_ok=u'::', width=None, colors=None):
+def prompt_input(term, key, sep_ok='::', width=None, colors=None):
     """ Prompt for and return input, up to given width and colorscheme. """
     colors = colors or {'highlight': term.yellow}
     sep_ok = colors['highlight'](sep_ok)
 
-    echo(u'{sep} {key:<8}: '.format(sep=sep_ok, key=key))
-    return LineEditor(colors=colors, width=width).read() or u''
+    echo('{sep} {key:<8}: '.format(sep=sep_ok, key=key))
+    return LineEditor(colors=colors, width=width).read() or ''
 
 
 def coerce_terminal_encoding(term, encoding):
     """ Coerce encoding of terminal to match session by CSI. """
-    echo(u'\r\n')
+    echo('\r\n')
     echo({
         # ESC %G activates UTF-8 with an unspecified implementation
         # level from ISO 2022 in a way that allows to go back to
         # ISO 2022 again.
-        'utf8': u'\x1b%G',
+        'utf8': '\x1b%G',
         # ESC %@ returns to ISO 2022 in case UTF-8 had been entered.
         # ESC (U Sets character set G0 to codepage 437, such as on
         # Linux vga console.
-        'cp437': u'\x1b%@\x1b(U',
-    }.get(encoding, u''))
+        'cp437': '\x1b%@\x1b(',
+    }.get(encoding, ''))
     # remove possible artifacts, at least, %G may print a raw G
     echo(term.move_x(0) + term.clear_eol)
 
@@ -282,16 +282,16 @@ def show_description(term, description, color='white', width=80, **kwargs):
         if line.strip():
             lines.extend(term.wrap(line, wide, **kwargs))
         else:
-            lines.append(u'')
+            lines.append('')
 
     # output as a single string, reducing latency
-    outp = u''.join(
-        [getattr(term, color) if color else u''] +
-        [u''.join((
-            term.move_x(xpos) if xpos else u'',
+    outp = ''.join(
+        [getattr(term, color) if color else ''] +
+        [''.join((
+            term.move_x(xpos) if xpos else '',
             txt.rstrip(),
             term.clear_eol,
-            u'\r\n')) for txt in lines])
+            '\r\n')) for txt in lines])
     echo(outp)
     return len(outp.splitlines())
 
@@ -299,14 +299,14 @@ def show_description(term, description, color='white', width=80, **kwargs):
 def filesize(filename):
     """ display a file's size in human-readable format """
     size = float(os.stat(filename).st_size)
-    for scale in u'BKMGT':
-        if size < 1000 or scale == u'T':
-            if scale in u'BK':
+    for scale in 'BKMGT':
+        if size < 1000 or scale == 'T':
+            if scale in 'BK':
                 # no precision for bytees or kilobytes
-                return (u'{size:d}{scale}'
+                return ('{size:d}{scale}'
                         .format(size=int(size), scale=scale))
             # 2-decimal precision
-            return (u'{size:0.2f}{scale}'
+            return ('{size:0.2f}{scale}'
                     .format(size=size, scale=scale))
         size /= 1024
 
@@ -318,9 +318,9 @@ def display_prompt(term, colors):
     xpos = 0
     if term.width > 30:
         xpos = max(5, int((term.width / 2) - (80 / 2)))
-    return (u'{xpos}{user}{at}{bbsname}{colon} '.format(
+    return ('{xpos}{user}{at}{bbsname}{colon} '.format(
         xpos=term.move_x(xpos),
         user=term.session.user.handle,
-        at=colors['lowlight'](u'@'),
+        at=colors['lowlight']('@'),
         bbsname=bbsname,
-        colon=colors['lowlight'](u'::')))
+        colon=colors['lowlight']('::')))

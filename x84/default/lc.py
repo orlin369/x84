@@ -56,7 +56,7 @@ def main(last=9):
     :param int last: Number of last callers to display
     """
     session, term = getsession(), getterminal()
-    session.activity = u'Viewing last callers'
+    session.activity = 'Viewing last callers'
 
     colors = [term.green, term.bright_blue, term.bold,
               term.cyan, term.bold_black]
@@ -70,7 +70,7 @@ def main(last=9):
 
     # get last callers
     last_callers = get_lastcallers(last=last)
-    echo(u'\r\n\r\n')
+    echo('\r\n\r\n')
 
     def make_header(fmt):
         return fmt.format(

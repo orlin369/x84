@@ -13,21 +13,21 @@ def main():
         term = Terminal()
 
         def echo(text):
-            sys.stdout.write(u'{}'.format(text))
+            sys.stdout.write('{}'.format(text))
             sys.stdout.flush()
 
-    echo(u''.join((term.normal,
-                   term.height * u'\r\n',
+    echo(''.join((term.normal,
+                   term.height * '\r\n',
                    term.home,
                    term.clear_eos)))
 
     with term.raw():
-        inp = u''
-        echo(u'Press Q to exit.\r\n')
+        inp = ''
+        echo('Press Q to exit.\r\n')
         while inp.upper() != 'Q':
             inp = term.inkey(timeout=10.0)
             disp_inp = inp.__str__() if inp.is_sequence else inp
-            echo(u'{0!r}: code={1!r} name={2!r}\r\n'
+            echo('{0!r}: code={1!r} name={2!r}\r\n'
                  .format(disp_inp, inp.code, inp.name))
 
 if __name__ == '__main__':

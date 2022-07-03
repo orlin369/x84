@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ Configuration package x/84. """
-# std imports
+
 from __future__ import print_function
 import logging.config
 import configparser
@@ -57,7 +60,7 @@ def init(lookup_bbs, lookup_log):
             try:
                 os.makedirs(dir_name)
             except OSError as err:
-                log.warn(err)
+                log.warning(err)
         try:
             write_cfg(cfg_log, cfg_logfile)
             log.info('Saved %s', cfg_logfile)
@@ -84,7 +87,7 @@ def init(lookup_bbs, lookup_log):
             try:
                 os.makedirs(dir_name)
             except OSError as err:
-                log.warn(err)
+                log.warning(err)
         try:
             write_cfg(cfg_bbs, cfg_bbsfile)
             log.info('Saved %s', cfg_bbsfile)
@@ -244,7 +247,7 @@ def init_bbs_ini():
     cfg_bbs.set('nua', 'max_email', '30')
     cfg_bbs.set('nua', 'max_location', '24')
     cfg_bbs.set('nua', 'allow_apply', 'yes')
-    invalid_handles = u', '.join((
+    invalid_handles = ', '.join((
         cfg_bbs.get('matrix', 'byecmds'),
         cfg_bbs.get('matrix', 'newcmds'),
         'anonymous', 'sysop',))
@@ -270,8 +273,8 @@ def init_log_ini():
     cfg_log.add_section('formatter_default')
     # for multiprocessing/threads, use: %(processName)s %(threadName) !
     cfg_log.set('formatter_default', 'format',
-                u'%(asctime)s %(levelname)-6s '
-                u'%(filename)10s:%(lineno)-3s %(message)s')
+                '%(asctime)s %(levelname)-6s '
+                '%(filename)10s:%(lineno)-3s %(message)s')
     cfg_log.set('formatter_default', 'class', 'logging.Formatter')
     cfg_log.set('formatter_default', 'datefmt', '%a-%m-%d %I:%M%p')
 
@@ -365,9 +368,9 @@ def get_ini(section=None, key=None, getter='get', split=False, splitsep=','):
     assert key is not None, key
     if CFG is None:
         # when building documentation, 'get_ini' at module-level
-        # imports is not really an error.  However, if you're importing
+        # imports is not really an error.  However, if yo're importing
         # a module that calls get_ini before the config system is
-        # initialized, then you're going to get an empty value! warning!!
+        # initialized, then yo're going to get an empty value! warning!!
         stack = inspect.stack()
         caller_mod, caller_func = stack[2][1], stack[2][3]
         warnings.warn('ini system not (yet) initialized, '
@@ -382,4 +385,4 @@ def get_ini(section=None, key=None, getter='get', split=False, splitsep=','):
         return False
     if split:
         return []
-    return u''
+    return ''

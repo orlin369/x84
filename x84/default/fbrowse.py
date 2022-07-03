@@ -37,7 +37,7 @@ SYNCTERM_FONT = get_ini(
 #: marker for flagged files in browser list
 FLAGGED_CHAR = get_ini(
     section='fbrowse', key='flagged_char'
-) or u'+'
+) or '+'
 
 #: extensions for ASCII collies
 COLLY_EXTENSIONS = get_ini(
@@ -47,7 +47,7 @@ COLLY_EXTENSIONS = get_ini(
 #: name of virtual directory for collecting user's flagged files
 FLAGGED_DIRNAME = get_ini(
     section='fbrowse', key='flagged_dirname'
-) or u'__flagged__{0}'.format(os.path.sep)
+) or '__flagged__{0}'.format(os.path.sep)
 
 #: decoding to use for ASCII collies
 COLLY_DECODING = get_ini(
@@ -83,7 +83,7 @@ def diz_from_dms(binary, filename):
     if proc.returncode == 0:
         return output.decode('cp437_art')
     else:
-        return u'No description'
+        return 'No description'
 
 
 def diz_from_lha(binary, filename):
@@ -93,7 +93,7 @@ def diz_from_lha(binary, filename):
     import subprocess
     import tempfile
     import shutil
-    description = u'No description'
+    description = 'No description'
     path = tempfile.mkdtemp(prefix='x84_')
     args = ('xw={0}'.format(path), filename)
     proc = subprocess.Popen((binary,) + args, stdout=subprocess.PIPE,
@@ -119,14 +119,14 @@ def diz_from_zip(filename, method=zipfile.ZIP_STORED):
         for cname in (cname for cname in myzip.namelist()
                       if cname.lower() == 'file_id.diz'):
             return myzip.read(cname).decode('cp437_art')
-        return u'No description'
+        return 'No description'
     except zipfile.BadZipfile:
-        return u'Bad zip file, cannot parse'
+        return 'Bad zip file, cannot parse'
     except zipfile.LargeZipFile:
         # since we do allowZip64=True above, this shouldn't happen any longer
-        return u'Large zip file, cannot parse'
+        return 'Large zip file, cannot parse'
     except NotImplementedError:
-        return u'Unsupported compression, cannot parse'
+        return 'Unsupported compression, cannot parse'
 
 
 def get_diz_from_colly(filepath):
@@ -146,27 +146,27 @@ def get_diz_from_colly(filepath):
 def get_instructions(term, is_sysop=None):
     """ Show file browser instructions. """
     return [
-        term.bold_blue_underline(u'Instructions'),
-        u' ',
-        u'{0} Un/flag file for download'
-        .format(term.reverse(u'(SPACE)')),
-        u'{0}  Back up'
-        .format(term.reverse(u'(LEFT)')),
-        term.reverse(u'(RIGHT, ENTER)'),
-        u'        Browse subdirectory',
-        u'{0}     Download flagged file(s)'
-        .format(term.reverse(u'(D)')),
-        u'{0}     Unflag all files'
-        .format(term.reverse(u'(-)')),
-        u'{0}     Upload file(s)'
-        .format(term.reverse(u'(u)')),
-        u'{0}     Edit description'
-        .format(term.reverse(u'(e)')) if is_sysop else u'',
-        u'{0}     Quit'
-        .format(term.reverse(u'(q)')),
-        u' ',
-        u'Files are also available via {0}'
-        .format(term.bold(u'SFTP')),
+        term.bold_blue_underline('Instructions'),
+        ' ',
+        '{0} Un/flag file for download'
+        .format(term.reverse('(SPACE)')),
+        '{0}  Back up'
+        .format(term.reverse('(LEFT)')),
+        term.reverse('(RIGHT, ENTER)'),
+        '        Browse subdirectory',
+        '{0}     Download flagged file(s)'
+        .format(term.reverse('(D)')),
+        '{0}     Unflag all files'
+        .format(term.reverse('(-)')),
+        '{0}     Upload file(s)'
+        .format(term.reverse('(u)')),
+        '{0}     Edit description'
+        .format(term.reverse('(e)')) if is_sysop else '',
+        '{0}     Quit'
+        .format(term.reverse('(q)')),
+        ' ',
+        'Files are also available via {0}'
+        .format(term.bold('SFTP')),
     ]
 
 
@@ -175,7 +175,7 @@ def edit_description(filepath, db_desc):
     from bbs import gosub
     new_desc = None
     if filepath in db_desc:
-        new_desc = u'\r\n'.join([line.decode('cp437_art')
+        new_desc = '\r\n'.join([line.decode('cp437_art')
                                  for line in db_desc[filepath]])
     new_desc = gosub('editor', continue_draft=new_desc)
     if not new_desc:
@@ -193,18 +193,18 @@ def download_files(term, session, protocol='xmodem1k'):
     for fname in flagged:
         _fname = fname[fname.rfind(os.path.sep) + 1:].decode('utf8')
         echo(term.bold_green(
-            u'Start your {protocol} receiving program '
-            u'to begin transferring {_fname}...\r\n'
+            'Start your {protocol} receiving program '
+            'to begin transferring {_fname}...\r\n'
             .format(protocol=protocol, _fname=_fname)))
-        echo(u'Press ^X twice to cancel\r\n')
+        echo('Press ^X twice to cancel\r\n')
 
         fin = open(fname, 'rb')
         if not send_modem(fin, protocol):
-            echo(term.bold_red(u'Transfer failed!\r\n'))
+            echo(term.bold_red('Transfer failed!\r\n'))
         else:
             browser.flagged_files.remove(fname)
             session.user['flaggedfiles'] = browser.flagged_files
-            echo(term.bold(u'Transfer(s) finished.\r\n'))
+            echo(term.bold('Transfer(s) finished.\r\n'))
     term.inkey()
 
 
@@ -212,20 +212,20 @@ def upload_files(term, protocol='xmodem1k'):
     """ Upload files. """
     echo(term.clear)
     while True:
-        echo(u'Filename (empty to quit):\r\n')
+        echo('Filename (empty to quit):\r\n')
         led = LineEditor(width=term.width - 1)
         led.refresh()
         inp = led.read()
         led = None
         if inp:
-            for illegal in (os.path.sep, u'..', u'~',):
+            for illegal in (os.path.sep, '..', '~',):
                 if illegal in inp:
-                    echo(term.bold_red(u'\r\nIllegal filename.\r\n'))
+                    echo(term.bold_red('\r\nIllegal filename.\r\n'))
                     term.inkey()
                     return
 
             echo(term.bold(
-                u'\r\nBegin your {0} sending program now.\r\n'
+                '\r\nBegin your {0} sending program now.\r\n'
                 .format(protocol)))
 
             upload_filename = os.path.join(UPLOADS_DIR, inp)
@@ -235,10 +235,10 @@ def upload_files(term, protocol='xmodem1k'):
                 echo(term.bold_red('u\r\nIOError: {err}\r\n'.format(err=err)))
             else:
                 if not recv_modem(upload, protocol):
-                    echo(term.bold_red(u'Upload failed!\r\n'))
+                    echo(term.bold_red('Upload failed!\r\n'))
                     os.unlink(upload_filename)
                 else:
-                    echo(term.bold_green(u'Transfer succeeded.\r\n'))
+                    echo(term.bold_green('Transfer succeeded.\r\n'))
             term.inkey()
         else:
             return
@@ -254,7 +254,7 @@ def draw_interface(term, lightbar):
     browser.max_diz_width = term.width - lightbar.width - 2
     # -4 for space above/below diz area and info line (filename, size)
     browser.max_diz_height = term.height - 4
-    echo(u''.join([term.clear,
+    echo(''.join([term.clear,
                    lightbar.border(),
                    lightbar.refresh()]))
 
@@ -264,16 +264,16 @@ def clear_diz(term):
     echo(term.move(1, browser.diz_location))
     # +2 for info line (filename, size) and empty line below it
     for i in range(browser.last_diz_len + 2):
-        echo(u''.join((
+        echo(''.join((
             term.move(i, browser.diz_location), term.clear_eol)))
 
 
 def describe_file(term, diz, directory, filename, isdir=None):
     """ Describe a file in the diz area. """
-    if isdir or filename == u'..{0}'.format(os.path.sep):
+    if isdir or filename == '..{0}'.format(os.path.sep):
         # describe directory
-        description = u'{txt_Directory}: {filename}'.format(
-            txt_Directory=term.bold(u'Directory'),
+        description = '{txt_Directory}: {filename}'.format(
+            txt_Directory=term.bold('Directory'),
             filename=filename.decode('utf8'))
 
     else:
@@ -282,15 +282,15 @@ def describe_file(term, diz, directory, filename, isdir=None):
         _filename = (filename[len(ROOT):].decode('utf8')
                      if directory == os.path.join(ROOT, FLAGGED_DIRNAME)
                      else filename.decode('utf8'))
-        description = (u'{txt_Filename}: {filename}  {txt_Size}: {size}'
-                       .format(txt_Filename=term.bold(u'Filename'),
+        description = ('{txt_Filename}: {filename}  {txt_Size}: {size}'
+                       .format(txt_Filename=term.bold('Filename'),
                                filename=_filename,
-                               txt_Size=term.bold(u'Size'),
+                               txt_Size=term.bold('Size'),
                                size=_size))
 
     description = term.wrap(description, browser.max_diz_width)
-    echo(u''.join((term.move(1, browser.diz_location),
-                   u''.join(['{0}{1}\r\n'.format(
+    echo(''.join((term.move(1, browser.diz_location),
+                   ''.join(['{0}{1}\r\n'.format(
                              term.move_x(browser.diz_location), line)
                              for line in description]),
                    term.move(2 + len(description), browser.diz_location))))
@@ -300,12 +300,12 @@ def describe_file(term, diz, directory, filename, isdir=None):
         wrapped_diz += term.wrap(line, browser.max_diz_width)
     wrapped_diz = wrapped_diz[:browser.max_diz_height - len(description) + 1]
 
-    output = u''
+    output = ''
     for line in wrapped_diz:
         browser.last_diz_len += 1
-        output = u''.join(
+        output = ''.join(
             (output, term.move_x(browser.diz_location),
-             line, u'\r\n'))
+             line, '\r\n'))
     echo(output)
 
 
@@ -313,11 +313,11 @@ def mark_flagged(directory, files):
     """ Add marker to flagged files. """
     files_list = list()
     for fname in files:
-        prefix = u' '
+        prefix = ' '
         if os.path.join(directory, fname) in browser.flagged_files:
             prefix = FLAGGED_CHAR
         txt_fname = fname.strip().decode('utf8')
-        item = (fname, (u'{prefix}{txt_fname}'
+        item = (fname, ('{prefix}{txt_fname}'
                         .format(prefix=prefix, txt_fname=txt_fname)))
         files_list.append(item)
     return files_list
@@ -325,15 +325,15 @@ def mark_flagged(directory, files):
 
 def flagged_listdir():
     """ Build listing for flagged files pseudo-folder. """
-    files = [u'{flagged_char}{txt_fname}'.format(
+    files = ['{flagged_char}{txt_fname}'.format(
         flagged_char=FLAGGED_CHAR,
         txt_fname=fname[fname.rfind(os.path.sep) + 1:].decode('utf8'))
         for fname in browser.flagged_files]
 
     zipped_files = zip(browser.flagged_files, files)
     sorted_files = sorted(zipped_files, key=lambda x: x[1].lower())
-    sorted_files.insert(0, (u'..{0}'.format(os.path.sep),
-                            u' ..{0}'.format(os.path.sep)))
+    sorted_files.insert(0, ('..{0}'.format(os.path.sep),
+                            ' ..{0}'.format(os.path.sep)))
     return sorted_files
 
 
@@ -427,7 +427,7 @@ def browse_dir(session, db_desc, term, lightbar, directory, sub=False):
             # 'exit' key pressed
             return False
 
-        elif inp in (u' ',) and filename[-1:] != os.path.sep:
+        elif inp in (' ',) and filename[-1:] != os.path.sep:
             # 'flag' key pressed; don't allow flagging directories
             if filepath in browser.flagged_files:
                 # already flagged; un-flag
@@ -444,23 +444,23 @@ def browse_dir(session, db_desc, term, lightbar, directory, sub=False):
                 echo(lightbar.refresh_row(lightbar.vitem_idx))
                 lightbar.move_down()
 
-        elif inp in (u'-',):
+        elif inp in ('-',):
             # 'unflag all' pressed
             session.user['flaggedfiles'] = browser.flagged_files = set()
             reload_dir(session, directory, lightbar, sub)
             echo(lightbar.refresh())
 
-        elif inp in (u'd',) and len(browser.flagged_files):
+        elif inp in ('d',) and len(browser.flagged_files):
             download_files(term, session)
             reload_dir(session, directory, lightbar, sub)
             draw_interface(term, lightbar)
 
-        elif inp in (u'u',):
+        elif inp in ('',):
             upload_files(term)
             reload_dir(session, directory, lightbar, sub)
             draw_interface(term, lightbar)
 
-        elif inp in (u'e',) and session.user.is_sysop and not isdir:
+        elif inp in ('e',) and session.user.is_sysop and not isdir:
             edit_description(relativename, db_desc)
             reload_dir(session, directory, lightbar, sub)
             draw_interface(term, lightbar)
@@ -504,7 +504,7 @@ def browse_dir(session, db_desc, term, lightbar, directory, sub=False):
                     diz = [line.decode(decoder, errors='replace')
                            for line in diz]
                 except UnicodeEncodeError:
-                    diz = [u'Invalid characters in FILE_ID.DIZ']
+                    diz = ['Invalid characters in FILE_ID.DIZ']
 
         elif ext in browser.diz_extractors:
             # is (supported) archive
@@ -522,7 +522,7 @@ def browse_dir(session, db_desc, term, lightbar, directory, sub=False):
             try:
                 diz = [line.decode(decoder, errors='replace') for line in diz]
             except UnicodeEncodeError:
-                diz = [u'Invalid characters in FILE_ID.DIZ']
+                diz = ['Invalid characters in FILE_ID.DIZ']
                 db_desc[relativename] = diz
 
         elif is_flagged_dir(filename):
@@ -538,7 +538,7 @@ def browse_dir(session, db_desc, term, lightbar, directory, sub=False):
         else:
             # is normal file
             save_diz = False
-            diz = [u'No description']
+            diz = ['No description']
 
         if not UPLOADS_DIR.find(directory) and save_diz:
             # write description to diz db when save_diz is True
@@ -557,7 +557,7 @@ def main():
     import subprocess
     import functools
     session, term = getsession(), getterminal()
-    session.activity = u'Browsing files'
+    session.activity = 'Browsing files'
     db_desc = DBProxy(DIZ_DB)
 
     # set syncterm font, if any
@@ -599,4 +599,4 @@ def main():
     with term.hidden_cursor():
         browse_dir(session, db_desc, term, lightbar, ROOT)
     echo(term.move(term.height, term.width))
-    echo(u'\r\n\r\n' + term.normal)
+    echo('\r\n\r\n' + term.normal)

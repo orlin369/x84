@@ -2,14 +2,14 @@
 
 GLYPHSETS = {
     'ascii': {
-        'top-left': u'+',
-        'bot-left': u'+',
-        'top-right': u'+',
-        'bot-right': u'+',
-        'left-vert': u'|',
-        'right-vert': u'|',
-        'top-horiz': u'-',
-        'bot-horiz': u'-', },
+        'top-left': '+',
+        'bot-left': '+',
+        'top-right': '+',
+        'bot-right': '+',
+        'left-vert': '|',
+        'right-vert': '|',
+        'top-horiz': '-',
+        'bot-horiz': '-', },
     'thin': {
         'top-left': chr(218).encode('utf-8').decode('cp437'),
         'bot-left': chr(192).encode('utf-8').decode('cp437'),
@@ -187,15 +187,15 @@ class AnsiWindow(object):
         """ Return sequence suitable for drawing window border. """
         # pylint: disable=R0912
         #        Too many branches (17/12)
-        topright = self.glyphs.get('top-right', u'*')
-        thoriz = self.glyphs.get('top-horiz', u'-') * (max(0, self.width - 2))
-        topleft = self.glyphs.get('top-left', u'/')
-        leftvert = self.glyphs.get('left-vert', u'|')
-        rightvert = self.glyphs.get('right-vert', u'|')
-        botleft = self.glyphs.get('bot-left', u'\\')
-        bhoriz = self.glyphs.get('bot-horiz', u'-') * (max(0, self.width - 2))
-        botright = self.glyphs.get('bot-right', u'/')
-        rstr = u''
+        topright = self.glyphs.get('top-right', '*')
+        thoriz = self.glyphs.get('top-horiz', '-') * (max(0, self.width - 2))
+        topleft = self.glyphs.get('top-left', '/')
+        leftvert = self.glyphs.get('left-vert', '|')
+        rightvert = self.glyphs.get('right-vert', '|')
+        botleft = self.glyphs.get('bot-left', '\\')
+        bhoriz = self.glyphs.get('bot-horiz', '-') * (max(0, self.width - 2))
+        botright = self.glyphs.get('bot-right', '/')
+        rstr = ''
         for row in range(0, self.height):
             for col in range(0, self.width):
                 if col == 0 or col == self.width - 1:
@@ -211,11 +211,11 @@ class AnsiWindow(object):
                              if col == 0 else
                              self.pos(row, col) + rightvert
                              if col == self.width - 1 else
-                             u'')
+                             '')
                 elif row == 0:
                     # top row (column 1)
-                    if thoriz == u'':
-                        if topright != u'':
+                    if thoriz == '':
+                        if topright != '':
                             # prepare for top-right, (horiz skipped)
                             rstr += self.pos(row, max(0, self.width - 1))
                     else:
@@ -224,8 +224,8 @@ class AnsiWindow(object):
                     break
                 elif row == self.height - 1:
                     # bottom row (column 1)
-                    if bhoriz == u'':
-                        if botright != u'':
+                    if bhoriz == '':
+                        if botright != '':
                             # prepare for bot-right, (horiz skipped)
                             rstr += self.pos(row, max(0, self.width - 1))
                     else:
@@ -234,8 +234,8 @@ class AnsiWindow(object):
                     # bot-right
                     rstr += botright
                     break
-        return (self.colors.get('border', u'') + rstr +
-                self.colors.get('normal', u''))
+        return (self.colors.get('border', '') + rstr +
+                self.colors.get('normal', ''))
 
     def erase_border(self):
         """ Return sequence suitable for erasing only the window border. """
@@ -243,8 +243,8 @@ class AnsiWindow(object):
         for glyph in ('top-left', 'top-horiz', 'top-right',
                       'left-vert', 'right-vert',
                       'bot-left', 'bot-horiz', 'bot-right'):
-            if 0 != len(self.glyphs.get(glyph, u'')):
-                self.glyphs[glyph] = self.glyphs.get('erase', u' ')
+            if 0 != len(self.glyphs.get(glyph, '')):
+                self.glyphs[glyph] = self.glyphs.get('erase', ' ')
         ucs = self.border()
         # pylint: disable=W0201
         #         Attribute 'glyphs' defined outside __init__
@@ -253,15 +253,15 @@ class AnsiWindow(object):
 
     def erase(self):
         """ Return sequence suitable for erasing full window (with border). """
-        return u''.join([self.pos(y, 0)
-                         + (self.glyphs.get('erase', u' ') * self.width)
+        return ''.join([self.pos(y, 0)
+                         + (self.glyphs.get('erase', ' ') * self.width)
                          for y in range(self.height)
                          ])
 
     def clear(self):
         """ Return sequence suitable for erasing contents window. """
-        return u''.join([self.pos(self.ypadding + yloc, self.xpadding)
-                         + (self.glyphs.get('erase', u' ')
+        return ''.join([self.pos(self.ypadding + yloc, self.xpadding)
+                         + (self.glyphs.get('erase', ' ')
                             * self.visible_width)
                          for yloc in range(self.visible_height)
                          ])

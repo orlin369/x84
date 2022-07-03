@@ -93,7 +93,7 @@ def get_fail2ban_function():
 
         # check to see if IP is blacklisted
         if ip in ip_blacklist:
-            log.debug('Blacklisted IP rejected: {ip}'.format(ip=ip))
+            log.debug(f'Blacklisted IP rejected: {ip}')
             return False
 
         # check to see if IP is banned
@@ -106,11 +106,11 @@ def get_fail2ban_function():
                     'attempts': 1,
                     'expiry': now + max_attempted_logins_window
                 }
-                log.debug('Banned IP expired: {ip}'.format(ip=ip))
+                log.debug(f'Banned IP expired: {ip}')
             else:
                 # increase the expiry and kick them out
                 BANNED_IP_LIST[ip] += ban_increment_length
-                log.debug('Banned IP rejected: {ip}'.format(ip=ip))
+                log.debug(f'Banned IP rejected: {ip}')
                 return False
 
         # check num of attempts, ban if exceeded max
@@ -126,8 +126,7 @@ def get_fail2ban_function():
                 # max # of attempts reached
                 del ATTEMPTED_LOGINS[ip]
                 BANNED_IP_LIST[ip] = now + initial_ban_length
-                log.warn('Exceeded maximum attempts; banning {ip}'
-                         .format(ip=ip))
+                log.warning(f'Exceeded maximum attempts; banning {ip}')
                 return False
             else:
                 # extend window

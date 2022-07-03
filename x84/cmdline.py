@@ -21,7 +21,7 @@ def parse_args():
                   os.path.expanduser(os.path.join('~', '.x84', 'logging.ini')))
 
     try:
-        opts, tail = getopt.getopt(sys.argv[1:], u'', (
+        opts, tail = getopt.getopt(sys.argv[1:], '', (
             'config=', 'logger=', 'help'))
     except getopt.GetoptError as err:
         sys.stderr.write('{0}\n'.format(err))

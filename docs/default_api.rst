@@ -36,8 +36,8 @@ welcome to the user::
     def main():
         from x84.bbs import echo, getterminal
         term = getterminal()
-        echo(term.bold_red(u'Hello, scene!\r\n'))
-        echo(u'Press a key to continue...')
+        echo(term.bold_red('Hello, scene!\r\n'))
+        echo('Press a key to continue...')
         term.inkey()
 
 So what happens here?
@@ -82,7 +82,7 @@ terminal attributes are defined by the clients ``TERM`` setting.
 
 Retrieves a single keystroke from the user's terminal. If the key stroke was a
 normal alphanumeric key, you will receive a single character that was typed as
-unicode, otherwise you'll get the full multibyte string, such as ``\x1b[A`` for
+unicode, otherwise yo'll get the full multibyte string, such as ``\x1b[A`` for
 the up arrow -- a ``code`` attribute is available that can be compared with
 complimentary attributes of the ``term`` instance. See blessed_ for details.
 

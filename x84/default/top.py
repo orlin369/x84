@@ -1,7 +1,7 @@
 """
 Post-login screen for x/84.
 
-When handle is None or u'', an in-memory account 'anonymous' is created
+When handle is None or '', an in-memory account 'anonymous' is created
 and assigned to the session.
 """
 # std
@@ -42,8 +42,8 @@ art_speed = 0.04
 #: which sauce records to display
 sauce_records = set(['author', 'title', 'group', 'date', 'filename'])
 
-#: ssh port configured, this is displayed to the user, if you're using NAT port
-#: forwarding or something like that, you'll want to set the configuration
+#: ssh port configured, this is displayed to the user, if yo're using NAT port
+#: forwarding or something like that, yo'll want to set the configuration
 #: value of section [ssh] for key 'advertise_port'.
 ssh_port = (get_ini(section='ssh', key='advertise_port') or
             get_ini(section='ssh', key='port'))
@@ -59,9 +59,9 @@ idisplay_art = functools.partial(showart, encoding=art_encoding,
 
 def _show_opt(term, keys):
     """ Display characters ``key`` highlighted as keystroke """
-    return u''.join((term.bold_black(u'['),
+    return ''.join((term.bold_black('['),
                      term.bold_red_underline(keys),
-                     term.bold_black(u']')))
+                     term.bold_black(']')))
 
 
 def get_art_detail(art_file):
@@ -96,49 +96,49 @@ def display_sauce(term, art_file):
     # will the current tabulation fit?
     sauce_width = lambda: (
         ((key_adjust + val_adjust) * sauce_columns)
-        + (len(u':' * sauce_columns))
-        + (len(u' ') * sauce_columns))
+        + (len(':' * sauce_columns))
+        + (len(' ') * sauce_columns))
 
     # resize until it does !
     while sauce_columns > 1 and sauce_width() >= term.width:
         sauce_columns -= 1
 
     # construct formatted tabular sauce data
-    sauce_disp = [u'{key}{colon}{space}{value}'
+    sauce_disp = ['{key}{colon}{space}{value}'
                   .format(key=term.bold_black(key.rjust(key_adjust)),
-                          colon=term.bold_black_underline(u':'),
-                          space=u' ',
+                          colon=term.bold_black_underline(':'),
+                          space=' ',
                           value=term.red(value.ljust(val_adjust)))
                   for key, value in get_art_detail(art_file)]
 
     # justify last row for alignment
     if sauce_disp:
         while len(sauce_disp) % sauce_columns != 0:
-            sauce_disp.append(u'{key}{colon}{space}{value}'
-                              .format(key=u' ' * key_adjust,
-                                      colon=u' ',
-                                      space=u' ',
-                                      value=u' ' * val_adjust))
+            sauce_disp.append('{key}{colon}{space}{value}'
+                              .format(key=' ' * key_adjust,
+                                      colon=' ',
+                                      space=' ',
+                                      value=' ' * val_adjust))
 
     # display sauce / filename data
     for idx in range(0, len(sauce_disp), sauce_columns):
         echo(term.center(
-            u''.join(sauce_disp[idx:idx + sauce_columns])
-        ).rstrip() + u'\r\n')
+            ''.join(sauce_disp[idx:idx + sauce_columns])
+        ).rstrip() + '\r\n')
 
 
 def display_prompt(term):
     """ Display prompt of user choices. """
     # show prompt
-    echo(u'\r\n\r\n')
-    echo(term.center(u'{0} previous - {1} change encoding - next {2}'
-                     .format(_show_opt(term, u'<'),
-                             _show_opt(term, u'!'),
-                             _show_opt(term, u'>'))
+    echo('\r\n\r\n')
+    echo(term.center('{0} previous - {1} change encoding - next {2}'
+                     .format(_show_opt(term, '<'),
+                             _show_opt(term, '!'),
+                             _show_opt(term, '>'))
                      ).rstrip())
     echo(term.move_up() + term.move_up() + term.move_x(0))
-    echo(term.center(u'quick login {0} ?\b\b'
-                     .format(_show_opt(term, u'[yN]'))
+    echo(term.center('quick login {0} ?\b\b'
+                     .format(_show_opt(term, '[yN]'))
                      ).rstrip())
 
 
@@ -152,14 +152,14 @@ def display_intro(term, index):
 
     # show art
     art_file = art_files[index % len(art_files)]
-    line = u''
+    line = ''
     for line in idisplay_art(art_file):
         echo(line)
     if line.strip():
         # write newline only if last line was artful
-        echo(u'\r\n')
+        echo('\r\n')
     display_sauce(term, art_file)
-    echo(u'\r\n')
+    echo('\r\n')
 
 
 def get_user_record(handle):
@@ -168,9 +168,9 @@ def get_user_record(handle):
 
     If handle is ``anonymous``, Create and return a new User object.
     """
-    if handle == u'anonymous':
+    if handle == 'anonymous':
         log.debug('anonymous login')
-        return User(u'anonymous')
+        return User('anonymous')
 
     log.debug('login by {0!r}'.format(handle))
     return get_user(handle)
@@ -197,7 +197,7 @@ def login(session, user):
     user['last_from'] = session.sid
 
     # save user record
-    if user.handle != u'anonymous':
+    if user.handle != 'anonymous':
         user.save()
 
     # update 'lastcalls' database
@@ -221,7 +221,7 @@ def do_intro_art(term, session):
 
     index = int(time.time()) % len(art_files)
     dirty = True
-    echo(u'\r\n')
+    echo('\r\n')
     while True:
         session.activity = 'top'
         if session.poll_event('refresh') or dirty:
@@ -230,23 +230,23 @@ def do_intro_art(term, session):
             dirty = False
         dirty = True
         inp = LineEditor(1, colors={'highlight': term.normal}).read()
-        if inp is None or inp.lower() == u'y':
+        if inp is None or inp.lower() == 'y':
             # escape/yes: quick login
             return True
         # issue #242 : set 'N' as default, by adding a check for an empty
         # unicode string.
-        elif inp.lower() in (u'n', u'\r', u'\n', u''):
+        elif inp.lower() in ('n', '\r', '\n', ''):
             break
 
         if len(inp) == 1:
-            echo(u'\b')
-        if inp == u'!':
-            echo(u'\r\n' * 3)
+            echo('\b')
+        if inp == '!':
+            echo('\r\n' * 3)
             gosub('charset')
             dirty = True
-        elif inp == u'<':
+        elif inp == '<':
             index -= 1
-        elif inp == u'>':
+        elif inp == '>':
             index += 1
         else:
             dirty = False
@@ -266,7 +266,7 @@ def describe_ssh_availability(term, session):
 
     about_key = (u"You may even use an ssh key, which you can configure from "
                  u"your user profile, " if not session.user.get('pubkey')
-                 else u'')
+                 else '')
     big_msg = term.bold_blue("Big Brother is Watching You")
     description = (
         u"\r\n\r\n"

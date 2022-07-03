@@ -1,17 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 """ Database proxy helper for x/84. """
-# std imports
+
 import logging
 
-# local
 from bbs.ini import get_ini
-from db import (
-    get_db_filepath,
-    get_database,
-    get_db_func,
-    get_db_lock,
-    log_db_cmd,
-)
 
+from db import get_db_filepath, get_database, get_db_func, get_db_lock, log_db_cmd
 
 class DBProxy(object):
 
