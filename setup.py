@@ -56,7 +56,7 @@ setup(name='x84',
           'with_crypto': (
               'bcrypt>=3.1.7,<4',
               'cherrypy>=17.4.2,<18',
-              'cryptography>=2.9.2,<3',
+              'cryptography>=2.9.2,<40',
               'paramiko>=2.7.1,<3',
               'web.py>=0.51,<1',
           )
